@@ -40,5 +40,30 @@ Check in new or amended files
     --- GREE are pending 'commit'
 9. CMD: git add .               (add all)
 10 CMD: git commit -m "<<remarks">>
-11.CMD: git push -u origin main
+11.CMD: git push -u origin main     (or just git push if the you are sure of currrent branch and origin has already been setup properle)
         --- firstly, check what is the current branch using "git branch --show-current" (should be main)
+
+NOTE: for renaming of files, might have to run again these after pushing
+      CMD: git add .
+      CMD: git commit -m "<<remarks>>"
+      CMD: git push
+
+
+NOW TO CREATE NEW BRANCH TO START MODFICATIONS
+-----------------------------------------------
+THe initial (main) branch is suppose to be the 'production' or final, will merge any changes in new branch to main later
+CMD: git checkout -b dev
+    --- this will create AND switch to new branch
+CMD: git checkout <<branch name>>
+    --- this is to switch only (no create)
+
+CMD: git branch
+    --- check all available branches for the current repository
+CMD: git branch -m <<new-name>>
+    --- renames a branch
+
+Merging (RMB: its merging from)
+CMD: git checkout main 
+    --- switch to the target merge branch first
+CMD: git merge <<branch-to-merge-from>>
+    --- then specify the branch to merge from
