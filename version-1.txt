@@ -12,7 +12,11 @@ REFERENCES:
 
 OBJECTIVES
     --- setting bootstrap 5
+    --- setup static folder for application resources
+    --- setup application messages
     --- setup base.html
+        --- navigation / steppers
+
     --- main layout and navigation
 
 
@@ -25,30 +29,39 @@ OBJECTIVES
                 import os       (put at the top)
                 STATIC_URL = '/static/'
                 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+        --- css/
+            will set styles according to modules/process, then will apply in each module Pages
+            via {% block custom_styles %}{% endblock %}
+            --- root.css
+            --- trainer.css
+            --- exercises.css
+            --- tags.css
+            --- programs.css
+            --- workouts.css
 
     Setting up template folder for app html
     ================================================================================
     --- new folder templates/trainer
         --- base.html
             --- main layout / cdn sources
+            --- %static
+                --- <link href="{% static 'css/root.css' %}" rel="stylesheet">
             --- %blocks
-                --- {% content blocks %} 
                 --- {% title block %}
-                --- {% pageHeader block %}
-                --- {$ customStyles block %}
-                --- {% customStyle block %}
+                --- {% content blocks %} 
+                --- {% stepper block %}
+                --- {$ custom_styles block %}
             --- %includes
-                --- {% include for top navigation bar %}
-                --- {% include for pageHeader %}
+                --- {% include 'trainer/includes/_page_header.html' %}
+                --- {% include 'trainer/includes/_stepper.html' %}
             --- NOTE: FOR RESPONSIVE LAYOUT IN BASE.html
                 --- wrap <main> inside
                     <div class="container py-4">
                         <div class="row justify-content-center">
                             <div class="col-12 col-lg-10">
-
         ---- includes/
             --- _nav_bar.html
-            --- _page_header.html
+            --- _stepper.html
     
     Setting up application level messages (for displaying CRUD status)
     =================================================================================
@@ -66,7 +79,7 @@ OBJECTIVES
     ==================================================================================
     --- create new folder in trainer/templates/includes
     --- _navbar.html
-    --- _pageHeader.html
+    --- _stepper.html   (for process flow sequence)
 
 
     Skeleton Pages

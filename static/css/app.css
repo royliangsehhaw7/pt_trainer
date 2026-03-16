@@ -1,0 +1,16 @@
+/* exercises.css */
+
+/* [data-bs-theme="dark"] { */
+:root {
+    .card, 
+    .form-control, 
+    .form-select, 
+    .table {
+        border: 1px solid blue !important;
+    }
+
+    /* 3. Target text inside this theme */
+    h1, .text-success {
+        color: #198754 !important;
+    }
+}

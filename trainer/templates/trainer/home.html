@@ -1,6 +1,42 @@
 {% extends "trainer/base.html" %}
 
-
 {% block content %}
-    <h1>HOME HOME HOME</h1>
+<div class="py-4">
+    <h3 class="mb-4 text-success">Trainer Dashboard</h3>
+
+    <!-- First Row: 3 Cards (Stacks on mobile, 3-wide on medium screens+) -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+        {% for i in "123" %}
+        <div class="col">
+            <div class="card h-100 bg-dark shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-success">Metric {{ i }}</h6>
+                    <p class="card-text text-body-secondary">Quick overview of trainer performance or active sessions.</p>
+                    <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Second Row: 2 Cards (Stacks on mobile, 2-wide on medium screens+) -->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card h-100 bg-dark shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Upcoming Schedules</h5>
+                    <p class="card-text text-body-secondary">Full width on mobile, half width on desktop.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 bg-dark shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Recent Registrations</h5>
+                    <p class="card-text text-body-secondary">List of trainers awaiting approval from the staff.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

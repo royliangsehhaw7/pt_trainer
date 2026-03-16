@@ -1,0 +1,17 @@
+/* app.css */
+
+:root {
+    --bs-body-font-family: 'Roboto', sans-serif;
+    --bs-body-font-size: 0.9rem;
+}
+
+/* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+    font-family: var(--bs-body-font-family);
+    font-weight: 600; /* Optional: adds professional weight to Segoe */
+}
+
+/* 4. Ensure inputs and buttons match the small Segoe font */
+.form-control, .form-select, .btn, .table {
+    font-size: 0.8rem !important;
+}
