@@ -1,0 +1,94 @@
+REFERENCES:
+    Bootstrap Responsive _navbar
+    --- https://getbootstrap.com/docs/5.0/components/navbar/
+    Handling static files (css,js,images)
+    ---- https://www.geeksforgeeks.org/python/django-static-file/
+    ---- https://testdriven.io/blog/django-static-files/
+    Handling applicaction level messages
+    ---- https://micropyramid.medium.com/basics-of-django-messages-framework-4315a0f3a469
+    ---- https://dev.to/doridoro/django-messages-framework-482p
+
+
+
+OBJECTIVES
+    --- setting bootstrap 5
+    --- setup base.html
+    --- main layout and navigation
+
+
+    Setting up static folder / resources
+    ===============================================================================
+    trainer/
+    --- new folder static/
+        --- this is the folder for application static file (css,js,png,pdf)
+        --- /config/settings.py
+                import os       (put at the top)
+                STATIC_URL = '/static/'
+                STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+    Setting up template folder for app html
+    ================================================================================
+    --- new folder templates/trainer
+        --- base.html
+            --- main layout / cdn sources
+            --- %blocks
+                --- {% content blocks %} 
+                --- {% title block %}
+                --- {% pageHeader block %}
+                --- {$ customStyles block %}
+                --- {% customStyle block %}
+            --- %includes
+                --- {% include for top navigation bar %}
+                --- {% include for pageHeader %}
+            --- NOTE: FOR RESPONSIVE LAYOUT IN BASE.html
+                --- wrap <main> inside
+                    <div class="container py-4">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-10">
+
+        ---- includes/
+            --- _nav_bar.html
+            --- _page_header.html
+    
+    Setting up application level messages (for displaying CRUD status)
+    =================================================================================
+    --- /config/settings.py
+        from django.contrib.messages import constants as messages
+        MESSAGE_TAGS = {
+            messages.DEBUG: 'alert-secondary',
+            messages.INFO: 'alert-info',
+            messages.SUCCESS: 'alert-success',
+            messages.WARNING: 'alert-warning',
+            messages.ERROR: 'alert-danger',
+        }
+
+    Setting up navigation/page headers (if needed) using includes
+    ==================================================================================
+    --- create new folder in trainer/templates/includes
+    --- _navbar.html
+    --- _pageHeader.html
+
+
+    Skeleton Pages
+    ===================================================================================
+    --- /trainer/templates/trainer
+        --- index.html
+        --- home.html
+    --- /trainer/views
+        --- index_view.py  
+        --- home_view.py        
+    --- /trainer/urls.py
+        --- 
+        urlpatterns = [
+            path('', index_view.index, name="index"),
+            path('index/', index_view.index, name='index'),
+            path('home/', home_view.home, name='home')
+        ]
+
+    ** Must update /config/urls.py
+        --- 
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+            path('', include('trainer.urls'))
+        ]
+    
