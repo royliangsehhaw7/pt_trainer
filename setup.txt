@@ -42,3 +42,10 @@ Check in new or amended files
 10 CMD: git commit -m "<<remarks">>
 11.CMD: git push -u origin main
         --- firstly, check what is the current branch using "git branch --show-current" (should be main)
+
+
+Revert file changes
+--------------------------------
+12. git checkout -- <filename>
+13. NOTE: if vscode still show pending even after reverting this file
+    --- CMD: git restore <filename>
