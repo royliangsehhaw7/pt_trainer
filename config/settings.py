@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'orm',
-    'admin',
+    'management',
     'trainer'
 ]
 
