@@ -1,0 +1,36 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h2 class="mb-2 mb-sm-0">Tags</h2>
+        <a href="{% url 'tag_add' %}" class="btn btn-primary">+ Add Tag</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover border shadow-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td class="fw-bold">{{ tag.name }}</td>
+                    <td class="text-end">
+                        <div class="btn-group flex-column flex-sm-row">
+                            <a href="{% url 'tag_edit' tag.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>
+                            <a href="{% url 'tag_delete' tag.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">No authors in the database.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

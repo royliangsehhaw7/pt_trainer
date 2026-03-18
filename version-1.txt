@@ -1,23 +1,95 @@
+HTML
+    --- <select>                    (Single Dropdown pick)
+    """
+    <label for="category">Category</label>
+
+    <select id="category" name="category">
+        <option value="power">Power</option>
+        <option value="strength">Strength</option>
+        <option value="upper_body">Upper Body</option>
+    </select>
+    """
+    --- <select multiple>           (Multi Ctrl+click in a box)
+    """
+    <label for="tags">Tags</label><br><br>    
+    <select id="tags" name="tags" multiple size="3">
+        <option value="power">Power</option>
+        <option value="strength">Strength</option>
+        <option value="upper_body">Upper Body</option>
+    </select>
+    --- <input type="radio">        (Single Click one, others deselect)
+
+
+    --- <input type="checkbox">     (MultiTick any number<option>)
+    """
+    <form action="/submit" method="post">
+        <div>
+            <input type="checkbox" id="tag_power" name="tags" value="power">
+            <label for="tag_power">Power</label>
+        </div>
+        <div>
+            <input type="checkbox" id="tag_strength" name="tags" value="strength">
+            <label for="tag_strength">Strength</label>
+        </div>
+        <div>
+            <input type="checkbox" id="tag_upperbody" name="tags" value="upper_body">
+            <label for="tag_upperbody">Upper Body</label>
+        </div>
+        <br>
+        <button type="submit">Save</button>
+    </form>    
+    """
+
+
+
 REFERENCES:
-    Bootstrap Responsive _navbar
+---------------------------------------------------------------
+    Bootstrap 
+    Responsive Navbar
     --- https://getbootstrap.com/docs/5.0/components/navbar/
+    Responsive tables
+    --- 
+
     Handling static files (css,js,images)
-    ---- https://www.geeksforgeeks.org/python/django-static-file/
-    ---- https://testdriven.io/blog/django-static-files/
+    ---- https://www.digitalocean.com/community/tutorials/working-with-django-templates-static-files
     Handling applicaction level messages
     ---- https://micropyramid.medium.com/basics-of-django-messages-framework-4315a0f3a469
     ---- https://dev.to/doridoro/django-messages-framework-482p
+    Handling multiplechoicefield Checkboxes
+    --- https://www.geeksforgeeks.org/python/multiplechoicefield-django-forms/
+
+
+
+AI:
+    1. How to mark multiplechoicefields in a django form during editing an existing record
+       It is a ManyToMany relationship BUT i am using a manual junction table instead.
+       eg. One article has many tags and tags may hane many articles
+
 
 
 
 OBJECTIVES
+---------------------------------------------------------------
     --- setting bootstrap 5
     --- setup static folder for application resources
     --- setup application messages
+    --- setup modules stylsheets
+        --- /static/css
+    
     --- setup base.html
-        --- navigation / steppers
+        --- navigation / steppers **
 
+    --- orm
+        --- two simple modules
+            --- tags
+            --- exercises
+            *** will hard code trainer id for testing first
+    ---- Tags and exercises
+        --- Many to Many CRUD using custom junctables
+        --- NOT USING models.ManyToMany relationship
+    
     --- main layout and navigation
+
 
 
     Setting up static folder / resources
