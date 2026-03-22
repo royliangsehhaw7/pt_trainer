@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
 
@@ -8,7 +9,7 @@ from ..forms.exercise_form import ExerciseForm
 # default for testing. next time will get from session user
 logged_in_trainer = 1
 
-def list(request):
+def exercise_list(request):
     # 1. Get the trainer instance (Must exist)
     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
 
@@ -18,7 +19,7 @@ def list(request):
     
     return render(request, 'trainer/exercise/exercise_list.html', {'exercises': exercises})
 
-def add(request):
+def exercise_add(request):
     # 1. Get the trainer instance (Must exist)
     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
 
@@ -77,8 +78,7 @@ def add_using_M2M(request):
 
     return render(request, 'trainer/exercise/exercise_add.html', {'form': form })
 
-
-def edit(request, pk):
+def exercise_edit(request, pk):
     # exercise = get_object_or_404(Exercise, pk=pk)
     # trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
     
@@ -145,10 +145,29 @@ def edit(request, pk):
         'title': 'Edit Exercise'
     })
 
-def delete(request, pk):
+def exercise_delete(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk, trainer=logged_in_trainer)
     if request.method == 'POST':
         exercise.delete()
         return redirect('exercise_list')
 
     return render(request, 'trainer/exercise/exercise_delete.html', {'exercise': exercise})
+
+
+import json
+def get_exercises_params(request):
+    trainer = get_object_or_404(Trainer, pk=logged_in_trainer)
+
+    # ASP.NET equivalent of: public JsonResult GetExercises(List<int> tag_id)
+    # .getlist() captures ALL ?tag_id=3&tag_id=4 into a Python list
+    tag_ids = request.GET.getlist('tag_id')
+
+    # If the list is empty, Django won't crash, it just returns nothing.
+    # If it has ['3', '4'], Django's ORM handles the conversion to INT.
+    exercises = Exercise.objects.filter(
+        trainer=trainer, 
+        tagged_items__tag_id__in=tag_ids
+    ).distinct()
+
+    # Just ensure you didn't name your view function 'list' or it shadows the constructor!
+    return JsonResponse(list(exercises.values('id', 'name')), safe=False)

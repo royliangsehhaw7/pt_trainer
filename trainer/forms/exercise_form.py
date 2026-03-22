@@ -5,8 +5,8 @@ from orm.models import Exercise, Tag
 class ExerciseForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.none(),  # will set dynamically in __init__
-        widget=forms.CheckboxSelectMultiple()
-        # widget=forms.CheckboxSelectMultiple(attrs={"class": "btn-check"})
+        # widget=forms.CheckboxSelectMultiple()
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "btn-check"})
     )
 
     # --- these are just default which can be changed when actually create workouts

@@ -3,8 +3,9 @@
 {% block content %}
 <div class="container mt-4">
     <div class="row">
+
         <!-- ======================== -->
-        <div class="col-12 col-md-4 col-lg-4">
+        <!-- <div class="col-12 col-md-4 col-lg-4">
             <h3>Tags</h3>
             <div>
                 {% for tag in tags %}
@@ -22,7 +23,24 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
+        </div> -->
+        <!-- ======================== -->
+        <!-- ========== multi select dropdown =============-->
+        <div class="col-12 col-md-4 col-lg-4">            
+            <select class="form-select" name="tags" id="tags">
+                <option selected disabled value="0">Tags</option>
+            </select>
+            <!-- =========== multi select Checkboxes ============= -->
+            <div id="multiTagsContainer">
+
+            </div>
+            <!-- =========== card list for exercises ============ -->
+            <div>
+                <ul id="execise-card-list">
+
+                </ul>
+            </div>
+        </div>         
         <!-- ======================== -->
         <div class="col-12 col-md-8 col-lg-8">
             <form method="post" id="workout-form">
@@ -86,7 +104,7 @@
                                     {{ ex_form.pre_duration }}
                                 </div>
                             </div>
-                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -116,6 +134,92 @@
 </template>
 
 <script>
+    var multiTagsElement = document.getElementById('multiTagsContainer')
+
+    document.addEventListener("DOMContentLoaded", () => {
+        get_tags();
+    })
+
+    async function get_tags() {
+        fetch('/tags/')
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                // targeting dom element and generate html select dropdown options
+                for (i = 0; i < data.length; i++) {
+                    tags.options[i+1] = new Option(data[i].name, data[i].id);
+                }
+                // question.style.display = 'block';
+
+                // targetting dom element and generate multi checkbox select
+                multiTagsElement.innerHTML = data.map(tag => 
+                `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" onchange="handleTagChanges(this)" 
+                            name="tags" value="${tag.id}" id="tag${tag.id}"
+                        >
+                        <label class="form-check-label" for="tag${tag.id}">
+                            ${tag.name}
+                        </label>
+                    </div>
+                `).join('');
+            })
+    }
+    async function get_exercises(tag_ids) {
+        fetch('/exercises')
+            .then(res => {
+                return res.json();
+            })
+            then(data => {
+
+            })
+    }
+
+    function handleTagChanges(el) {
+        // Log the one that just changed
+        console.log(`ID: ${el.value} is now ${el.checked ? 'Checked' : 'Unchecked'}`);
+
+        // Get all checkboxes by name
+        const allTags = document.getElementsByName('tags');
+        
+        // Extract values of only the checked ones
+        const selectedIds = Array.from(allTags)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);   //selectedIds is an array of integer
+
+        const params = new URLSearchParams();
+        
+        selectedIds.forEach(id => params.append('tag_id', id));
+        fetch(`/exercises/tags/?${params}`)
+            .then(res => res.json())
+            .then(data => {
+                const exerciseList = document.getElementById('execise-card-list');
+            
+            // 1. Map the data into a string of HTML cards
+            exerciseList.innerHTML = data.map(ex => `
+                <li class="card mb-2 shadow-sm border-0 bg-light p-2" 
+                    style="cursor: pointer;" 
+                    onclick="addExerciseToWorkout(${ex.id})">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold small text-dark">${ex.name}</span>
+                        <span class="badge bg-primary">+</span>
+                    </div>
+                </li>
+            `).join('');
+            });
+    }
+    function addExerciseToWorkout(exerciseId) {
+        document.getElementById('add-row').click();
+        
+        const rows = document.querySelectorAll('.exercise-row');
+        const lastRow = rows[rows.length - 1];
+        const select = lastRow.querySelector('select[name$="-exercise"]');
+        if (select) {
+            select.value = exerciseId;
+        }
+    }
+    
     document.getElementById('add-row').addEventListener('click', function() {
         const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
         const count = parseInt(totalForms.value);
@@ -129,6 +233,7 @@
     });
 </script>
 {% endblock %}
+
 
 <!-- 
 {% comment %}

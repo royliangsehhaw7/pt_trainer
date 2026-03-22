@@ -1,4 +1,5 @@
 from .trainer import *
+from .client import *
 from .tag import *
 
 from .exercise import *

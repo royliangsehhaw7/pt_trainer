@@ -1,5 +1,6 @@
 
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from orm.models import Tag, Trainer
@@ -55,8 +56,6 @@ def tag_list(request):
 
     return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
 
-
-
 def tag_add(request):
     # Saas tenant - get logged in tenant for data filtering
     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
@@ -102,15 +101,26 @@ def tag_edit(request, pk):
 
 
 def tag_delete(request, pk):
-    # Saas tenant
+    # Saas requirement, tenant
     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
 
+    # Ensure the tag belongs to this trainer before deleting
     tag = get_object_or_404(Tag, pk=pk, trainer=trainer_instance)
 
     if request.method == "POST":
+        tag_name = tag.name  # Store name before deleting for the message
         tag.delete()
-        messages.success(request, f"Tag '{tag.name}' deleted.")
+        messages.success(request, f"Tag '{tag_name}' deleted.")
         return redirect('tag_list')
     
-    form = TagForm(instance=tag)
-    return render(request, 'trainer/tag/tag_delete.html', {'form': form})
+    # No form needed, just pass the object to the template for confirmation
+    return render(request, 'trainer/tag/tag_delete.html', {'tag': tag})
+
+import json
+
+def get_tags(request):
+    # Saas requirement, tenant
+    trainer = get_object_or_404(Trainer, pk=logged_in_trainer)
+    tags = Tag.objects.filter(trainer = trainer)
+
+    return JsonResponse(list(tags.values()), safe=False)
