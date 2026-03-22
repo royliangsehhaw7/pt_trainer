@@ -9,52 +9,26 @@ class ExerciseForm(forms.ModelForm):
         # widget=forms.CheckboxSelectMultiple(attrs={"class": "btn-check"})
     )
 
+    # --- these are just default which can be changed when actually create workouts
     def_sets = forms.IntegerField(
         label="Number of Sets",
-        validators=[MinValueValidator(0)],
-        # widgets will add the element attributes
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "min": 0,
-            "max": 100,
-            "type" :"number",
-        })
+        initial=0,
+        widget=forms.TextInput(attrs={"class": "form-control"})
     )
     def_reps = forms.IntegerField(
         label="Number of Sets",
-        validators=[MinValueValidator(10)],
-        # widgets will add the element attributes
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "min": 0,
-            "max": 100,
-            "type" :"number",
-            "required": True
-        })
+        initial=0,
+        widget=forms.TextInput(attrs={"class": "form-control"})
     )    
     def_weight = forms.IntegerField(
         label="Number of Sets",
-        validators=[MinValueValidator(10)],
-        # widgets will add the element attributes
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "min": 0,
-            "max": 100,
-            "type" :"number",
-            "required": True
-        })
+        initial=0,
+        widget=forms.TextInput(attrs={"class": "form-control"})
     )
     def_duration = forms.IntegerField(
         label="Number of Sets",
-        validators=[MinValueValidator(10)],
-        # widgets will add the element attributes
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "min": 0,
-            "max": 100,
-            "type" :"number",
-            "required": True
-        })
+        initial=0,
+        widget=forms.TextInput(attrs={"class": "form-control"})
     )        
 
 
@@ -87,8 +61,6 @@ class ExerciseForm(forms.ModelForm):
         if trainer:
             # this will create a list of tags when used in the template
             self.fields['tags'].queryset = Tag.objects.filter(trainer=trainer)
-
-
 
         # # Apply Bootstrap invalid class automatically
         # for field_name, field in self.fields.items():

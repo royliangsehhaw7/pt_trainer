@@ -1,0 +1,22 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger shadow">
+            <div class="card-header bg-danger text-white">Confirm Deletion</div>
+            <div class="card-body text-center">
+                <p class="lead">Are you sure you want to delete the workout for:</p>
+                <h4 class="mb-4">{{ workout.client.name }}</h4>
+                <p class="text-muted small">This will also delete all exercises associated with this workout.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger px-4">Yes, Delete Everything</button>
+                    <a href="{% url 'workout_list' %}" class="btn btn-secondary px-4">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

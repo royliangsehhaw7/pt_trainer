@@ -1,62 +1,83 @@
-HTML
-    --- <select>                    (Single Dropdown pick)
-    """
-    <label for="category">Category</label>
+HTML Elements
+==========================================================================================
+1. General
+--- https://www.geeksforgeeks.org/html/html-tutorial/
+2. Special
+    --- <select> (Single Dropdown pick)
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                <option value="power">Power</option>
+                <option value="strength">Strength</option>
+                <option value="upper_body">Upper Body</option>
+            </select>
 
-    <select id="category" name="category">
-        <option value="power">Power</option>
-        <option value="strength">Strength</option>
-        <option value="upper_body">Upper Body</option>
-    </select>
-    """
-    --- <select multiple>           (Multi Ctrl+click in a box)
-    """
-    <label for="tags">Tags</label><br><br>    
-    <select id="tags" name="tags" multiple size="3">
-        <option value="power">Power</option>
-        <option value="strength">Strength</option>
-        <option value="upper_body">Upper Body</option>
-    </select>
+    --- <select multiple> (Multi Ctrl+click in a box)
+            <label for="tags">Tags</label><br><br>    
+            <select id="tags" name="tags" multiple size="3">
+                <option value="power">Power</option>
+                <option value="strength">Strength</option>
+                <option value="upper_body">Upper Body</option>
+            </select>
     --- <input type="radio">        (Single Click one, others deselect)
 
+    --- <input type="checkbox">     (Multi tick checkboxes)
+            <form action="/submit" method="post">
+                <div>
+                    <input type="checkbox" id="tag_power" name="tags" value="power">
+                    <label for="tag_power">Power</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tag_strength" name="tags" value="strength">
+                    <label for="tag_strength">Strength</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tag_upperbody" name="tags" value="upper_body">
+                    <label for="tag_upperbody">Upper Body</label>
+                </div>
+                <br>
+                <button type="submit">Save</button>
+            </form>    
 
-    --- <input type="checkbox">     (MultiTick any number<option>)
-    """
-    <form action="/submit" method="post">
-        <div>
-            <input type="checkbox" id="tag_power" name="tags" value="power">
-            <label for="tag_power">Power</label>
-        </div>
-        <div>
-            <input type="checkbox" id="tag_strength" name="tags" value="strength">
-            <label for="tag_strength">Strength</label>
-        </div>
-        <div>
-            <input type="checkbox" id="tag_upperbody" name="tags" value="upper_body">
-            <label for="tag_upperbody">Upper Body</label>
-        </div>
-        <br>
-        <button type="submit">Save</button>
-    </form>    
-    """
+
 
 
 
 REFERENCES:
----------------------------------------------------------------
-    Bootstrap 
-    Responsive Navbar
-    --- https://getbootstrap.com/docs/5.0/components/navbar/
-    Responsive tables
-    --- 
+=========================================================================================
+    1. Bootstrap 
+        Responsive Navbar
+        --- https://getbootstrap.com/docs/5.0/components/navbar/
+        Responsive tables
+        --- 
+        Responsive pagination
+        ---
 
-    Handling static files (css,js,images)
+
+
+    2. Handling static files (css,js,images)
     ---- https://www.digitalocean.com/community/tutorials/working-with-django-templates-static-files
-    Handling applicaction level messages
+
+    3. Handling applicaction level messages
     ---- https://micropyramid.medium.com/basics-of-django-messages-framework-4315a0f3a469
     ---- https://dev.to/doridoro/django-messages-framework-482p
-    Handling multiplechoicefield Checkboxes
+
+    4. Adding Search / Filter to list views and templates
+    --- https://learndjango.com/tutorials/django-search-tutorial
+
+    5. Adding pagination to views/templates
+    --- https://medium.com/django-unleashed/django-pagination-tutorial-with-example-745cefd54eb3
+
+    6. Handling multiplechoicefield Checkboxes
     --- https://www.geeksforgeeks.org/python/multiplechoicefield-django-forms/
+
+    7. Inline Formset (For parent child data entries)
+    --- https://medium.com/@adandan01/django-inline-formsets-example-mybook-420cc4b6225d
+    --- https://awstip.com/django-inline-formset-factory-with-examples-27576b915b5a
+    --- 
+
+    8. Ajax calls with django
+    --- https://medium.com/@jaeyeonjung3/asynchronous-http-requests-ajax-axios-and-fetch-af5103480a8f
+    --- https://www.raphaeluziel.com/coding/
 
 
 
@@ -64,12 +85,17 @@ AI:
     1. How to mark multiplechoicefields in a django form during editing an existing record
        It is a ManyToMany relationship BUT i am using a manual junction table instead.
        eg. One article has many tags and tags may hane many articles
+    
+    2. How to format Bootstrap 5 pagination to be Responsive
+
+    3. 
 
 
 
 
-OBJECTIVES
----------------------------------------------------------------
+
+BRANCH OBJECTIVES
+=============================================================================================
     --- setting bootstrap 5
     --- setup static folder for application resources
     --- setup application messages
@@ -77,23 +103,39 @@ OBJECTIVES
         --- /static/css
     
     --- setup base.html
-        --- navigation / steppers **
+        --- main layout and navigation
 
     --- orm
         --- two simple modules
             --- tags
             --- exercises
+            --- exercise_tags (junction table)
             *** will hard code trainer id for testing first
-    ---- Tags and exercises
-        --- Many to Many CRUD using custom junctables
-        --- NOT USING models.ManyToMany relationship
+
+    --- pages
+        --- simple CRUD
+            --- Trainer / Client / Tags
+        --- ManyToMany CRUD
+            --- Exercise -> Tags
+        --- OneToMany
+            --- Many to Many CRUD using custom junctables
+            --- NOT USING models.ManyToMany relationship
     
-    --- main layout and navigation
 
 
 
-    Setting up static folder / resources
-    ===============================================================================
+SETUP
+===============================================================================================
+    1. Database Configurations
+    ----------------------------------------------------------
+    --- config/
+        ---- settings.py
+            --- DATABASES {
+
+            }
+
+    2. Static folder / resources
+    ------------------------------------------------------------
     trainer/
     --- new folder static/
         --- this is the folder for application static file (css,js,png,pdf)
@@ -111,8 +153,74 @@ OBJECTIVES
             --- programs.css
             --- workouts.css
 
+   
+    3. Application level messages (for displaying CRUD status)
+    --------------------------------------------------------------
+    --- /config/settings.py
+        from django.contrib.messages import constants as messages
+        MESSAGE_TAGS = {
+            messages.DEBUG: 'alert-secondary',
+            messages.INFO: 'alert-info',
+            messages.SUCCESS: 'alert-success',
+            messages.WARNING: 'alert-warning',
+            messages.ERROR: 'alert-danger',
+        }
+
+
+
+
+DEVELOPMENT
+========================================================================================
+    Project structure
+    ----------------------------------------------------------------------
+    --- PT_TRAINER/
+        --- config/
+        --- management/         (app for subscribtion management - trainers) ?????
+        --- orm/                (app for project models)
+        --- static/             (folder for project static files - css,js,png)
+        --- trainer/            (app for trainers)
+        --- venv                (python environment folders)
+        --- manage.py
+
+
+    Application structure
+    -----------------------------------------------------------------------
+    --- orm/
+        --- models/
+            --- client.py
+            --- trainer.py      (temporary - will have to restructure for authentication)
+            --- tag.py
+            --- exercise.py
+            --- workout.py
+            --- workout_exercise.py
+    --- trainer/    
+        --- forms/
+            --- client_form.py
+            --- trainer_form.py
+            --- tag_form.py
+            --- exercise_form.py
+            --- workout_form.py
+        --- templates/
+            --- trainer/
+                    --- client/
+                    --- trainer/
+                    --- tag/
+                    --- exercise/
+                    --- workout/
+        --- views/
+            --- client_view.py
+            --- trainer_view.py
+            --- tag_view.py
+            --- exercise_view.py
+            --- workout_view.py
+
+
+
+
+
+
     Setting up template folder for app html
-    ================================================================================
+    -----------------------------------------------------------------------------
     --- new folder templates/trainer
         --- base.html
             --- main layout / cdn sources
@@ -134,46 +242,4 @@ OBJECTIVES
         ---- includes/
             --- _nav_bar.html
             --- _stepper.html
-    
-    Setting up application level messages (for displaying CRUD status)
-    =================================================================================
-    --- /config/settings.py
-        from django.contrib.messages import constants as messages
-        MESSAGE_TAGS = {
-            messages.DEBUG: 'alert-secondary',
-            messages.INFO: 'alert-info',
-            messages.SUCCESS: 'alert-success',
-            messages.WARNING: 'alert-warning',
-            messages.ERROR: 'alert-danger',
-        }
-
-    Setting up navigation/page headers (if needed) using includes
-    ==================================================================================
-    --- create new folder in trainer/templates/includes
-    --- _navbar.html
-    --- _stepper.html   (for process flow sequence)
-
-
-    Skeleton Pages
-    ===================================================================================
-    --- /trainer/templates/trainer
-        --- index.html
-        --- home.html
-    --- /trainer/views
-        --- index_view.py  
-        --- home_view.py        
-    --- /trainer/urls.py
-        --- 
-        urlpatterns = [
-            path('', index_view.index, name="index"),
-            path('index/', index_view.index, name='index'),
-            path('home/', home_view.home, name='home')
-        ]
-
-    ** Must update /config/urls.py
-        --- 
-        urlpatterns = [
-            path('admin/', admin.site.urls),
-            path('', include('trainer.urls'))
-        ]
-    
+        

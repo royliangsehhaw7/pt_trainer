@@ -2,17 +2,28 @@
 
 :root {
     --bs-body-font-family: 'Roboto', sans-serif;
-    --bs-body-font-size: 0.9rem;
+    --bs-body-font-size: 1.0rem;
 }
 
 /* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */
-h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+/* h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
     font-family: var(--bs-body-font-family);
-    font-weight: 600; /* Optional: adds professional weight to Segoe */
-}
+    font-weight: 600; 
+} */
 
 /* 4. Ensure inputs and buttons match the small Segoe font */
-.form-control, .form-select, .btn, .table {
+/* .form-control, .form-select, .btn, .table {
     font-size: 0.8rem !important;
-}
+} */
 
+
+
+.card {
+    /* 200, 200, 200 is a light gray base. 0.4 is 40% opacity. */
+    border: 1px solid rgba(200, 200, 200, 0.2); 
+    border-radius: 6px;
+}
+.table tbody td {
+    color: #555555; /* A soft gray to match your borders */
+    vertical-align: middle; /* Keeps text centered with the buttons */
+}

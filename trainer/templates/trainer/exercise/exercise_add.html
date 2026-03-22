@@ -8,7 +8,7 @@
         </a>
     </div>
     
-    <div class="card shadow-sm border rounded p-4 bg-body">
+    <div>
         <form method="POST" class="border rounded p-4 shadow-sm bg-body">
             {% csrf_token %}
 
@@ -27,7 +27,7 @@
             </div>
             <!-- exercise instructions -->
             <div class="mb-3 row">
-                <label class="col-sm-2 col-form-label">Instructions</label>
+                <label class="col-sm-2 col-form-label" for="{{ form.instructions.id_for_label}}">{{form.instructions.label}}</label>
                 <div class="col-sm-10">
                     {{ form.instructions }}
 
@@ -36,46 +36,48 @@
                     {% endfor %}
                 </div>
             </div>
-            <!-- exercise instructions -->
+            <!-- exercise routine - recommended / default -->
             <div class="mb-3 row">
-                <label class="col-sm-2 col-form-label">Prescriptions</label>
+                <label class="col-sm-2 col-form-label">Recommendations</label>
                 <div class="col-sm-10">
                     <div class="row g-3"> <div class="col-12 col-md-3">
-                            <label class="small text-muted">Sets</label>
-                            {{ form.def_sets }}
-                            {% for error in form.def_sets.errors %}
-                                <div class="text-danger x-small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                        <label class="small text-muted" for="{{form.def_sets.id_for_label}}">Sets</label>
+                        {{ form.def_sets }}
 
-                        <div class="col-12 col-md-3">
-                            <label class="small text-muted">Reps</label>
-                            {{ form.def_reps }}
-                            {% for error in form.def_reps.errors %}
-                                <div class="text-danger x-small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                        {% for error in form.def_sets.errors %}
+                            <div class="text-danger x-small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-                        <div class="col-12 col-md-3">
-                            <label class="small text-muted">Weight (kg)</label>
-                            {{ form.def_weight }}
-                            {% for error in form.def_weight.errors %}
-                                <div class="text-danger x-small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                    <div class="col-12 col-md-3">
+                        <label class="small text-muted" for="{{form.def_reps.id_for_label}}">Reps</label>
+                        {{ form.def_reps }}
 
-                        <div class="col-12 col-md-3">
-                            <label class="small text-muted">Duration</label>
-                            {{ form.def_duration }}
-                            {% for error in form.def_duration.errors %}
-                                <div class="text-danger x-small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                        {% for error in form.def_reps.errors %}
+                            <div class="text-danger x-small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
+                    <div class="col-12 col-md-3">
+                        <label class="small text-muted" for="{{form.def_weight.id_for_label}}">Weight (kg)</label>
+                        {{ form.def_weight }}
+
+                        {% for error in form.def_weight.errors %}
+                            <div class="text-danger x-small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <label class="small text-muted" for="{{form.def_duraration.id_for_label}}">Duration</label>
+                        {{ form.def_duration }}
+
+                        {% for error in form.def_duration.errors %}
+                            <div class="text-danger x-small">{{ error }}</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-
+            </div>
             <!-- tags -->
             <div class="mb-3 row">
                 <label class="col-sm-2 col-form-label">Tags</label>
@@ -96,7 +98,7 @@
                 <a href="{% url 'exercise_list' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
                     Cancel
                 </a>
-                <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save Exercise</button>
+                <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save</button>
             </div>
         </form>
     </div>

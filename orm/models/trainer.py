@@ -5,6 +5,7 @@ class Trainer(models.Model):
         max_length=100
     )
     email = models.EmailField(
+        max_length=100,
         unique=True
     )
     contact_number = models.CharField(

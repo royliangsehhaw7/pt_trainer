@@ -1,0 +1,200 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- ======================== -->
+        <div class="col-12 col-md-4 col-lg-4">
+            <h3>Tags</h3>
+            <div>
+                {% for tag in tags %}
+                <div class="card">
+                    <h6>{{tag.name}}</h6>
+                </div>
+                {% endfor %}
+            </div>
+
+            <h3>Exercises</h3>
+            <div>
+                {% for exercise in exercises %}
+                <div class="card">
+                    <h6>{{exercise.name}}</h6>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- ======================== -->
+        <div class="col-12 col-md-8 col-lg-8">
+            <form method="post" id="workout-form">
+                {% csrf_token %}
+                
+                <div class="card mb-4 border-primary shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Create New Workout Plan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="fw-bold small">Trainer</label>
+                                {{ form.trainer }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="fw-bold small">Client</label>
+                                {{ form.client }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="fw-bold small">Scheduled Date</label>
+                                {{ form.scheduled_date }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Prescribed Exercises</h4>
+                    <button type="button" id="add-row" class="btn btn-dark btn-sm">+ Add Exercise</button>
+                </div>
+
+                {{ formset.management_form }}
+
+                <div id="exercise-container">
+                    {% for ex_form in formset %}
+                    <div class="card mb-3 exercise-row border-start border-4 border-info shadow-sm">
+                        <div class="card-body">
+                            {{ ex_form.id }}
+                            {{ ex_form.workout }}
+
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="small fw-bold">Exercise Name</label>
+                                    {{ ex_form.exercise }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small fw-bold">Sets</label>
+                                    {{ ex_form.pre_sets }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small fw-bold">Reps</label>
+                                    {{ ex_form.pre_reps }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small fw-bold">Weight (kg)</label>
+                                    {{ ex_form.pre_weight }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small fw-bold">Duration</label>
+                                    {{ ex_form.pre_duration }}
+                                </div>
+                            </div>
+                            </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 mb-5">
+                    <button type="submit" class="btn btn-success btn-lg w-100 shadow">Assign Workout to Client</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<template id="empty-row-template">
+    <div class="card mb-3 exercise-row border-start border-4 border-success shadow-sm">
+        <div class="card-body">
+            {{ formset.empty_form.id }}
+            {{ formset.empty_form.workout }}
+            <div class="row g-2">
+                <div class="col-md-4"><label class="small fw-bold">Exercise</label>{{ formset.empty_form.exercise }}</div>
+                <div class="col-md-2"><label class="small fw-bold">Sets</label>{{ formset.empty_form.pre_sets }}</div>
+                <div class="col-md-2"><label class="small fw-bold">Reps</label>{{ formset.empty_form.pre_reps }}</div>
+                <div class="col-md-2"><label class="small fw-bold">Weight</label>{{ formset.empty_form.pre_weight }}</div>
+                <div class="col-md-2"><label class="small fw-bold">Duration</label>{{ formset.empty_form.pre_duration }}</div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    document.getElementById('add-row').addEventListener('click', function() {
+        const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+        const count = parseInt(totalForms.value);
+        const template = document.getElementById('empty-row-template').innerHTML;
+        
+        // Replace __prefix__ with the current count
+        const newCard = template.replace(/__prefix__/g, count);
+        
+        document.getElementById('exercise-container').insertAdjacentHTML('beforeend', newCard);
+        totalForms.value = count + 1;
+    });
+</script>
+{% endblock %}
+
+<!-- 
+{% comment %}
+{% block content %}
+<div class="container mt-4">
+    <form method="post">
+        {% csrf_token %}
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white"><h5>Workout Details</h5></div>
+            <div class="card-body"><div class="row">{% for field in form %}<div class="col-md-6 mb-3"><label>{{ field.label }}</label>{{ field }}</div>{% endfor %}</div></div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between">
+                <h5>Prescribe Exercises</h5>
+                <button type="button" id="add-row" class="btn btn-sm btn-light">+ Add</button>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Name</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Duration</th></tr></thead>
+                        <tbody id="exercise-tbody">
+                            {% for ex_form in formset %}
+                            <tr class="exercise-row">
+                                {% for hidden in ex_form.hidden_fields %}{{ hidden }}{% endfor %}
+                                <td>{{ ex_form.exercise }}</td>
+                                <td>{{ ex_form.pre_sets }}</td>
+                                <td>{{ ex_form.pre_reps }}</td>
+                                <td>{{ ex_form.pre_weight }}</td>
+                                <td>{{ ex_form.pre_duration }}</td>
+                                <td style="display:none;">{{ ex_form.is_done }}{{ ex_form.actual_sets }}{{ ex_form.actual_reps }}{{ ex_form.actual_weight }}{{ ex_form.actual_duration }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Save Workout Plan</button>
+    </form>
+</div>
+
+<template id="empty-row-template">
+    <tr class="exercise-row">
+        {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+        <td>{{ formset.empty_form.exercise }}</td>
+        <td>{{ formset.empty_form.pre_sets }}</td>
+        <td>{{ formset.empty_form.pre_reps }}</td>
+        <td>{{ formset.empty_form.pre_weight }}</td>
+        <td>{{ formset.empty_form.pre_duration }}</td>
+        <td style="display:none;">
+            {{ formset.empty_form.is_done }}{{ formset.empty_form.actual_sets }}{{ formset.empty_form.actual_reps }}{{ formset.empty_form.actual_weight }}{{ formset.empty_form.actual_duration }}
+        </td>
+    </tr>
+</template>
+
+
+<script>
+    document.getElementById('add-row').addEventListener('click', function() {
+        const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+        const count = parseInt(totalForms.value);
+        const template = document.getElementById('empty-row-template').innerHTML;
+        document.getElementById('exercise-tbody').insertAdjacentHTML('beforeend', template.replace(/__prefix__/g, count));
+        totalForms.value = count + 1;
+    });
+</script>
+{% endblock %} 
+{% endcomment %}
+-->

@@ -1,1 +1,3 @@
 from .tag_form import *
+from .exercise_form import *
+from .workout_form import *

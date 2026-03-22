@@ -1,3 +1,4 @@
+
 A. Setup bare django project and blank applications
 ==========================================================
 1. mkdir pt_trainer
@@ -11,8 +12,9 @@ A. Setup bare django project and blank applications
 6. CMD: django startapp trainer                 (personal trainer app)
 7. CMD: django startapp admin                   (***managing trainer subscription)
 8. Register new app in settings.py
-    --- INSTALLED_APPS [ ....., 'orm', 'trainer', 'admin']
+    --- INSTALLED_APPS [ ....., 'orm', 'trainer', 'management']
 9.
+
 
 
 B. Setup git repository
@@ -52,7 +54,7 @@ NOTE: for renaming of files, might have to run again these after pushing
 NOW TO CREATE NEW BRANCH TO START MODFICATIONS
 -----------------------------------------------
 THe initial (main) branch is suppose to be the 'production' or final, will merge any changes in new branch to main later
-CMD: git checkout -b dev
+CMD: git checkout -b <<branch name>>    
     --- this will create AND switch to new branch
 CMD: git checkout <<branch name>>
     --- this is to switch only (no create)
