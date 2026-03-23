@@ -1,9 +1,194 @@
-{% extends "trainer/base.html" %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Train Forge</title>
 
-<!-- this to hide the stepper -->
-{% block pageHeader %}
-{% endblock %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- 2. Bootstrap Icons (Add this here) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">        
+    </head>
 
-{% block content %}
-    <h6>INDEX INDEX INDEX</h6>
-{% endblock %}
+    <body>
+
+        <!-- NAV -->
+        <nav class="navbar border-bottom py-3">
+            <div class="container">
+                <span class="navbar-brand fw-bold">TrainForge</span>
+                <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row align-items-center g-5">
+
+                    <!-- LEFT -->
+                    <div class="col-lg-6">
+                        <h1 class="fw-bold display-6">
+                            Simple system for personal trainers to manage clients and workouts
+                        </h1>
+
+                        <p class="text-secondary mt-3">
+                            Create clients, build workout plans, and track training sessions using a structured workflow:
+                            tags → exercises → workouts → clients.
+                        </p>
+
+                        <div class="mt-4">
+                            <div class="border rounded p-3 mb-2">
+                                <span><i class="bi bi-check-2x"></i></span> Structured training workflow
+                            </div>
+                            <div class="border rounded p-3 mb-2">
+                                ✔ Client & workout management
+                            </div>
+                            <div class="border rounded p-3">
+                                ✔ Progress tracking & review system
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT LOGIN -->
+                    <div class="col-lg-5 ms-auto">
+                        <div class="card bg-dark border-light p-4">
+                            <h4 class="mb-3">Features</h4>
+                            <p>PUT SOMETHING HERE LAH</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+<section class="py-5 border-top">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">AI-assisted coaching capabilities</h2>
+            <p class="text-secondary mx-auto" style="max-width: 700px;">
+                The platform includes AI support features designed to enhance training program quality and decision-making for personal trainers.
+            </p>
+        </div>
+
+        <div class="row g-5">
+
+            <div class="col-md-6">
+                <h5 class="fw-bold">Exercise and program support</h5>
+                <p class="text-secondary">
+                    The system can generate exercise suggestions aligned with client goals, training focus areas, and the trainer’s existing exercise library.
+                    It helps expand training variety while maintaining consistency in programming style.
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <h5 class="fw-bold">Performance-based recommendations</h5>
+                <p class="text-secondary">
+                    The system can analyze completed workout data, trainer feedback, and client responses to provide recommendations for future training adjustments,
+                    including changes to intensity, volume, or exercise selection.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>        
+
+        <!-- WORKFLOW EXPLANATION -->
+        <section class="py-5 border-top">
+            <div class="container text-center">
+                <h2 class="fw-bold">Structured training workflow</h2>
+                <p class="text-secondary">Each module is color-coded for clarity and onboarding</p>
+
+                <div class="row g-4 mt-4">
+
+                    <!-- TAG (RED) -->
+                    <div class="col-md-3">
+                        <div class="card border-danger bg-dark p-3 h-100">
+                            <h5 class="text-danger">Tags</h5>
+                            <p class="text-secondary small">
+                                Create training categories like fat loss, strength, cardio.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- EXERCISE (BLUE) -->
+                    <div class="col-md-3">
+                        <div class="card border-primary bg-dark p-3 h-100">
+                            <h5 class="text-primary">Exercises</h5>
+                            <p class="text-secondary small">
+                                Add exercises and assign multiple tags for filtering.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- WORKOUT (GREEN) -->
+                    <div class="col-md-3">
+                        <div class="card border-success bg-dark p-3 h-100">
+                            <h5 class="text-success">Workouts</h5>
+                            <p class="text-secondary small">
+                                Build structured workout plans using selected exercises.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- CLIENT (YELLOW) -->
+                    <div class="col-md-3">
+                        <div class="card border-warning bg-dark p-3 h-100">
+                            <h5 class="text-warning">Clients</h5>
+                            <p class="text-secondary small">
+                                Assign workouts, track progress, and manage sessions.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKFLOW FLOW SECTION -->
+        <!-- VALUE / POSITIONING SECTION -->
+        <section class="py-5 border-top">
+            <div class="container text-center">
+                <h2 class="fw-bold">Built for independent personal trainers</h2>
+
+                <p class="text-secondary mx-auto mt-3" style="max-width: 700px;">
+                    This system is designed to simplify how trainers manage their entire coaching workflow —
+                    from planning workouts to tracking client progress — without using multiple tools or spreadsheets.
+                </p>
+
+                <div class="row mt-5 g-4">
+
+                    <div class="col-md-4">
+                        <div class="card bg-dark border-light p-4 h-100">
+                            <h5>Reduce manual work</h5>
+                            <p class="text-secondary small">
+                                Replace scattered notes, chats, and spreadsheets with one structured system.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card bg-dark border-light p-4 h-100">
+                            <h5>Improve consistency</h5>
+                            <p class="text-secondary small">
+                                Ensure every client follows a structured and goal-driven training program.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card bg-dark border-light p-4 h-100">
+                            <h5>Scale your coaching</h5>
+                            <p class="text-secondary small">
+                                Manage more clients efficiently without increasing workload complexity.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </body>
+</html>

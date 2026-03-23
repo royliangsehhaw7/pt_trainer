@@ -11,12 +11,12 @@
     <!-- Row 2: Search (Left) and Add (Right) -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
         <!-- Search Aligned Far Left -->
-        <form method="GET" action="{% url 'tag_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
+        <!-- <form method="GET" action="{% url 'tag_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
             <div class="input-group">
                 <input type="text" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
                 <button type="submit" class="btn btn-outline-secondary">GO</button>
             </div>
-        </form>
+        </form> -->
         <!-- Add Button Aligned Far Right -->
         <a href="{% url 'tag_add' %}" class="btn btn-primary px-4">
             + Add Tag
@@ -29,6 +29,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>Name</th>
+                    <th>Exercises</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -36,6 +37,7 @@
                 {% for tag in tags %}
                 <tr>
                     <td>{{ tag.name }}</td>
+                    <td>{{ tag.exercise_count }}</td>
                     <td class="text-end">
                         <div class="d-grid d-sm-flex gap-2 justify-content-sm-end">
                             <a href="{% url 'tag_edit' tag.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
-from .trainer import Trainer
+from orm.models import UserTrainer as Trainer
+from orm.models import Tag
 
 class Exercise(models.Model):
     name = models.CharField(
@@ -31,13 +32,13 @@ class Exercise(models.Model):
         db_default=0,
         validators = [MinValueValidator(0), MaxValueValidator(100)],
 
-        help_text = "in Kgs"    # Adds a small sub-label or hint below the input field
+        help_text = "in Kgs" 
     )
     def_duration = models.IntegerField(
         db_default=0,
         validators = [MinValueValidator(0), MaxValueValidator(100)],
 
-        help_text = "in Minutes"    # Adds a small sub-label or hint below the input field
+        help_text = "in Minutes" 
     )
     
 
@@ -47,7 +48,12 @@ class Exercise(models.Model):
         on_delete=models.CASCADE, 
         related_name='exercises'
     )
-    # Note: No ManyToManyField here because you want manual control
+    # many to many with tags
+    tags = models.ManyToManyField(
+        Tag,
+        related_name = "exercises",
+        db_table = "tags_exercises"
+    )
 
     class Meta:
         db_table = 'exercises'

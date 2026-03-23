@@ -1,6 +1,6 @@
 from django.db import models
 
-from .trainer import Trainer
+from orm.models import UserTrainer as Trainer
 from .client import Client
 
 class Workout(models.Model):

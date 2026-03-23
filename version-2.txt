@@ -1,0 +1,51 @@
+References
+-----------------------------
+    --- https://www.geeksforgeeks.org/python/user-authentication-system-using-django/
+    --- https://medium.com/@mathur.danduprolu/django-getting-started-with-django-2024-authentication-and-authorization-part-8-16-7bf55d1f7570
+
+    --- https://www.geeksforgeeks.org/python/python-user-groups-custom-permissions-django/
+    
+
+A. Authentication
+----------------------------
+1. orm/models
+    NOTE: will have to abstract from AbstractUser so we can have new columns
+    *****
+    The django authentication will now use this new model for its base authentication
+    auth_user               -   -- replaced by user_trainers
+    auth_user_groups            -- replaced by user_trainers_groups
+    auth_user_user_permission   -- replaced by user_trainers_user_permissions
+    *****
+    --- user_trainer.py
+        from django.contrib.auth.models import AbstractUser
+        class UserTrainer(AbstractUser)                 # inherit from AbstractUser
+            -- make email unique
+                email = models.EmailField(unique=True)
+            -- add new flag
+                is_trainer = models.BooleanField(default=False)
+            -- rename table name
+                db_table = "user_trainers"
+        NOTE: username is still required, so we will set username = email to bypass this
+
+2. config/
+    --- settings.py
+    LOGIN_URL = 'login'
+    LOGIN_REDIRECT_URL = 'home'
+    LOGOUT_REDIRECT_URL = 'index'
+
+    AUTH_USER_MODEL = "orm.UserTrainer"     # tells django to use this new model as the default auth user !!! IMPORTANT
+
+3. templates
+    --- /trainer/templates/trainer/account
+        --- login.html
+        --- register.html
+
+4. views
+    --- /trainer/views
+        --- account_view.py
+
+
+
+
+B. Authorisation
+----------------------------------

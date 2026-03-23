@@ -1,19 +1,38 @@
 
+from django.db.models import Count
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from orm.models import Tag, Trainer
+from orm.models import Tag 
+from orm.models import UserTrainer as Trainer
+
 from ..forms.tag_form import TagForm
 
 # - simulate logged in trainer
-logged_in_trainer = 1
+# logged_in_trainer = 1
 
 # simple list view
-# def tag_list(request):
-#     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
-#     tags = Tag.objects.filter(trainer=trainer_instance)
-#     return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
+def tag_list(request):
+    # Saas tenant check
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
+    # filter tags 
+    tags = Tag.objects.filter(trainer=trainer)
+
+    # -- normal get exercises count
+    # tag = Tag.objects.get(id=1)
+    # count1 = tag.exercises.count()
+    # count2 = Exercise.objects.filter(tags__id=1).count()
+    
+    
+    # using annotate to create a computer property
+    # 2. Get tags for this trainer and "attach" the count
+    # 'exercises' matches the related_name we set in the ManyToManyField
+    tags = Tag.objects.filter(trainer=trainer).annotate(
+        exercise_count=Count('exercises')
+    )
+
+    return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
 
 
 # list view with search
@@ -32,39 +51,39 @@ def tag_list(request):
 """
 
 # list view with search and pagination
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-def tag_list(request):
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+# def tag_list(request):
+#     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
 
-    search = request.GET.get('search', '')
-    if search:
-        # Use icontains for a better user search experience
-        tags = Tag.objects.filter(trainer=trainer_instance, name__icontains=search).order_by('name')
-    else:     
-        tags = Tag.objects.filter(trainer=trainer_instance).order_by('name')
+#     search = request.GET.get('search', '')
+#     if search:
+#         # Use icontains for a better user search experience
+#         tags = Tag.objects.filter(trainer=trainer_instance, name__icontains=search).order_by('name')
+#     else:     
+#         tags = Tag.objects.filter(trainer=trainer_instance).order_by('name')
 
-    # pagination controls
-    paginator = Paginator(tags, 3)
-    #
-    page_number = request.GET.get('page')
-    try:
-        pager = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        pager = paginator.page(1)
-    except EmptyPage:
-        pager = paginator.page(paginator.num_pages)
+#     # pagination controls
+#     paginator = Paginator(tags, 3)
+#     #
+#     page_number = request.GET.get('page')
+#     try:
+#         pager = paginator.get_page(page_number)
+#     except PageNotAnInteger:
+#         pager = paginator.page(1)
+#     except EmptyPage:
+#         pager = paginator.page(paginator.num_pages)
 
-    return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
+#     return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
 
 def tag_add(request):
     # Saas tenant - get logged in tenant for data filtering
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer= get_object_or_404(Trainer, pk=request.user.id)
 
     if request.method == "POST":
         form = TagForm(request.POST)
         if form.is_valid():
-            tag = form.save(commit=False)   # don't save yet
-            tag.trainer = trainer_instance  # attach trainer here
+            tag = form.save(commit=False)   # don't save yet, get the tag model
+            tag.trainer = trainer  # attach trainer here
             tag.save()
 
             messages.success(request, "Tag added successfully!")
@@ -77,7 +96,7 @@ def tag_add(request):
 
 def tag_edit(request, pk):
     # Saas tenant - get logged in tenant for data filtering
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
 
     # getting data from database first
     # actually this has NO concurrency check, 
@@ -93,7 +112,7 @@ def tag_edit(request, pk):
             tag.save()
 
             messages.success(request, "Tag updated successfully!")
-            return redirect("trainer:tag_list")
+            return redirect("tag_list")
     else:
         form = TagForm(instance=tag)
 
@@ -102,7 +121,7 @@ def tag_edit(request, pk):
 
 def tag_delete(request, pk):
     # Saas requirement, tenant
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
 
     # Ensure the tag belongs to this trainer before deleting
     tag = get_object_or_404(Tag, pk=pk, trainer=trainer_instance)
@@ -116,11 +135,10 @@ def tag_delete(request, pk):
     # No form needed, just pass the object to the template for confirmation
     return render(request, 'trainer/tag/tag_delete.html', {'tag': tag})
 
-import json
 
 def get_tags(request):
     # Saas requirement, tenant
-    trainer = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
     tags = Tag.objects.filter(trainer = trainer)
 
     return JsonResponse(list(tags.values()), safe=False)

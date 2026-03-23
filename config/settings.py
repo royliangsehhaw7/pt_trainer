@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'orm',
-    'management',
     'trainer'
 ]
 
@@ -92,6 +91,15 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+
+    'gcloud': {
+        'ENGINE'    : 'django.db.backends.mysql',
+        'NAME'      : 'uni_db',
+        'USER'      : 'pt_user',
+        'PASSWORD'  : '123123123',
+        'HOST'      : '136.110.1.139',
+        'PORT'      : '3306'
+    },
     'default': {
         'ENGINE'    : 'django.db.backends.mysql',
         'NAME'      : 'db30',
@@ -105,6 +113,13 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'index'
+
+# customized User with is_trainer indicator
+AUTH_USER_MODEL = "orm.UserTrainer"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -126,11 +141,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 

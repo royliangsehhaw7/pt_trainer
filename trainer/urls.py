@@ -1,14 +1,17 @@
 from django.contrib import admin
 from django.urls import path
 
-from .views import index_view, home_view
-from .views import tag_view, exercise_view, workout_view,client_view
+from .views import account_view, index_view, home_view
+from .views import index_view, tag_view, exercise_view, workout_view, client_view
 
 urlpatterns = [
     path('', index_view.index, name="index"),
 
     path('index/', index_view.index, name='index'),
     path('home/', home_view.home, name='home'),
+
+    path('login/', account_view.login_page, name='login'),
+    path('register/', account_view.register_page, name='register'),
 
     path('client/', client_view.client_list, name="client_list"),
     path('client/add/', client_view.client_add, name='client_add'),

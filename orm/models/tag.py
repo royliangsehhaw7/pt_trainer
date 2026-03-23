@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 
-from .trainer import Trainer
+from orm.models import UserTrainer as Trainer
 
 class Tag(models.Model):
     name = models.CharField(

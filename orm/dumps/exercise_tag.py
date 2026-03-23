@@ -1,8 +1,8 @@
 from django.db import models
 
-from .trainer import Trainer
-from .exercise import Exercise
-from .tag import Tag
+from orm.models import UserTrainer as Trainer
+from ..models.exercise import Exercise
+from ..models.tag import Tag
 
 # Junction table for Tags and Exercises
 

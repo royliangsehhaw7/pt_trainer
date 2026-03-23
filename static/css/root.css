@@ -2,7 +2,7 @@
 
 :root {
     --bs-body-font-family: 'Roboto', sans-serif;
-    --bs-body-font-size: 1.0rem;
+    --bs-body-font-size: 1.05rem;
 }
 
 /* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */
