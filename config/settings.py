@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-8x+sj4@^!vj^u7@v*aa2b$*(a=tevr*69ips6v60)go78jnxpx
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # application messages
 from django.contrib.messages import constants as messages
@@ -92,22 +91,22 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
 
-    'gcloud': {
+    'default': {
         'ENGINE'    : 'django.db.backends.mysql',
         'NAME'      : 'uni_db',
         'USER'      : 'pt_user',
         'PASSWORD'  : '123123123',
-        'HOST'      : '136.110.1.139',
+        'HOST'      : '34.142.192.182',
         'PORT'      : '3306'
     },
-    'default': {
-        'ENGINE'    : 'django.db.backends.mysql',
-        'NAME'      : 'db30',
-        'USER'      : 'root',
-        'PASSWORD'  : '123456',
-        'HOST'      : 'localhost',
-        'PORT'      : '3306'
-    } 
+    # 'default': {
+    #     'ENGINE'    : 'django.db.backends.mysql',
+    #     'NAME'      : 'db30',
+    #     'USER'      : 'root',
+    #     'PASSWORD'  : '123456',
+    #     'HOST'      : 'localhost',
+    #     'PORT'      : '3306'
+    # } 
 }
 
 
@@ -150,7 +149,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 # 1. The URL used to access static files in the browser
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # 2. Where Django LOOKS for your files during development (Crucial!)
 # This matches your project/static/ folder
 STATICFILES_DIRS = [
