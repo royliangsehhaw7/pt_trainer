@@ -18,10 +18,9 @@ class WorkoutForm(forms.ModelForm):
 
     class Meta:
         model = Workout
-        fields = ['trainer', 'client', 'scheduled_date', 'is_completed', 'trainer_review', 'client_remarks']
+        fields = ['client', 'scheduled_date', 'is_completed', 'trainer_review', 'client_remarks']
         widgets = {
             'scheduled_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-            'trainer': forms.Select(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
             # 'trainer_review': forms.Textarea(attrs={'class': 'form-control'}),
             # 'client_remarks': forms.Textarea(attrs={'class': 'form-control'}),
@@ -54,6 +53,6 @@ ExerciseFormSet = inlineformset_factory(
         'actual_duration': forms.NumberInput(attrs={'class': 'form-control'}),
         'is_done': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
     },
-    extra=1,
+    extra=0,
     can_delete=True
 )

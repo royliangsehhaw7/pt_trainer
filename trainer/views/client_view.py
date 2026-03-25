@@ -1,4 +1,7 @@
 from django.contrib import messages
+from django.http import JsonResponse
+# from django.forms import ValidationError
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 
 from orm.models import Client
@@ -6,33 +9,55 @@ from orm.models import UserTrainer as Trainer
 
 from ..forms import ClientForm
 
-logged_in_trainer = 1
-
+# list view with search and pagination
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def client_list(request):
     # Saas tenant requirement
-    trainer = get_object_or_404(Trainer, pk = logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk = request.user.id)
 
-    clients = Client.objects.filter(trainer = trainer)
+    search = request.GET.get('search', '')
+    if search:
+        tags = Client.objects.filter(trainer=trainer, name__icontains=search).order_by('name')
+    else:     
+        tags = Client.objects.filter(trainer=trainer).order_by('name')
 
-    return render(request, 'trainer/client/client_list.html', {'clients': clients })
+    # pagination controls
+    paginator = Paginator(tags, 3)
+    page_number = request.GET.get('page')
+
+    try:
+        pager = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        pager = paginator.page(1)
+    except EmptyPage:
+        pager = paginator.page(paginator.num_pages)
+
+    return render(request, 'trainer/client/client_list.html', {'clients': pager, 'search': search, 'page_obj': pager})
 
 
 def client_add(request):
     # Saas tenant requirement
-    trainer = get_object_or_404(Trainer, pk = logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     if request.method == "POST":
         form = ClientForm(request.POST)
         if form.is_valid():
-            # normal save
-            # tag = form.save()
-            # with saas, where tenant must be supplied
-            client = form.save(commit=False)
+            print('form valid')
+            client = form.save(commit=False)    
             client.trainer = trainer
-            client.save()
+            # client.preferred_times = "123"
+     
+            try:
+                client.full_clean()     # to trigger model validation
+                client.save()
+                messages.success(request, 'Client updated successfully')
 
-            messages.success(request, 'Client updated successfully')
-            return redirect('client_list')
+                return redirect('client_list')
+            except ValidationError as e:
+                form.add_error(None, str(e))                    
+            except Exception as e:
+                print('exception')
+                messages.error(request, f"Database Error: {str(e)}")
     else:
         form = ClientForm()
 
@@ -41,7 +66,7 @@ def client_add(request):
 
 def client_edit(request, pk):
     # Saas tenant requirement
-    trainer = get_object_or_404(Trainer, pk = logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk = request.usser.id)
 
     # have to check if client belongs to the current logged in user
     client = get_object_or_404(Client, pk=pk, trainer = trainer)
@@ -55,14 +80,12 @@ def client_edit(request, pk):
     else:
         form = ClientForm(instance=client)
 
-    
     return render(request, 'trainer/client/client_edit.html', {'form': form})
         
 
-    
-
 def client_delete(request, pk):
-    trainer = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
+
     # Ensure the tag belongs to this trainer before deleting
     client = get_object_or_404(Client, pk=pk, trainer=trainer)
 
@@ -72,3 +95,11 @@ def client_delete(request, pk):
         return redirect('client_list')
     
     return render(request, 'trainer/client/client_delete.html', {'client': client})
+
+def get_client_by_id(request, pk):
+    # Saas requirement, tenant
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
+    client = Client.objects.get(id=pk, trainer=trainer)
+
+    data = {"id": client.id, "name": client.name, "goals": client.goals }
+    return JsonResponse(data)

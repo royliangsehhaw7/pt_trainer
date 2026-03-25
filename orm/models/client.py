@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinLengthValidator, EmailValidator
+from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator, EmailValidator
 
 from orm.models import UserTrainer as Trainer
 
@@ -19,6 +19,20 @@ class Client(models.Model):
         validators = [EmailValidator()]
     )
 
+    age = models.PositiveIntegerField(
+        validators = [MinValueValidator(10), MaxValueValidator(100)]
+    )
+    height = models.DecimalField(
+        max_digits = 4,
+        decimal_places = 2,
+        validators = [MinValueValidator(0.5), MaxValueValidator(6)],
+    )
+    weight = models.DecimalField(
+        max_digits = 5,
+        decimal_places = 2,        
+        validators = [MinValueValidator(0.5), MaxValueValidator(6)],
+    )
+
     goals = models.TextField()                              # this is a TEXT (up to 4GB) in database, NOT varchar   
     preferred_times = models.CharField(max_length=150)
 
@@ -27,6 +41,7 @@ class Client(models.Model):
                                                             # but can register with another trainer
         db_table = "clients"
 
+    
     def __str__(self):
         return self.name
     

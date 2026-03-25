@@ -12,27 +12,27 @@ from ..forms.tag_form import TagForm
 # - simulate logged in trainer
 # logged_in_trainer = 1
 
-# simple list view
-def tag_list(request):
-    # Saas tenant check
-    trainer = get_object_or_404(Trainer, pk=request.user.id)
-    # filter tags 
-    tags = Tag.objects.filter(trainer=trainer)
+# # simple list view
+# def tag_list(request):
+#     # Saas tenant check
+#     trainer = get_object_or_404(Trainer, pk=request.user.id)
+#     # filter tags 
+#     tags = Tag.objects.filter(trainer=trainer)
 
-    # -- normal get exercises count
-    # tag = Tag.objects.get(id=1)
-    # count1 = tag.exercises.count()
-    # count2 = Exercise.objects.filter(tags__id=1).count()
+#     # -- normal get exercises count
+#     # tag = Tag.objects.get(id=1)
+#     # count1 = tag.exercises.count()
+#     # count2 = Exercise.objects.filter(tags__id=1).count()
     
     
-    # using annotate to create a computer property
-    # 2. Get tags for this trainer and "attach" the count
-    # 'exercises' matches the related_name we set in the ManyToManyField
-    tags = Tag.objects.filter(trainer=trainer).annotate(
-        exercise_count=Count('exercises')
-    )
+#     # using annotate to create a computer property
+#     # 2. Get tags for this trainer and "attach" the count
+#     # 'exercises' matches the related_name we set in the ManyToManyField
+#     tags = Tag.objects.filter(trainer=trainer).annotate(
+#         exercise_count=Count('exercises')
+#     )
 
-    return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
+#     return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
 
 
 # list view with search
@@ -51,29 +51,30 @@ def tag_list(request):
 """
 
 # list view with search and pagination
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-# def tag_list(request):
-#     trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+def tag_list(request):
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
 
-#     search = request.GET.get('search', '')
-#     if search:
-#         # Use icontains for a better user search experience
-#         tags = Tag.objects.filter(trainer=trainer_instance, name__icontains=search).order_by('name')
-#     else:     
-#         tags = Tag.objects.filter(trainer=trainer_instance).order_by('name')
+    search = request.GET.get('search', '')
+    if search:
+        # Use icontains for a better user search experience
+        tags = Tag.objects.filter(trainer=trainer, name__icontains=search).order_by('name')
+    else:     
+        tags = Tag.objects.filter(trainer=trainer).order_by('name')
 
-#     # pagination controls
-#     paginator = Paginator(tags, 3)
-#     #
-#     page_number = request.GET.get('page')
-#     try:
-#         pager = paginator.get_page(page_number)
-#     except PageNotAnInteger:
-#         pager = paginator.page(1)
-#     except EmptyPage:
-#         pager = paginator.page(paginator.num_pages)
+    # pagination controls
+    paginator = Paginator(tags, 3)
+    #
+    page_number = request.GET.get('page')
 
-#     return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
+    try:
+        pager = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        pager = paginator.page(1)
+    except EmptyPage:
+        pager = paginator.page(paginator.num_pages)
+
+    return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
 
 def tag_add(request):
     # Saas tenant - get logged in tenant for data filtering

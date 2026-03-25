@@ -29,7 +29,23 @@ class ClientForm(forms.ModelForm):
         label="C Email",
         widget=forms.EmailInput(attrs={"class":"form-control", "placeholder":"placeholder for email"})
     )
+    age = forms.IntegerField(
+        label="Age",
+        widget=forms.NumberInput(attrs={"class": "form-control"})
+    )
+    height = forms.DecimalField(
+        label="Height",
+        widget=forms.NumberInput(attrs={"class": "form-control"})
+    )    
+    weight = forms.DecimalField(
+        label="Weight",
+        widget=forms.NumberInput(attrs={"class": "form-control"})
+    )
+    goals = forms.CharField(
+        label="Goals",
+        widget=forms.Textarea(attrs={"class":"form-control", "rows": 3})
+    )
 
     class Meta:
         model = Client
-        fields=["name","email"]
+        fields=["name","email","age","weight","height","goals"]

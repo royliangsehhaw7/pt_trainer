@@ -16,7 +16,11 @@
         <nav class="navbar border-bottom py-3">
             <div class="container">
                 <span class="navbar-brand fw-bold">TrainForge</span>
-                <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-outline-light" href="{% url 'home' %}">Dashboard</a>
+                {% else %}
+                    <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
+                {% endif %}
             </div>
         </nav>
 

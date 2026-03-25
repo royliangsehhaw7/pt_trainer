@@ -17,12 +17,21 @@
                     <a class="nav-link" href="{% url 'exercise_list' %}">Exercises</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'workout_list' %}">Programs</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'client_list' %}">Clients</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'workout_list' %}">Programs</a>
+                </li>
             </ul>
+        </div>
+
+        <div class="container">
+            {{ user.email }}
+            <!-- LOGOUT must use a form -->
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">logout</button>
+            </form>
         </div>
     </div>
 </nav>

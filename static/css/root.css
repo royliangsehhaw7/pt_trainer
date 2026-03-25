@@ -1,9 +1,9 @@
 /* app.css */
 
-:root {
+/* :root {
     --bs-body-font-family: 'Roboto', sans-serif;
     --bs-body-font-size: 1.05rem;
-}
+} */
 
 /* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */
 /* h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
@@ -18,12 +18,12 @@
 
 
 
-.card {
-    /* 200, 200, 200 is a light gray base. 0.4 is 40% opacity. */
+/* 200, 200, 200 is a light gray base. 0.4 is 40% opacity. */
+/* .card {
     border: 1px solid rgba(200, 200, 200, 0.2); 
     border-radius: 6px;
 }
 .table tbody td {
-    color: #555555; /* A soft gray to match your borders */
-    vertical-align: middle; /* Keeps text centered with the buttons */
-}
+    color: #555555;
+    vertical-align: middle;
+} */

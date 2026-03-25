@@ -7,21 +7,34 @@ from orm.models import Exercise
 from orm.models import UserTrainer as Trainer
 from ..forms.exercise_form import ExerciseForm
 
-# default for testing. next time will get from session user
-logged_in_trainer = 1
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def exercise_list(request):
     # 1. Get the trainer instance (Must exist)
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
 
-    # Only show exercises belonging to the logged-in user
-    exercises = Exercise.objects.filter(trainer=trainer_instance)  # THIS WORKS - by object
-    # exercises = Exercise.objects.filter(trainer_id=logged_in_trainer)   # THIS WORKS - by int
+    search = request.GET.get('search', '')
+    if search:
+        exercises = Exercise.objects.filter(trainer=trainer, name__icontains=search).orderBy('name')
+    else:
+        exercises = Exercise.objects.filter(trainer=trainer).order_by('name')
     
-    return render(request, 'trainer/exercise/exercise_list.html', {'exercises': exercises})
+    # pagination controls
+    paginator = Paginator(exercises, 3)
+    #
+    page_number = request.GET.get('page')
+
+    try:
+        pager = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        pager = paginator.page(1)
+    except EmptyPage:
+        pager = paginator.page(paginator.num_pages)
+
+    return render(request, 'trainer/exercise/exercise_list.html', {'exercises': pager, 'search': search, 'page_obj': pager})
 
 def exercise_add(request):
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
 
     if request.method == 'POST':
         form = ExerciseForm(request.POST, trainer=trainer_instance)
@@ -45,11 +58,12 @@ def exercise_add(request):
 
 def exercise_edit(request, pk):
     # Ensure SaaS security: exercise must belong to the trainer
-    exercise = get_object_or_404(Exercise, pk=pk, trainer_id=logged_in_trainer)
-    trainer_instance = exercise.trainer
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
+
+    exercise = get_object_or_404(Exercise, pk=pk, trainer=trainer)
 
     if request.method == 'POST':
-        form = ExerciseForm(request.POST, instance=exercise, trainer=trainer_instance)
+        form = ExerciseForm(request.POST, instance=exercise, trainer=trainer)
 
         if form.is_valid():
             # 1. Update the main object
@@ -68,7 +82,7 @@ def exercise_edit(request, pk):
         # NO MORE: initial={'tags': selected_tags}
         # Because we passed 'instance=exercise', Django automatically
         # pre-selects the tags currently linked to this exercise.
-        form = ExerciseForm(instance=exercise, trainer=trainer_instance)
+        form = ExerciseForm(instance=exercise, trainer=trainer)
 
     return render(request, 'trainer/exercise/exercise_edit.html', {'form': form})
 

@@ -3,9 +3,12 @@
 
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <h2 class="mb-2 mb-sm-0">Tags</h2>
+        <h3 class="mb-2 mb-sm-0">edit tags</h3>
+        <!-- You can put a back button if needed -->
         <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Back</a>
     </div>
+
+    <hr style="height:5px;background-color: #3ABEF9;" />    
 
     <form method="POST" class="border rounded p-4 shadow-sm bg-body">
         {% csrf_token %}
@@ -22,10 +25,13 @@
             </div>
         </div>
 
-        <div class="mt-4 d-flex gap-2">
-            <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Cancel</a>
-            <button type="submit" class="btn btn-success">Save Tag</button>
-        </div>
+            <!-- buttons actions -->      
+            <div class="mt-4 d-flex gap-2 justify-content-end flex-wrap">
+                <a href="{% url 'exercise_list' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save</button>
+            </div>
     </form>
 {% endblock %}
 

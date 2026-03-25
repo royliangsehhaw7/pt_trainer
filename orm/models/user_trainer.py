@@ -7,11 +7,6 @@ class UserTrainer(AbstractUser):
     # is_active, is_staff, is_superuser, groups
     # date_joined, last_login
 
-    # will use email as the login instead of username
-    email = models.EmailField(
-        unique=True
-    )
-
     is_trainer = models.BooleanField(default=False)
 
     class Meta:

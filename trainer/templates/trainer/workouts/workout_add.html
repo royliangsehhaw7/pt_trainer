@@ -53,11 +53,7 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="fw-bold small">Trainer</label>
-                                {{ form.trainer }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="fw-bold small">Client</label>
+                                <label class="fw-bold small" for="{{form.client.id_for_label}}">{{form.client.label}}</label>
                                 {{ form.client }}
                             </div>
                             <div class="col-md-4">
@@ -66,6 +62,7 @@
                             </div>
                         </div>
                     </div>
+                    <label>Goals</label><textarea type="text" disabled readonly id="client-goals" rows="3"></textarea>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -118,7 +115,8 @@
 </div>
 
 <template id="empty-row-template">
-    <div class="card mb-3 exercise-row border-start border-4 border-success shadow-sm">
+    <!-- <div class="card mb-3 exercise-row border-start border-4 border-success shadow-sm"> -->
+    <div class="exercise-row">
         <div class="card-body">
             {{ formset.empty_form.id }}
             {{ formset.empty_form.workout }}
@@ -131,6 +129,7 @@
             </div>
         </div>
     </div>
+    <!-- </div> -->
 </template>
 
 <script>
@@ -138,6 +137,11 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         get_tags();
+    })
+    document.getElementById("{{ form.client.id_for_label }}").addEventListener("change", (e) => {
+        debugger;
+        alert(e.target.value);
+        document.getElementById('client-goals').value = e.target.value.goals
     })
 
     async function get_tags() {
@@ -212,12 +216,14 @@
     function addExerciseToWorkout(exerciseId) {
         document.getElementById('add-row').click();
         
-        const rows = document.querySelectorAll('.exercise-row');
-        const lastRow = rows[rows.length - 1];
-        const select = lastRow.querySelector('select[name$="-exercise"]');
-        if (select) {
-            select.value = exerciseId;
-        }
+        setTimeout(()=> {
+            const rows = document.querySelectorAll('.exercise-row');
+            const lastRow = rows[rows.length - 1];
+            const select = lastRow.querySelector('select[name$="-exercise"]');
+            if (select) {
+                select.value = exerciseId;
+            }
+        }, 50)
     }
     
     document.getElementById('add-row').addEventListener('click', function() {

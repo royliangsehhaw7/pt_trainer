@@ -1,13 +1,37 @@
 References
 -----------------------------
+    --- https://learndjango.com/tutorials/django-login-and-logout-tutorial
+    --- https://dev.to/doridoro/django-built-in-authentication-1j93
+
     --- https://www.geeksforgeeks.org/python/user-authentication-system-using-django/
+    --- https://medium.com/@yogeshkrishnanseeniraj/django-authentication-a-complete-guide-44e1cc91f58c
     --- https://medium.com/@mathur.danduprolu/django-getting-started-with-django-2024-authentication-and-authorization-part-8-16-7bf55d1f7570
 
+    Authorisation
     --- https://www.geeksforgeeks.org/python/python-user-groups-custom-permissions-django/
+    --- https://medium.com/@yogeshkrishnanseeniraj/django-user-permissions-and-groups-complete-guide-with-common-errors-842769805f9c
+    --- https://openclassrooms.com/en/courses/7107341-intermediate-django/7265147-assign-permissions-using-groups
+    --- https://testdriven.io/blog/django-permissions/
     
 
 A. Authentication
 ----------------------------
+0. **** IMPORTANT *****
+    --- django authentication will strictly look for folder or filenames 
+    --- settings.py
+        --- TEMPLATES = [
+            'DIRS': [BASE_DIR / 'templates']        *** THIS IS A MUST ***
+            'APP_DIRS': True,
+        ]
+    --- MUST have
+        --- project root/templates/registration folder
+            --- login.html
+            --- register.html
+            --- password_reset_form.html
+    THE NAMES OF FOLDER AND FILES MUST BE NAMED ACCORDINGLY IN ORDER FOR THE AUTHENTICATION TO WORK
+    --- MUST PROVIDE LOGIN/REGISTER/FORGOT PASSWORD TEMPLATES
+
+
 1. orm/models
     NOTE: will have to abstract from AbstractUser so we can have new columns
     *****
@@ -42,7 +66,7 @@ A. Authentication
 
 4. views
     --- /trainer/views
-        --- account_view.py
+        --- account_view.py                 *** MUST CREATE A REGISTER LOGIC
 
 
 

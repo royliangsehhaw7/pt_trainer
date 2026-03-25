@@ -1,0 +1,15 @@
+/* Targets the outer table and all cell borders
+.table-red-borders, 
+.table-red-borders th, 
+.table-red-borders td {
+    border: 1px solid #ae4343 !important;
+}
+
+/* Specifically fixes the top border of the first row in the body */
+/* .table-red-borders thead th {
+    border-bottom: 2px solid #ff0000 !important;
+} */
+
+/* .button {
+    background-color: red;
+} */

@@ -31,13 +31,11 @@ class Exercise(models.Model):
     def_weight = models.IntegerField(
         db_default=0,
         validators = [MinValueValidator(0), MaxValueValidator(100)],
-
         help_text = "in Kgs" 
     )
     def_duration = models.IntegerField(
         db_default=0,
         validators = [MinValueValidator(0), MaxValueValidator(100)],
-
         help_text = "in Minutes" 
     )
     
