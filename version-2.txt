@@ -43,8 +43,6 @@ A. Authentication
     --- user_trainer.py
         from django.contrib.auth.models import AbstractUser
         class UserTrainer(AbstractUser)                 # inherit from AbstractUser
-            -- make email unique
-                email = models.EmailField(unique=True)
             -- add new flag
                 is_trainer = models.BooleanField(default=False)
             -- rename table name

@@ -41,14 +41,13 @@ def client_add(request):
 
     if request.method == "POST":
         form = ClientForm(request.POST)
-        if form.is_valid():
-            print('form valid')
-            client = form.save(commit=False)    
-            client.trainer = trainer
-            # client.preferred_times = "123"
-     
+        if form.is_valid():            
             try:
-                client.full_clean()     # to trigger model validation
+                client = form.save(commit=False)    # dont save first
+                client.trainer = trainer            # attach trainer
+                # client.preferred_times = "123"
+                
+                client.full_clean()                 # trigger model validation
                 client.save()
                 messages.success(request, 'Client updated successfully')
 
@@ -56,8 +55,7 @@ def client_add(request):
             except ValidationError as e:
                 form.add_error(None, str(e))                    
             except Exception as e:
-                print('exception')
-                messages.error(request, f"Database Error: {str(e)}")
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
         form = ClientForm()
 
@@ -66,7 +64,7 @@ def client_add(request):
 
 def client_edit(request, pk):
     # Saas tenant requirement
-    trainer = get_object_or_404(Trainer, pk = request.usser.id)
+    trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     # have to check if client belongs to the current logged in user
     client = get_object_or_404(Client, pk=pk, trainer = trainer)
@@ -74,9 +72,19 @@ def client_edit(request, pk):
     if request.method == "POST":
         form = ClientForm(request.POST, instance = client)
         if form.is_valid():
-            form.save()
-            #newClient = form.save()
-            return redirect('client_list')
+            try:
+                client = form.save(commit=False)
+                client.trainer = trainer
+
+                client.full_clean()
+                client.save()
+                messages(request, 'Client saved successfully!')
+
+                return redirect('client_list')
+            except ValidationError as e:
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
         form = ClientForm(instance=client)
 
@@ -90,11 +98,17 @@ def client_delete(request, pk):
     client = get_object_or_404(Client, pk=pk, trainer=trainer)
 
     if request.method == "POST":
-        client.delete()
-        messages.success(request, f"Client deleted.")
-        return redirect('client_list')
+        try:
+            client_name = client.name
+            client.delete()
+            messages.success(request, f"Client {client_name} deleted.")
+            
+            return redirect('client_list')
+        except Exception as e:
+            messages.error(request, f"Exceptions: {str(e)}")
     
     return render(request, 'trainer/client/client_delete.html', {'client': client})
+
 
 def get_client_by_id(request, pk):
     # Saas requirement, tenant

@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
+from django.core.exceptions import ValidationError
+
 
 from orm.models import Exercise
 from orm.models import UserTrainer as Trainer
@@ -39,18 +41,21 @@ def exercise_add(request):
     if request.method == 'POST':
         form = ExerciseForm(request.POST, trainer=trainer_instance)
         if form.is_valid():
-            # 1. Save the exercise object (commit=False because we need to set the trainer)
-            exercise = form.save(commit=False)
-            exercise.trainer = trainer_instance
-            exercise.save()
+            try:
+                exercise = form.save(commit=False)      # dont commit to db first
+                exercise.trainer = trainer_instance
 
-            # 2. SAVE THE RELATIONSHIPS
-            # This replaces the manual loop and ExerciseTag.objects.create() logic.
-            # Django handles the hidden junction table automatically.
-            form.save_m2m() 
+                exercise.full_clean()
+                exercise.save()
+                # this is a must for the manytomany junctioan table
+                form.save_m2m() # Django handles the hidden junction table automatically.
 
-            messages.success(request, f"Exercise '{exercise.name}' added.")
-            return redirect('exercise_list')
+                messages.success(request, f"Exercise '{exercise.name}' added.")
+                return redirect('exercise_list')
+            except ValidationError as e:
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
         form = ExerciseForm(trainer=trainer_instance)
 
@@ -89,21 +94,22 @@ def exercise_edit(request, pk):
 
 def exercise_delete(request, pk):
     # Ensure SaaS security: the exercise must belong to the logged-in trainer
-    exercise = get_object_or_404(Exercise, pk=pk, trainer_id=logged_in_trainer)
+    exercise = get_object_or_404(Exercise, pk=pk, trainer_id=request.user.id)
 
     if request.method == 'POST':
-        # This will automatically clean up the hidden many-to-many junction table,
-        # but it will NOT delete the actual Tags.
-        exercise.delete()
-        messages.success(request, f"Exercise '{exercise.name}' has been deleted.")
-        return redirect('exercise_list')
+        try:
+            exercise.delete()       # junction table related record
+            messages.success(request, f"Exercise '{exercise.name}' has been deleted.")
+
+            return redirect('exercise_list')
+        except Exception as e:
+            messages.error(request, f"Exceptions: {str(e)}")
 
     return render(request, 'trainer/exercise/exercise_delete.html', {'exercise': exercise})
 
 
-
 def get_exercises_params(request):
-    trainer = get_object_or_404(Trainer, pk=logged_in_trainer)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
     tag_ids = request.GET.getlist('tag_id')
 
     # Cleaner lookup: 'tags' is the ManyToManyField name on the Exercise model

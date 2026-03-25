@@ -1,8 +1,27 @@
 /* app.css */
 
+
+:root {
+  /* 1. Segoe UI: Standard Windows
+     2. -apple-system / BlinkMacSystemFont: Standard Mac/iOS
+     3. Roboto: Standard Android
+     4. sans-serif: The generic fallback
+  */
+  --bs-body-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+body {
+  font-family: var(--bs-body-font-family);
+  /* Optional: Segoe UI looks better with a slightly cleaner rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
 /* :root {
-    --bs-body-font-family: 'Roboto', sans-serif;
-    --bs-body-font-size: 1.05rem;
+  --bs-body-font-family: "Roboto", "Segoe UI", system-ui, -apple-system,  Arial, sans-serif;
+}
+body {
+  font-family: "Segoe UI", "Roboto", sans-serif !important;
 } */
 
 /* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */

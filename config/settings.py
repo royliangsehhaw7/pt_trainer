@@ -91,22 +91,22 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
 
-    'default': {
-        'ENGINE'    : 'django.db.backends.mysql',
-        'NAME'      : 'uni_db',
-        'USER'      : 'pt_user',
-        'PASSWORD'  : '123123123',
-        'HOST'      : '34.142.192.182',
-        'PORT'      : '3306'
-    },
     # 'default': {
     #     'ENGINE'    : 'django.db.backends.mysql',
-    #     'NAME'      : 'db30',
-    #     'USER'      : 'root',
-    #     'PASSWORD'  : '123456',
-    #     'HOST'      : 'localhost',
+    #     'NAME'      : 'uni_db',
+    #     'USER'      : 'pt_user',
+    #     'PASSWORD'  : '123123123',
+    #     'HOST'      : '34.142.192.182',
     #     'PORT'      : '3306'
-    # } 
+    # },
+    'default': {
+        'ENGINE'    : 'django.db.backends.mysql',
+        'NAME'      : 'db30',
+        'USER'      : 'root',
+        'PASSWORD'  : '123456',
+        'HOST'      : 'localhost',
+        'PORT'      : '3306'
+    } 
 }
 
 

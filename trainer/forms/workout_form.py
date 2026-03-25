@@ -20,8 +20,8 @@ class WorkoutForm(forms.ModelForm):
         model = Workout
         fields = ['client', 'scheduled_date', 'is_completed', 'trainer_review', 'client_remarks']
         widgets = {
-            'scheduled_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
+            'scheduled_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             # 'trainer_review': forms.Textarea(attrs={'class': 'form-control'}),
             # 'client_remarks': forms.Textarea(attrs={'class': 'form-control'}),
         }
@@ -43,16 +43,18 @@ ExerciseFormSet = inlineformset_factory(
     ),
     widgets={
         'exercise': forms.Select(attrs={'class': 'form-control'}),
-        'pre_sets': forms.NumberInput(attrs={'class': 'form-control'}),
-        'pre_reps': forms.NumberInput(attrs={'class': 'form-control'}),
-        'pre_weight': forms.NumberInput(attrs={'class': 'form-control'}),
-        'pre_duration': forms.NumberInput(attrs={'class': 'form-control'}),
-        'actual_sets': forms.NumberInput(attrs={'class': 'form-control'}),
-        'actual_reps': forms.NumberInput(attrs={'class': 'form-control'}),
-        'actual_weight': forms.NumberInput(attrs={'class': 'form-control'}),
-        'actual_duration': forms.NumberInput(attrs={'class': 'form-control'}),
-        'is_done': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        'pre_sets': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'pre_reps': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'pre_weight': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'pre_duration': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'actual_sets': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'actual_reps': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'actual_weight': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'actual_duration': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
+        'is_done': forms.CheckboxInput(attrs={'class': 'form-check-input', 'value': '0'}),
     },
     extra=0,
+    min_num=0,           # <--- ADD THIS
+    validate_min=True,   # <--- ADD THIS
     can_delete=True
 )

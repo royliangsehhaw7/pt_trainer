@@ -2,6 +2,7 @@
 from django.db.models import Count
 from django.contrib import messages
 from django.http import JsonResponse
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 
 from orm.models import Tag 
@@ -83,12 +84,20 @@ def tag_add(request):
     if request.method == "POST":
         form = TagForm(request.POST)
         if form.is_valid():
-            tag = form.save(commit=False)   # don't save yet, get the tag model
-            tag.trainer = trainer  # attach trainer here
-            tag.save()
+            try:
+                tag = form.save(commit=False)   # don't save yet, get the tag model
+                tag.trainer = trainer           # attach trainer here
 
-            messages.success(request, "Tag added successfully!")
-            return redirect("tag_list")
+                tag.full_clean()                # triggre model validation
+                tag.save()
+                messages.success(request, "Tag added successfully!")
+
+                return redirect("tag_list")
+            except ValidationError as e:
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")
+
     else:
         form = TagForm()
 
@@ -108,12 +117,19 @@ def tag_edit(request, pk):
     if request.method == "POST":
         form = TagForm(request.POST, instance=tag)
         if form.is_valid():
-            tag = form.save(commit=False)
-            tag.trainer = trainer_instance  # optional but safe
-            tag.save()
-
-            messages.success(request, "Tag updated successfully!")
-            return redirect("tag_list")
+            try:
+                tag = form.save(commit=False)
+                tag.trainer = trainer_instance  # optional but safe
+                
+                tag.full_clean()
+                tag.save()
+                messages.success(request, "Tag updated successfully!")
+                
+                return redirect("tag_list")
+            except ValidationError as e:
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
         form = TagForm(instance=tag)
 
@@ -128,10 +144,14 @@ def tag_delete(request, pk):
     tag = get_object_or_404(Tag, pk=pk, trainer=trainer_instance)
 
     if request.method == "POST":
-        tag_name = tag.name  # Store name before deleting for the message
-        tag.delete()
-        messages.success(request, f"Tag '{tag_name}' deleted.")
-        return redirect('tag_list')
+        try:            
+            tag_name = tag.name             # Store name before deleting for the message
+            tag.delete()
+            messages.success(request, f"Tag '{tag_name}' deleted.")
+            
+            return redirect('tag_list')
+        except Exception as e:
+            messages.error(request, f"Exceptions: {str(e)}")
     
     # No form needed, just pass the object to the template for confirmation
     return render(request, 'trainer/tag/tag_delete.html', {'tag': tag})
