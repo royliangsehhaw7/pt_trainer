@@ -20,12 +20,23 @@ class Tag(models.Model):
     # saas requirement - tenant
     trainer = models.ForeignKey(
         Trainer, 
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,   # but again, tags still has a CASCADE rule from the exercises
         related_name='tags'
     ) 
     
     class Meta:
         db_table = "tags"
+
+    #***** WARNING - THIS IS A MUST ********** #
+    # IF NOT THE EXERCISES ARE NOT PYHSICALLY DELETE FROM THE DATABASE *
+    def delete(self, *args, **kwargs):
+        self.exercises.all().clear() # I dont understand why we have to do this to physically delete from the database
+        super().delete(*args, **kwargs)    
+
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators to ensure they run even if modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)        
 
     def __str__(self):
         return self.name

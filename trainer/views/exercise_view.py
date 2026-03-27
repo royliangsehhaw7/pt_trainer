@@ -71,18 +71,24 @@ def exercise_edit(request, pk):
         form = ExerciseForm(request.POST, instance=exercise, trainer=trainer)
 
         if form.is_valid():
-            # 1. Update the main object
-            exercise = form.save(commit=False)
-            exercise.save()
+            try:
+                # 1. Update the main object
+                exercise = form.save(commit=False)
+                exercise.save()
 
-            # 2. SYNC THE TAGS
-            # This replaces: ExerciseTag.objects.filter(...).delete() 
-            # AND the manual loop to re-insert.
-            # save_m2m() identifies which tags were removed and which were added.
-            form.save_m2m()
+                # 2. SYNC THE TAGS
+                # This replaces: ExerciseTag.objects.filter(...).delete() 
+                # AND the manual loop to re-insert.
+                # save_m2m() identifies which tags were removed and which were added.
+                form.save_m2m()
 
-            messages.success(request, f"Exercise '{exercise.name}' updated.")
-            return redirect('exercise_list')
+                messages.success(request, f"Exercise '{exercise.name}' updated.")
+
+                return redirect('exercise_list')
+            except ValidationError as e:
+                form.add_error(None, str(e))                    
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
         # NO MORE: initial={'tags': selected_tags}
         # Because we passed 'instance=exercise', Django automatically
@@ -98,8 +104,9 @@ def exercise_delete(request, pk):
 
     if request.method == 'POST':
         try:
+            exercise_name = exercise.name
             exercise.delete()       # junction table related record
-            messages.success(request, f"Exercise '{exercise.name}' has been deleted.")
+            messages.success(request, f"Exercise '{exercise_name}' has been deleted.")
 
             return redirect('exercise_list')
         except Exception as e:

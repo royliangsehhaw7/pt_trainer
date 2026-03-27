@@ -13,3 +13,7 @@
 /* .button {
     background-color: red;
 } */
+
+.active>.page-link, .page-link.active {
+    background-color: #3ABEF9;
+}

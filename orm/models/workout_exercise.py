@@ -64,6 +64,11 @@ class WorkoutExercise(models.Model):
         unique_together = ['workout', 'exercise']
         db_table = "workout_exercises"
 
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators to ensure they run even if modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.id}"

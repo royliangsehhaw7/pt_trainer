@@ -6,7 +6,7 @@ from orm.models import UserTrainer as Trainer
 class Client(models.Model):
     trainer = models.ForeignKey(
         Trainer,
-        on_delete = models.CASCADE,
+        on_delete = models.RESTRICT,
         related_name = "clients"
     )
 
@@ -40,7 +40,11 @@ class Client(models.Model):
         unique_together = ['trainer','email']               # one client cannot register more than once per trainer
                                                             # but can register with another trainer
         db_table = "clients"
-
+        
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators to ensure they run even if modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name

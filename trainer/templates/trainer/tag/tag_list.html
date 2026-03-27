@@ -6,32 +6,30 @@
 {% endblock %}
 
 
-
 {% block content %}
-    <!-- row 1: page title -->
     <div class="row mb-3">
         <div class="col-12">
             <h3 class="mb-0">tags</h3>
         </div>
     </div>
 
-    <hr style="height:5px;background-color: #3ABEF9;" />    
+    <hr class="opacity-100" style="height:4px; background-color: #3ABEF9;" />
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-        <!-- Search Aligned Far Left -->
+        <!-- search box (aligned left) -->
         <form method="GET" action="{% url 'tag_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
             <div class="input-group">
-                <input type="text" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
-                <button type="submit" class="btn btn-outline-secondary">GO</button>
+                <input type="text" id="search" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
+                <button type="submit" id="go" name="go" class="btn btn-outline-secondary">go</button>
             </div>
         </form>
 
-        <a href="{% url 'tag_add' %}" class="btn btn-primary px-4">
-            + add
+        <a href="{% url 'tag_add' %}" class="btn btn-primary px-4" style="background-color: #3ABEF9;">
+            add
         </a>
     </div>
 
-    <!-- row 3: main tags list -->
+    <!-- tags list -->
     <div class="table-responsive mt-4">
         <table class="table table-hover table-red-borders shadow-sm align-middle">
             <thead class="table-dark">
@@ -61,27 +59,27 @@
             </tbody>
         </table>        
     </div>
-    <!-- row 4: pagination -->
+
+    <!-- bootstrap 5 pagination -->
     <div>
-        <!-- Container for Counter (Left) and Pager (Right) -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
             <!-- Page Counter (Far Left) -->
             <div class="text-muted small">
                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
             </div>
-            <!-- Pager (Far Right) -->
+
+            <!-- pager-->
             <nav aria-label="Page navigation example">
-                <ul class="pagination mb-0">
-                    
+                <ul class="pagination mb-0">                    
                     <!-- Previous -->
                     {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
                     {% else %}
-                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                     {% endif %}
 
                     <!-- Page Numbers -->
@@ -97,59 +95,16 @@
 
                     <!-- Next -->
                     {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
                     {% else %}
-                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
                     {% endif %}
-
                 </ul>
             </nav>
         </div>
     </div>
-
-
-
-
-   
-    <!-- <div class="row g-3">
-        {% for tag in tags %}
-        <div class="col-12">
-            <div class="card border-1 shadow-none" style="border-color: rgba(200, 200, 200, 0.4);">
-                <div class="card-body d-flex justify-content-between align-items-center p-3">
-                    <div>
-                        <h6 class="mb-0 fw-semibold text-secondary">{{ tag.name }}</h6>
-                        <small class="text-muted">ID: #{{ tag.id }}</small>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'tag_edit' tag.id %}" class="btn btn-light btn-sm border">Edit</a>
-                        <a href="{% url 'tag_delete' tag.id %}" class="btn btn-light btn-sm border text-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="text-center py-5 text-muted">No tags found.</div>
-        {% endfor %}
-    </div> 
-    -->
-    <!-- <div class="list-group list-group-flush border rounded-3 shadow-sm">
-        {% for tag in tags %}
-        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-            <span class="fs-5">{{ tag.name }}</span>
-            <div class="dropdown">
-                <button class="btn btn-dark border-0" type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots-vertical text-white-50 fs-5"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow border-secondary">
-                    <li><a class="dropdown-item" href="#">Edit</a></li>
-                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                </ul>
-            </div>
-        </div>
-        {% endfor %}
-    </div> -->
 {% endblock %}

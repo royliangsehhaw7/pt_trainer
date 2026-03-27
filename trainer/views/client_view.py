@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.http import JsonResponse
-# from django.forms import ValidationError
-from django.core.exceptions import ValidationError
+from django.forms import ValidationError
+# from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 
 from orm.models import Client
@@ -78,7 +78,7 @@ def client_edit(request, pk):
 
                 client.full_clean()
                 client.save()
-                messages(request, 'Client saved successfully!')
+                messages.success(request, 'Client saved successfully!')
 
                 return redirect('client_list')
             except ValidationError as e:

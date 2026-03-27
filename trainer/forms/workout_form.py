@@ -25,24 +25,22 @@ class WorkoutForm(forms.ModelForm):
             # 'trainer_review': forms.Textarea(attrs={'class': 'form-control'}),
             # 'client_remarks': forms.Textarea(attrs={'class': 'form-control'}),
         }
-    
+
 ExerciseFormSet = inlineformset_factory(
     Workout,
     WorkoutExercise,
     fields=(
         'exercise',
-        'pre_sets', 
-        'pre_reps', 
-        'pre_weight', 
-        'pre_duration', 
+        'pre_sets', 'pre_reps', 'pre_weight', 'pre_duration', 
+        'actual_sets', 'actual_reps', 'actual_weight', 'actual_duration',
         'is_done', 
-        'actual_sets', 
-        'actual_reps', 
-        'actual_weight', 
-        'actual_duration'
     ),
     widgets={
-        'exercise': forms.Select(attrs={'class': 'form-control'}),
+        'exercise': forms.Select(attrs={
+            'class': 'form-control',
+            'style': 'pointer-events: none; background-color: gray;',
+            'tabindex': '-1'
+        }),
         'pre_sets': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
         'pre_reps': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
         'pre_weight': forms.NumberInput(attrs={'class': 'form-control', 'value': '0'}),
@@ -54,7 +52,7 @@ ExerciseFormSet = inlineformset_factory(
         'is_done': forms.CheckboxInput(attrs={'class': 'form-check-input', 'value': '0'}),
     },
     extra=0,
-    min_num=0,           # <--- ADD THIS
-    validate_min=True,   # <--- ADD THIS
+    min_num=0,
+    validate_min=True,   
     can_delete=True
 )

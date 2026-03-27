@@ -1,10 +1,18 @@
 {% extends 'trainer/base.html' %}
 
 {% block content %}
-<div class="card shadow-sm border-danger">
-    <div class="card-body">
-        <h3>Delete Tag</h3>
-        <p>Are you sure you want to delete the tag <strong>"{{ tag.name }}"</strong>?</p>
+<div>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3 class="mb-2 mb-sm-0">delete tags</h3>
+        <!-- You can put a back button if needed -->
+        <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+
+    <hr class="opacity-100" style="height:5px; background-color: #3ABEF9;" />
+
+    <div class="card shadow-sm border-danger p-4 mt-4">
+        <h5>Are you sure you want to delete the tag <strong>"{{ tag.name }}"</strong>?</h5>
+        <p>All tagged exercises will also be deleted</p>
         
         <form method="POST">
             {% csrf_token %}

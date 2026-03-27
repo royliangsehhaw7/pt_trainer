@@ -1,5 +1,4 @@
 
-from django.db.models import Count
 from django.contrib import messages
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
@@ -64,7 +63,7 @@ def tag_list(request):
         tags = Tag.objects.filter(trainer=trainer).order_by('name')
 
     # pagination controls
-    paginator = Paginator(tags, 3)
+    paginator = Paginator(tags, 4)
     #
     page_number = request.GET.get('page')
 

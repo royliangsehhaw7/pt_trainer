@@ -3,7 +3,7 @@ from orm.models import Tag
 
 class TagForm(forms.ModelForm):
     name = forms.CharField(
-        label="Tag Name",
+        label="tag name",
         # widget - more for 'formatting' the gerrate html element
         widget=forms.TextInput(attrs={ "class": "form-control" })
     )

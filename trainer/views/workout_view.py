@@ -12,91 +12,212 @@ def workout_list(request):
     workouts = Workout.objects.all().select_related('client', 'trainer')
     return render(request, 'trainer/workouts/workout_list.html', {'workouts': workouts})
 
+
 def workout_add(request):
     selected_tag_ids = request.POST.getlist('tags_filter')
-
+    
     if request.method == "POST":
-        form = WorkoutForm(request.POST)
-        formset = ExerciseFormSet(request.POST, prefix='exercises')
-        
-        # We need to modify POST data to add a row, so we copy it
         post_data = request.POST.copy()
-        sidebar_ex_id = request.POST.get('sidebar_ex_id')
+        total_key = 'exercises-TOTAL_FORMS'
         
-        if sidebar_ex_id or 'add_row' in request.POST:
-            total_key = 'exercises-TOTAL_FORMS'
+        # 1. DATA POPULATION LOOP
+        # This handles Sidebar clicks, Dropdown changes, and Add Row clicks.
+        # It just looks at what's in the post_data and fills blanks.
+        try:
             current_total = int(post_data.get(total_key, 0))
+        except (ValueError, TypeError):
+            current_total = 0
 
-            # -- check for empty rows AI::
-            if 'add_row' in request.POST and current_total > 0:
-                last_val = post_data.get(f'exercises-{current_total-1}-exercise')
-                if not last_val or last_val == "":
-                    # Just re-render the existing formset without adding +1
-                    formset = ExerciseFormSet(post_data, prefix='exercises')
-                    return render(request, 'trainer/workouts/workout_add.html', {
-                        'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids, 
-                    })
-            # --- END GUARD ---            
-            
-            # Manually increment the total forms
-            post_data[total_key] = current_total + 1
-            
-            # If it's from the sidebar, inject the exercise ID into the new row
-            if sidebar_ex_id:
-                post_data[f'exercises-{current_total}-exercise'] = sidebar_ex_id
-            
-            # Re-bind with the updated post_data
-            formset = ExerciseFormSet(post_data, prefix='exercises')
-            
-            return render(request, 'trainer/workouts/workout_add.html', {
-                'form': form,
-                'formset': formset,
-                'selected_tag_ids': selected_tag_ids, 
-            })
+        for i in range(current_total):
+            prefix = f'exercises-{i}'
+            ex_id = post_data.get(f'{prefix}-exercise')
 
+            if ex_id:
+                # If sets is empty or 0, we treat it as a "New Selection"
+                val_sets = post_data.get(f'{prefix}-pre_sets')
+                if not val_sets or val_sets in ['0', '']:
+                    try:
+                        ex = Exercise.objects.get(id=ex_id)
+                        post_data[f'{prefix}-pre_sets'] = ex.def_sets
+                        post_data[f'{prefix}-pre_reps'] = ex.def_reps
+                        post_data[f'{prefix}-pre_weight'] = ex.def_weight
+                        post_data[f'{prefix}-pre_duration'] = ex.def_duration
+                    except Exercise.DoesNotExist:
+                        pass
 
-        # Regular save logic
-        if form.is_valid() and formset.is_valid():
-            try:
-                workout = form.save(commit=False)
-                workout.trainer = request.user
-                workout.full_clean()
-                workout.save()
+        # 2. BIND THE FORMS
+        form = WorkoutForm(post_data)
+        formset = ExerciseFormSet(post_data, prefix='exercises')
 
-                formset.instance = workout
-                formset.full_clean()
-                formset.save()
+        # 3. THE SAVE GATE
+        # Only save if the user explicitly clicked the 'Save' button
+        if 'save_workout' in post_data:
+            if form.is_valid() and formset.is_valid():
+                try:
+                    workout = form.save(commit=False)
+                    workout.trainer = request.user
+                    workout.save()
+                    formset.instance = workout
+                    formset.save()
+                    return redirect('workout_list')
+                except ValidationError as e:
+                    form.errors.add(None, str(e))
+                except Exception as e:
+                    messages.error(request, str(e))
 
-                messages.success(request, "Workout added successfully!")
-                
-                return redirect('workout_list')
-            except ValidationError as e:
-                form.add_error(None, str(e))
-            except Exception as e:
-                messages.error(request, f"Exceptions: {str(e)}")            
+        # Otherwise, just re-render with the populated data
+        return render(request, 'trainer/workouts/workout_add.html', {
+            'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids
+        })
 
-    else:
-        # 1. Create a blank, unsaved instance of the parent model
-        empty_workout = Workout()
-        
-        # 2. Start the form
-        form = WorkoutForm(instance=empty_workout)
-        
-        # 3. Force the formset to bind to that empty instance 
-        # AND tell it the queryset is empty.
-        formset = ExerciseFormSet(
-            instance=empty_workout, 
-            queryset=WorkoutExercise.objects.none(),
-            prefix='exercises'
-        )
-        
-        selected_tag_ids = []
-
+    # GET Request
+    form = WorkoutForm()
+    formset = ExerciseFormSet(queryset=WorkoutExercise.objects.none(), prefix='exercises')
     return render(request, 'trainer/workouts/workout_add.html', {
-        'form': form,
-        'formset': formset,
-        'selected_tag_ids': selected_tag_ids,
+        'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids
     })
+
+
+
+# def workout_add(request):
+#     selected_tag_ids = request.POST.getlist('tags_filter')
+    
+#     if request.method == "POST":
+#         post_data = request.POST.copy()
+#         sidebar_id = post_data.get('sidebar_ex_id')
+#         total_key = 'exercises-TOTAL_FORMS'
+        
+#         # 1. ADD ROW LOGIC
+#         # Triggered by either the "Add Empty Row" button OR a Sidebar click
+#         if 'add_row' in post_data or sidebar_id:
+#             try:
+#                 current_total = int(post_data.get(total_key, 0))
+#             except (ValueError, TypeError):
+#                 current_total = 0
+            
+#             # Increment the form count
+#             post_data[total_key] = str(current_total + 1)
+            
+#             # If it's a sidebar click, set the ID and fetch the defaults immediately
+#             if sidebar_id:
+#                 new_idx = current_total
+#                 post_data[f'exercises-{new_idx}-exercise'] = sidebar_id
+                
+#                 try:
+#                     ex_obj = Exercise.objects.get(id=sidebar_id)
+#                     # Use your exact DB column names: def_sets, def_reps, etc.
+#                     post_data[f'exercises-{new_idx}-pre_sets'] = ex_obj.def_sets
+#                     post_data[f'exercises-{new_idx}-pre_reps'] = ex_obj.def_reps
+#                     post_data[f'exercises-{new_idx}-pre_weight'] = ex_obj.def_weight
+#                     post_data[f'exercises-{new_idx}-pre_duration'] = ex_obj.def_duration
+#                 except Exercise.DoesNotExist:
+#                     pass
+
+#         # 2. BIND FORMS
+#         form = WorkoutForm(post_data)
+#         formset = ExerciseFormSet(post_data, prefix='exercises')
+
+#         # 3. SAVE LOGIC
+#         if 'save_workout' in post_data:
+#             if form.is_valid() and formset.is_valid():
+#                 workout = form.save(commit=False)
+#                 workout.trainer = request.user
+#                 workout.save()
+#                 formset.instance = workout
+#                 formset.save()
+#                 return redirect('workout_list')
+
+#         return render(request, 'trainer/workouts/workout_add.html', {
+#             'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids
+#         })
+
+#     # GET Request
+#     form = WorkoutForm()
+#     formset = ExerciseFormSet(queryset=WorkoutExercise.objects.none(), prefix='exercises')
+#     return render(request, 'trainer/workouts/workout_add.html', {
+#         'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids
+#     })
+
+
+
+
+
+# def workout_add(request):
+    # selected_tag_ids = request.POST.getlist('tags_filter')
+    
+    # if request.method == "POST":
+    #     post_data = request.POST.copy()
+    #     form = WorkoutForm(post_data)
+        
+    #     total_key = 'exercises-TOTAL_FORMS'
+    #     current_total = int(post_data.get(total_key, 0))
+
+    #     # --- PRE-PROCESSING: Determine if we need to add a row ---
+    #     sidebar_ex_id = post_data.get('sidebar_ex_id')
+    #     if sidebar_ex_id:
+    #         # Add a row for the sidebar selection
+    #         prefix = f'exercises-{current_total}'
+    #         post_data[total_key] = current_total + 1
+    #         post_data[f'{prefix}-exercise'] = sidebar_ex_id
+    #         current_total += 1 
+    #     elif 'add_row' in post_data:
+    #         # Add a truly empty row
+    #         post_data[total_key] = current_total + 1
+    #         current_total += 1
+
+    #     # --- THE POPULATOR: Runs for EVERY row in EVERY branch ---
+    #     # This ensures that whether from Sidebar, Add Row, or JS Change, 
+    #     # if an exercise exists but fields are empty, we fill them.
+    #     for i in range(current_total):
+    #         prefix = f'exercises-{i}'
+    #         ex_id = post_data.get(f'{prefix}-exercise')
+            
+    #         if ex_id:
+    #             # Get current values from POST
+    #             s = post_data.get(f'{prefix}-pre_sets')
+    #             r = post_data.get(f'{prefix}-pre_reps')
+    #             w = post_data.get(f'{prefix}-pre_weight')
+
+    #             # Logic: If sets is empty/0/None, we assume it needs defaults
+    #             if not s or s in ['0', '']:
+    #                 try:
+    #                     ex_obj = Exercise.objects.get(id=ex_id)
+    #                     post_data[f'{prefix}-pre_sets'] = getattr(ex_obj, 'default_sets', 5)
+    #                     post_data[f'{prefix}-pre_reps'] = getattr(ex_obj, 'default_reps', 10)
+    #                     post_data[f'{prefix}-pre_weight'] = getattr(ex_obj, 'default_weight', 0)
+    #                 except Exercise.DoesNotExist:
+    #                     pass
+
+    #     # Now that post_data is fully "fixed", initialize the formset ONCE
+    #     formset = ExerciseFormSet(post_data, prefix='exercises')
+
+    #     # --- BRANCHING: Decide what to return ---
+    #     if 'save_workout' in post_data:
+    #         if form.is_valid() and formset.is_valid():
+    #             workout = form.save(commit=False)
+    #             workout.trainer = request.user
+    #             workout.save()
+    #             formset.instance = workout
+    #             formset.save()
+    #             messages.success(request, "Workout saved successfully!")
+    #             return redirect('workout_list')
+        
+    #     # For Sidebar, Add Row, or JS Change, or Failed Validation:
+    #     return render(request, 'trainer/workouts/workout_add.html', {
+    #         'form': form,
+    #         'formset': formset,
+    #         'selected_tag_ids': selected_tag_ids,
+    #     })
+
+    # else:
+    #     # GET request
+    #     form = WorkoutForm()
+    #     formset = ExerciseFormSet(queryset=WorkoutExercise.objects.none(), prefix='exercises')
+
+    # return render(request, 'trainer/workouts/workout_add.html', {
+    #     'form': form, 'formset': formset, 'selected_tag_ids': selected_tag_ids,
+    # })
+
 # def workout_add(request):
 #     trainer = get_object_or_404(Trainer, pk=request.user.id)
     

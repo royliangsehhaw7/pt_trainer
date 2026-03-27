@@ -26,5 +26,10 @@ class Workout(models.Model):
     class Meta:
         db_table = "workouts"
 
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators to ensure they run even if modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)        
+
     def __str__(self):
         return f"Workout {self.id} for {self.client}"
