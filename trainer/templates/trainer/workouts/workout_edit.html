@@ -1,58 +1,59 @@
 {% extends 'trainer/base.html' %}
 
 {% block content %}
-   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <h3 class="mb-2 mb-sm-0">edit workout program</h3>
-        <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Back</a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h3 class="mb-2 mb-sm-0">edit workout program</h3>
+    <a href="{% url 'workout_list' %}" class="btn btn-outline-secondary">Back</a>
+</div>
 
-    <hr class="opacity-100" style="height:5px; background-color: #FF8A08;" />
+<hr class="opacity-100" style="height:5px; background-color: #FF8A08;" />
 
-    <div class="container-fluid mt-4">
+<div class="container-fluid mt-4">
+    <form id="workout-form" method="post">
+        {% csrf_token %}
+        
         <div class="row">
             <div class="col-12 col-md-4 border-end">
-                    <div class="card mb-4 border-0">
-                        <div class="card-header bg-primary text-white">
-                            <h6 class="mb-0">Select client</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label small" for="{{form.client.id_for_label}}">{{form.client.label}}</label>
-                                    {{ form.client }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small" for="{{form.scheduled_date.id_for_label}}">Scheduled Date</label>
-                                    {{ form.scheduled_date }}
-                                </div>
+                <div class="card mb-4 border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">Select client</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small" for="{{form.client.id_for_label}}">{{form.client.label}}</label>
+                                {{ form.client }}
+                                <input type="hidden" name="client" value="{{ workout.client.id }}">
                             </div>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label small" for="client-goals">Goals</label>
-                                    <textarea type="text" class="form-control" disabled readonly id="client-goals" rows="2"></textarea>
-                                </div>
+                            <div class="col-md-6">
+                                <label class="form-label small" for="{{form.scheduled_date.id_for_label}}">Scheduled Date</label>
+                                {{ form.scheduled_date }}
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12">
+                                <label class="form-label small" for="client-goals">Goals</label>
+                                <textarea class="form-control" disabled readonly id="client-goals" rows="2"></textarea>
                             </div>
                         </div>
                     </div>
-
+                </div>
             </div>
 
             <div class="col-12 col-md-8 col-lg-8">
-                <!-- <h5 class="mb-3">create workout plan</h5> -->
-                <form id="workout-form" method="post">
-                    {% csrf_token %}
-                    
-                    <input type="hidden" id="persist-tag-ids" name="tags_filter" value="{{ selected_tag_ids|join:',' }}">
+                <h3>ERRORS HEREs</h3>
+                {% include 'trainer/includes/_form_errors.html' %}
+                
+                <input type="hidden" id="persist-tag-ids" name="tags_filter" value="{{ selected_tag_ids|join:',' }}">
 
-                    <!--- client selection -->
-                    <!--- selected exercises-->
-
-                    <h5>Exercises in Workout</h5>
-                    {{ formset.management_form }}
-                    <div id="formset-container">
-                        {% for ex_form in formset %}
-                        <div class="card mb-1 p-1">
-                            <div class="row align-items-center">
+                <h5>Exercises in Workout</h5>
+                {{ formset.management_form }}
+                
+                <div id="formset-container">
+                    {% for ex_form in formset %}
+                        {{ ex_form.id }}
+                        <div class="card mb-3 p-2 shadow-sm">
+                            <div class="row align-items-center mb-2">
                                 <div class="col-md-4">
                                     {{ ex_form.exercise.label_tag }}
                                     {{ ex_form.exercise }}
@@ -72,20 +73,44 @@
                                 <div class="col-md-2">
                                     {{ ex_form.pre_duration.label_tag }}
                                     {{ ex_form.pre_duration }}
-                                </div>                                                    
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center border-top pt-2">
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        {{ ex_form.is_done }}
+                                        <label class="form-check-label" for="{{ex_form.is_done.id_for_label}}">Done?</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    {{ ex_form.actual_sets.label_tag }}
+                                    {{ ex_form.actual_sets }}
+                                </div>
+                                <div class="col-md-2">
+                                    {{ ex_form.actual_reps.label_tag }}
+                                    {{ ex_form.actual_reps }}
+                                </div>
+                                <div class="col-md-2">
+                                    {{ ex_form.actual_weight.label_tag }}
+                                    {{ ex_form.actual_weight }}
+                                </div>
+                                <div class="col-md-2">
+                                    {{ ex_form.actual_duration.label_tag }}
+                                    {{ ex_form.actual_duration }}
+                                </div>
                             </div>
                         </div>
-                        {% endfor %}
-                    </div>
+                    {% endfor %}
+                </div>
 
-                    <div class="d-flex gap-2">
-                        <!-- <button type="submit" name="add_row" class="btn btn-outline-secondary">Add Empty Row</button> -->
-                        <button type="submit" name="save_workout" class="btn btn-success flex-grow-1">Save Workout Plan</button>
-                    </div>
-                </form>
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" name="save_workout" class="btn btn-success flex-grow-1 py-2">Save Workout Plan</button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+</div>
 
 <script>
     const multiTagsElement = document.getElementById('multi-tags-container');
@@ -93,20 +118,17 @@
     const hiddenInput = document.getElementById('persist-tag-ids');
     const workoutForm = document.getElementById('workout-form');
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', () => {
+        // Auto-submit on exercise change
         document.addEventListener('change', (e) => {
             if (e.target && e.target.name && e.target.name.includes('-exercise')) {
-                console.log("Change detected in:", e.target.name);
-                document.getElementById('workout-form').submit();
+                workoutForm.submit();
             }
         });
 
-        // Load tags and handle memory
-        await get_tags(); 
-        
+        // Load existing tags
         const tagString = hiddenInput ? hiddenInput.value : "";
         const savedIds = tagString ? tagString.split(',') : [];
-
         if (savedIds.length > 0 && savedIds[0] !== "") {
             savedIds.forEach(id => {
                 const cb = document.getElementById('tag' + id);
@@ -116,15 +138,12 @@
         }
     });
 
-    // 2. SIDEBAR ACTION: Add new row and submit
     function addExerciseToWorkout(exId) {
         const totalFormsInput = document.getElementById('id_exercises-TOTAL_FORMS');
         const currentIndex = parseInt(totalFormsInput.value);
         
-        // Increment Django's management form count
         totalFormsInput.value = currentIndex + 1;
 
-        // Inject the exercise ID for the new row
         const exerciseInput = document.createElement('input');
         exerciseInput.type = 'hidden';
         exerciseInput.name = `exercises-${currentIndex}-exercise`;
@@ -134,27 +153,6 @@
         workoutForm.submit();
     }
 
-    // 3. TAGS API LOGIC
-    async function get_tags() {
-        try {
-            const res = await fetch('/tags/');
-            const data = await res.json();
-            multiTagsElement.innerHTML = data.map(tag => `
-                <div class="tag-pill-item">
-                    <input class="btn-check" type="checkbox" onchange="loadExercises()" 
-                           name="tags_filter" value="${tag.id}" id="tag${tag.id}">
-                    <label class="btn btn-outline-primary rounded-pill px-2 py-1 small" for="tag${tag.id}">
-                        ${tag.name}
-                    </label>
-                </div>
-            `).join('');
-        } 
-        catch (err) {
-            multiTagsElement.innerHTML = '<span class="text-danger">Error loading tags.</span>';
-        }
-    }
-
-    // 4. EXERCISE API LOGIC
     async function loadExercises() {
         const checkedBoxes = Array.from(document.querySelectorAll('input[name="tags_filter"]:checked'));
         const selectedIds = checkedBoxes.map(cb => cb.value);
@@ -171,18 +169,15 @@
         try {
             const res = await fetch(`/exercises/tags/?${params}`);
             const data = await res.json();
-            
             exerciseList.innerHTML = data.map(ex => `
-                <li class="card mb-2 shadow-sm border-0 p-2" style="cursor: pointer;" 
-                    onclick="addExerciseToWorkout(${ex.id})">
+                <li class="card mb-2 shadow-sm border-0 p-2" style="cursor: pointer;" onclick="addExerciseToWorkout(${ex.id})">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="small">${ex.name}</span>
                         <span class="badge bg-primary">+</span>
                     </div>
                 </li>
             `).join('');
-        } 
-        catch (err) {
+        } catch (err) {
             exerciseList.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
         }
     }

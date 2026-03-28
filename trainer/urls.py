@@ -10,7 +10,7 @@ urlpatterns = [
     path('', index_view.index, name="index"),
 
     path('index/', index_view.index, name='index'),
-    path('home/', home_view.home, name='home'),
+    path('home/', login_required(home_view.home), name='home'),
 
     # path('login/', account_view.login_page, name='login'),
     # path('register/', account_view.register_page, name='register'),

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 
-from orm.models import Exercise
+from orm.models import Exercise, ExerciseTag
 from orm.models import UserTrainer as Trainer
 from ..forms.exercise_form import ExerciseForm
 
@@ -42,16 +42,25 @@ def exercise_add(request):
         form = ExerciseForm(request.POST, trainer=trainer_instance)
         if form.is_valid():
             try:
-                exercise = form.save(commit=False)      # dont commit to db first
-                exercise.trainer = trainer_instance
+                # to maintain data integrity, using transaction
+                with transaction.atomic():
+                    exercise = form.save(commit=False)
+                    exercise.trainer = trainer_instance
+                    exercise.save()
 
-                exercise.full_clean()
-                exercise.save()
-                # this is a must for the manytomany junctioan table
-                form.save_m2m() # Django handles the hidden junction table automatically.
+                    selected_tags = form.cleaned_data.get('tags')
+                    # using manual loop thru tags coz we use a manual junction table
+                    if selected_tags:
+                        for tag in selected_tags:
+                            exercise_tag = ExerciseTag(
+                                trainer=trainer_instance, 
+                                exercise=exercise, 
+                                tag=tag
+                            )
+                            exercise_tag.save()
 
-                messages.success(request, f"Exercise '{exercise.name}' added.")
-                return redirect('exercise_list')
+                messages.success(request, f"Exercise added.")
+                return redirect('exercise_list')        # 'exercise_list' is the name of the path in urls.py
             except ValidationError as e:
                 form.add_error(None, str(e))
             except Exception as e:
@@ -67,33 +76,50 @@ def exercise_edit(request, pk):
 
     exercise = get_object_or_404(Exercise, pk=pk, trainer=trainer)
 
+
+
     if request.method == 'POST':
         form = ExerciseForm(request.POST, instance=exercise, trainer=trainer)
 
         if form.is_valid():
             try:
-                # 1. Update the main object
-                exercise = form.save(commit=False)
-                exercise.save()
+                with transaction.atomic():
+                    exercise = form.save(commit=False)
+                    exercise.trainer = trainer
+                    exercise.save()
 
-                # 2. SYNC THE TAGS
-                # This replaces: ExerciseTag.objects.filter(...).delete() 
-                # AND the manual loop to re-insert.
-                # save_m2m() identifies which tags were removed and which were added.
-                form.save_m2m()
+                    # simpler logic, remove all previous tags for this edited exercise
+                    # before inserting new ones
+                    ExerciseTag.objects.filter(
+                        exercise=exercise,
+                        trainer=trainer
+                    ).delete()
+
+                    # insert new tags
+                    selected_tags = form.cleaned_data.get('tags')
+                    if selected_tags:
+                        for tag in selected_tags:
+                            ExerciseTag.objects.create(
+                                trainer=trainer,
+                                exercise=exercise,
+                                tag=tag
+                            )
 
                 messages.success(request, f"Exercise '{exercise.name}' updated.")
-
                 return redirect('exercise_list')
             except ValidationError as e:
                 form.add_error(None, str(e))                    
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")
     else:
-        # NO MORE: initial={'tags': selected_tags}
-        # Because we passed 'instance=exercise', Django automatically
-        # pre-selects the tags currently linked to this exercise.
-        form = ExerciseForm(instance=exercise, trainer=trainer)
+        # IMPORTANT: we have to get the previously update tags and pass into the form to be marked since we are using a manual junction table
+        # get existing tag IDs for initial display
+        # selected_tags = ExerciseTag.objects.filter( exercise=exercise, trainer=trainer_instance).values_list('tag_id', flat=True)
+        selected_tags = exercise.exercise_tags.values_list("tag_id", flat=True)
+        form = ExerciseForm(
+            instance=exercise, 
+            trainer=trainer,
+            initial = {'tags': selected_tags})
 
     return render(request, 'trainer/exercise/exercise_edit.html', {'form': form})
 
@@ -117,13 +143,13 @@ def exercise_delete(request, pk):
 
 def get_exercises_params(request):
     trainer = get_object_or_404(Trainer, pk=request.user.id)
+    print(trainer.username)
     tag_ids = request.GET.getlist('tag_id')
 
-    # Cleaner lookup: 'tags' is the ManyToManyField name on the Exercise model
-    exercises = Exercise.objects.filter(
-        trainer=trainer, 
-        tags__id__in=tag_ids 
-    ).distinct()
+    # exercises = ExerciseTag.objects.filter(tag_id__in=tag_ids)
+    #                 .values('exercise__id', 'exercise__name').distinct()
+    # distinct as some tags have the same exercises - we only display the exercise once for selection
+    exercises = Exercise.objects.filter(exercise_tags__tag_id__in=tag_ids).distinct()
 
     return JsonResponse(list(exercises.values('id', 'name')), safe=False)
 

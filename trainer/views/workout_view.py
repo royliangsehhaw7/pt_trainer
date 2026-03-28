@@ -268,17 +268,26 @@ def workout_add(request):
 
 def workout_edit(request, pk):
     workout = get_object_or_404(Workout, pk=pk)
+
     if request.method == "POST":
         form = WorkoutForm(request.POST, instance=workout)
         formset = ExerciseFormSet(request.POST, instance=workout)
+
         if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            messages.success(request, "Workout updated!")
-            return redirect('workout_list')
+            try:
+                form.save()
+                formset.save()
+                messages.success(request, "Workout updated!")
+                
+                return redirect('workout_list')
+            except ValidationError as e:
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, f"Exceptions: {str(e)}")            
     else:
         form = WorkoutForm(instance=workout)
         formset = ExerciseFormSet(instance=workout)
+
     return render(request, 'trainer/workouts/workout_edit.html', {'form': form, 'formset': formset, 'workout': workout})
 
 def workout_delete(request, pk):

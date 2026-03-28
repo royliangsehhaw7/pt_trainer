@@ -46,12 +46,6 @@ class Exercise(models.Model):
         on_delete=models.CASCADE, 
         related_name='exercises'
     )
-    # many to many with tags
-    tags = models.ManyToManyField(
-        Tag,
-        related_name = "exercises",
-        db_table = "tags_exercises"
-    )
 
     class Meta:
         db_table = 'exercises'

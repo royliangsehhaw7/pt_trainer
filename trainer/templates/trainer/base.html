@@ -22,17 +22,19 @@
     </head>
 
     <body>
-        {% if user.is_authenticated %}
+        <div class="p-2">
             {% include 'trainer/includes/_nav_bar.html' %}
-        {% endif %}
+        </div>
 
         <div class="container p-3">
             <div class="row justify-content-center">
                 <div class="col-12">
                     <!-- this is onboarding cue steps -->
+                    {% if user.is_authenticated %}
                     {% block pageHeader %}
                         {% include 'trainer/includes/_stepper.html' %}
                     {% endblock %}
+                    {% endif %}
 
                     <main class="py-4">                        
                         <!-- global messages go here -->

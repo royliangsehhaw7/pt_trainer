@@ -6,7 +6,7 @@ from orm.models import UserTrainer as Trainer
 class Client(models.Model):
     trainer = models.ForeignKey(
         Trainer,
-        on_delete = models.RESTRICT,
+        on_delete = models.RESTRICT,    # no deletion of trainer if clients still exists
         related_name = "clients"
     )
 

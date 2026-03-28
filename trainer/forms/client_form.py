@@ -45,7 +45,11 @@ class ClientForm(forms.ModelForm):
         label="Goals",
         widget=forms.Textarea(attrs={"class":"form-control", "rows": 3})
     )
+    preferred_times = forms.CharField(
+        label = "Preferred Times",
+        widget= forms.Textarea(attrs={"class":"form-control", "rows": 2})
+    )
 
     class Meta:
         model = Client
-        fields=["name","email","age","weight","height","goals"]
+        fields=["name","email","age","weight","height","goals","preferred_times"]
