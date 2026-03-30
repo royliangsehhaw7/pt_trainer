@@ -32,7 +32,7 @@ def client_list(request):
     except EmptyPage:
         pager = paginator.page(paginator.num_pages)
 
-    return render(request, 'trainer/client/client_list.html', {'clients': pager, 'search': search, 'page_obj': pager})
+    return render(request, 'trainer/clients/client_list.html', {'clients': pager, 'search': search, 'page_obj': pager})
 
 
 def client_add(request):
@@ -59,7 +59,7 @@ def client_add(request):
     else:
         form = ClientForm()
 
-    return render(request, 'trainer/client/client_add.html', {'form': form})
+    return render(request, 'trainer/clients/client_add.html', {'form': form})
 
 
 def client_edit(request, pk):
@@ -88,7 +88,7 @@ def client_edit(request, pk):
     else:
         form = ClientForm(instance=client)
 
-    return render(request, 'trainer/client/client_edit.html', {'form': form})
+    return render(request, 'trainer/clientsclient_edit.html', {'form': form})
         
 
 def client_delete(request, pk):
@@ -107,7 +107,7 @@ def client_delete(request, pk):
         except Exception as e:
             messages.error(request, f"Exceptions: {str(e)}")
     
-    return render(request, 'trainer/client/client_delete.html', {'client': client})
+    return render(request, 'trainer/clients/client_delete.html', {'client': client})
 
 
 def get_client_by_id(request, pk):

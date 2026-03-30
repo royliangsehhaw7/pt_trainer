@@ -1,4 +1,4 @@
-
+from django.contrib.auth.models import Group
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -6,28 +6,35 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import authenticate, login, logout
 
-User = get_user_model()
+UserTrainer = get_user_model()
 
 def register_page(request):
     if request.method == 'POST':
 
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
+        username = request.POST.get('email')
         password = request.POST.get('password')
 
-        if User.objects.filter(username=username).exists():
+        if UserTrainer.objects.filter(username=username).exists():
             messages.error(request, "Email already taken!")
             return redirect('register')
 
-        User.objects.create_user(
+        new_userTrainer = UserTrainer.objects.create_user(
             username=username,
             email=username,
             password=password,
             first_name=first_name,
             last_name=last_name,
-            is_trainer=True
+            is_trainer=True     # rmb to set this as a trainer
         )
+
+        # 3. attach to existing 'Free' group
+        try:
+            free_group = Group.objects.get(name='Free') #default group
+            new_userTrainer.groups.add(free_group)
+        except Group.DoesNotExist:
+            print("WARNING: 'Free' group not found in DB. User created without group.")
 
         messages.success(request, "Account created successfully!")
         return redirect('login')

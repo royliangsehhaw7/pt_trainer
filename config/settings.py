@@ -99,22 +99,22 @@ DATABASES = {
     #     'HOST'      : '34.142.192.182',
     #     'PORT'      : '3306'
     # },
-    # 'default': {
-    #     'ENGINE'    : 'django.db.backends.mysql',
-    #     'NAME'      : 'db30',
-    #     'USER'      : 'root',
-    #     'PASSWORD'  : '123456',
-    #     'HOST'      : 'localhost',
-    #     'PORT'      : '3306'
-    # }     
     'default': {
         'ENGINE'    : 'django.db.backends.mysql',
         'NAME'      : 'db30',
         'USER'      : 'root',
-        'PASSWORD'  : 'returntoRL!',
-        'HOST'      : '103.3.173.137',
+        'PASSWORD'  : '123456',
+        'HOST'      : 'localhost',
         'PORT'      : '3306'
-    } 
+    }     
+    # 'default': {
+    #     'ENGINE'    : 'django.db.backends.mysql',
+    #     'NAME'      : 'db30',
+    #     'USER'      : 'root',
+    #     'PASSWORD'  : 'returntoRL!',
+    #     'HOST'      : '103.3.173.137',
+    #     'PORT'      : '3306'
+    # } 
 }
 
 

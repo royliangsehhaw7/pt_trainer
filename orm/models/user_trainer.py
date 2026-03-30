@@ -15,6 +15,12 @@ class UserTrainer(AbstractUser):
 
     class Meta:
         db_table = "user_trainers"
+        # this is very funny, we can only add permissions in the model
+        # and migration will create in the auth_permission table
+        # and NOT in the django-admin only Groups can be created there
+        permissions = [
+            ("can_use_ai", "Can use AI features")
+        ]
 
     def save(self, *args, **kwargs):
         # mnually trigger the validators to ensure they run even if modelform not used

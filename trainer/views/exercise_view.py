@@ -151,7 +151,15 @@ def get_exercises_params(request):
     # distinct as some tags have the same exercises - we only display the exercise once for selection
     exercises = Exercise.objects.filter(exercise_tags__tag_id__in=tag_ids).distinct()
 
-    return JsonResponse(list(exercises.values('id', 'name')), safe=False)
+    # return JsonResponse(list(exercises.values('id', 'name')), safe=False)
+    return JsonResponse(list(exercises.values(
+    'id',
+    'name',
+    'def_sets',
+    'def_reps',
+    'def_weight',
+    'def_duration'
+)), safe=False)
 
 
 

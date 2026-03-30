@@ -30,7 +30,7 @@ class ExerciseTag(models.Model):
 
     class Meta:
         unique_together = ('exercise', 'tag')   # THIS IS A MAST TO ENSURE DATA INTEGRITY
-        db_table = 'exercise_tags'
+        db_table = 'exercises_tags'
 
     def __str__(self):
         return f"{self.exercise.name} - {self.tag.name}"

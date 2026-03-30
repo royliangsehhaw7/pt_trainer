@@ -1,9 +1,34 @@
 {% extends 'trainer/base.html' %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/exercise.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>workout programs</h3>
-        <a href="{% url 'workout_add' %}" class="btn btn-primary">+ Add</a>
+    <!-- row 1: page title -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="mb-0">workouts</h4>
+        </div>
+    </div>
+
+    <hr class="opacity-100" style="height:2px; background-color: #FF8A08;" />
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <!-- Search Aligned Far Left -->
+        <form method="GET" action="{% url 'workout_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
+            <div class="d-flex flex-wrap">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
+                    <button type="submit" class="btn btn-outline-secondary">GO</button>
+                </div>
+            </div>
+        </form>
+
+        <a href="{% url 'exercise_add' %}" class="btn px-4" style="background-color: #FF8A08;">
+            + add
+        </a>
     </div>
 
     <div class="table-responsive">
@@ -43,4 +68,52 @@
             </tbody>
         </table>
     </div>
+
+    <!-- bootstrap 5 pagination -->
+    <div>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
+            <!-- Page Counter (Far Left) -->
+            <div class="text-muted small">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+
+            <!-- pager-->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination mb-0">                    
+                    <!-- Previous -->
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}&search={{ search }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>    
 {% endblock %}

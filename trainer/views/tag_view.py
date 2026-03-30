@@ -74,7 +74,7 @@ def tag_list(request):
     except EmptyPage:
         pager = paginator.page(paginator.num_pages)
 
-    return render(request, 'trainer/tag/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
+    return render(request, 'trainer/tags/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
 
 def tag_add(request):
     # Saas tenant - get logged in tenant for data filtering
@@ -100,7 +100,7 @@ def tag_add(request):
     else:
         form = TagForm()
 
-    return render(request, "trainer/tag/tag_add.html", {"form": form})
+    return render(request, "trainer/tags/tag_add.html", {"form": form})
 
 
 def tag_edit(request, pk):
@@ -132,7 +132,7 @@ def tag_edit(request, pk):
     else:
         form = TagForm(instance=tag)
 
-    return render(request, "trainer/tag/tag_edit.html", {"form": form})
+    return render(request, "trainer/tags/tag_edit.html", {"form": form})
 
 
 def tag_delete(request, pk):
@@ -153,7 +153,7 @@ def tag_delete(request, pk):
             messages.error(request, f"Exceptions: {str(e)}")
     
     # No form needed, just pass the object to the template for confirmation
-    return render(request, 'trainer/tag/tag_delete.html', {'tag': tag})
+    return render(request, 'trainer/tags/tag_delete.html', {'tag': tag})
 
 
 def get_tags(request):

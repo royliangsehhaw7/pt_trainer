@@ -10,19 +10,42 @@
 
     <div class="container-fluid mt-4">
         <div class="row">
-            <div class="col-12 col-md-4 border-end">
-                <h5 class="mb-3">exercise library</h5>
-                
-                <label class="fw-bold small">Filter by Tags</label>
-                <div id="multi-tags-container" class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="text-muted small">Loading tags...</span>
-                </div>
-
-                <label class="fw-bold small">Exercises</label>
-                <div class="border rounded style="max-height: 600px; overflow-y: auto;">
-                    <ul id="exercise-card-list" class="list-unstyled p-2 mb-0">
-                        <li class="text-muted small text-center py-3">Select tags to see exercises</li>
-                    </ul>
+            <div class="col-12 col-md-4 col-lg-4 border-end">                
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <h6 class="mb-3">exercise library</h6>
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <label class="fw-bold small">Filter by Tags</label>
+                                <div id="multi-tags-container" class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="text-muted small">Loading tags...</span>
+                                </div>
+                                <label class="fw-bold small">Exercises</label>
+                                <div class="border rounded style="max-height: 600px; overflow-y: auto;">
+                                    <ul id="exercise-card-list" class="list-unstyled p-2 mb-0">
+                                        <li class="text-muted small text-center py-3">Select tags to see exercises</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                <h6 class="mb-3">ai generation</h6>
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <p>Client Roles</p>
+                                <button type="button" id="generate" name="generate">Generate</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -61,6 +84,40 @@
 
                     <h5>Exercises in Workout</h5>
                     {{ formset.management_form }}
+
+                    <!-- ================================== EMPTY TEMPLATE (used for JS cloning) ========================================= -->
+                    <div id="empty-form-template" class="d-none">
+                        <div class="card mb-1 p-1 formset-row">
+                            <div class="row align-items-center">
+
+                                <div class="col-md-4">
+                                    {{ formset.empty_form.exercise }}
+                                </div>
+
+                                <div class="col-md-2">
+                                    {{ formset.empty_form.pre_sets }}
+                                </div>
+
+                                <div class="col-md-2">
+                                    {{ formset.empty_form.pre_reps }}
+                                </div>
+
+                                <div class="col-md-2">
+                                    {{ formset.empty_form.pre_weight }}
+                                </div>
+
+                                <div class="col-md-2">
+                                    {{ formset.empty_form.pre_duration }}
+                                </div>
+
+                                <button type="button" class="btn btn-sm btn-danger remove-row">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================================== FORMSET TEMPLACE ========================================= -->
                     <div id="formset-container">
                         {% for ex_form in formset %}
                         <div class="card mb-1 p-1">
@@ -95,120 +152,117 @@
                         {% endfor %}
                     </div>
 
+                    <!-- ============================  ========================================= -->
                     <div class="d-flex gap-2">
                         <!-- <button type="submit" name="add_row" class="btn btn-outline-secondary">Add Empty Row</button> -->
-                        <button type="submit" name="save_workout" class="btn btn-success flex-grow-1">Save Workout Plan</button>
+                        <button type="submit" name="save" class="btn btn-success flex-grow-1">Save Workout Plan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-<script>
-    const multiTagsElement = document.getElementById('multi-tags-container');
-    const exerciseList = document.getElementById('exercise-card-list');
-    const hiddenInput = document.getElementById('persist-tag-ids');
-    const workoutForm = document.getElementById('workout-form');
+    <script>
+        const multiTagsElement = document.getElementById('multi-tags-container');
+        const exerciseList = document.getElementById('exercise-card-list');
+        const hiddenInput = document.getElementById('persist-tag-ids');
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.name && e.target.name.includes('-exercise')) {
-                console.log("Change detected in:", e.target.name);
-                document.getElementById('workout-form').submit();
+        const formsetContainer = document.getElementById("formset-container");
+        const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
+        const totalForms = document.querySelector("input[name$='-TOTAL_FORMS']");
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await get_tags(); 
+            
+            const tagString = hiddenInput ? hiddenInput.value : "";
+            const savedIds = tagString ? tagString.split(',') : [];
+
+            if (savedIds.length > 0 && savedIds[0] !== "") {
+                savedIds.forEach(id => {
+                    const cb = document.getElementById('tag' + id);
+                    if (cb) cb.checked = true;
+                });
+                loadExercises(); 
             }
         });
 
-        // Load tags and handle memory
-        await get_tags(); 
-        
-        const tagString = hiddenInput ? hiddenInput.value : "";
-        const savedIds = tagString ? tagString.split(',') : [];
 
-        if (savedIds.length > 0 && savedIds[0] !== "") {
-            savedIds.forEach(id => {
-                const cb = document.getElementById('tag' + id);
-                if (cb) cb.checked = true;
+        function addExercise(ex) {
+            const index = parseInt(totalForms.value);
+            const newRow = emptyTemplate.cloneNode(true);
+
+            newRow.innerHTML = newRow.innerHTML.replace(/__prefix__/g, index);
+            newRow.querySelector('select').value = ex.id;
+            newRow.querySelectorAll('input').forEach(input => {
+                if (input.name.includes('pre_sets')) input.value = ex.def_sets;
+                if (input.name.includes('pre_reps')) input.value = ex.def_reps;
+                if (input.name.includes('pre_weight')) input.value = ex.def_weight;
+                if (input.name.includes('pre_duration')) input.value = ex.def_duration;
             });
-            loadExercises(); 
+
+            formsetContainer.appendChild(newRow);
+
+            totalForms.value = index + 1;
         }
-    });
+        function delExercise(ex) {
+        }    
 
-    // 2. SIDEBAR ACTION: Add new row and submit
-    function addExerciseToWorkout(exId) {
-        const totalFormsInput = document.getElementById('id_exercises-TOTAL_FORMS');
-        const currentIndex = parseInt(totalFormsInput.value);
-        
-        // Increment Django's management form count
-        totalFormsInput.value = currentIndex + 1;
 
-        // Inject the exercise ID for the new row
-        const exerciseInput = document.createElement('input');
-        exerciseInput.type = 'hidden';
-        exerciseInput.name = `exercises-${currentIndex}-exercise`;
-        exerciseInput.value = exId;
-        workoutForm.appendChild(exerciseInput);
-
-        workoutForm.submit();
-    }
-
-    // 3. TAGS API LOGIC
-    async function get_tags() {
-        try {
-            const res = await fetch('/tags/');
-            const data = await res.json();
-            multiTagsElement.innerHTML = data.map(tag => `
-                <div class="tag-pill-item">
-                    <input class="btn-check" type="checkbox" onchange="loadExercises()" 
-                           name="tags_filter" value="${tag.id}" id="tag${tag.id}">
-                    <label class="btn btn-outline-primary rounded-pill px-2 py-1 small" for="tag${tag.id}">
-                        ${tag.name}
-                    </label>
-                </div>
-            `).join('');
-        } 
-        catch (err) {
-            multiTagsElement.innerHTML = '<span class="text-danger">Error loading tags.</span>';
-        }
-    }
-
-    // 4. EXERCISE API LOGIC
-    async function loadExercises() {
-        const checkedBoxes = Array.from(document.querySelectorAll('input[name="tags_filter"]:checked'));
-        const selectedIds = checkedBoxes.map(cb => cb.value);
-        hiddenInput.value = selectedIds.join(',');
-
-        if (selectedIds.length === 0) {
-            exerciseList.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
-            return;
-        }
-
-        const params = new URLSearchParams();
-        selectedIds.forEach(id => params.append('tag_id', id));
-
-        if(selectedIds.length > 0) {
+        async function get_tags() {
             try {
-                const res = await fetch(`/exercises/tags/?${params}`);
+                const res = await fetch('/tags/');
                 const data = await res.json();
-
-                if(data.length > 0) {
-                    exerciseList.innerHTML = data.map(ex => `
-                        <li class="card mb-2 shadow-sm border-0 p-2" style="cursor: pointer;" 
-                            onclick="addExerciseToWorkout(${ex.id})">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="small">${ex.name}</span>
-                                <span class="badge bg-primary">+</span>
-                            </div>
-                        </li>
-                    `).join('');
-                }
-                else {
-                    exerciseList.innerHTML = '<li class="text-danger small text-center py-3">No exercises found for selected tag(s)</li>';
-                }
+                multiTagsElement.innerHTML = data.map(tag => `
+                    <div class="tag-pill-item">
+                        <input class="btn-check" type="checkbox" onchange="loadExercises()" 
+                            name="tags_filter" value="${tag.id}" id="tag${tag.id}">
+                        <label class="btn btn-outline-primary rounded-pill px-2 py-1 small" for="tag${tag.id}">
+                            ${tag.name}
+                        </label>
+                    </div>
+                `).join('');
             } 
             catch (err) {
-                exerciseList.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
+                multiTagsElement.innerHTML = '<span class="text-danger">Error loading tags.</span>';
             }
         }
-    }
-</script>
+        async function loadExercises() {
+            const checkedBoxes = Array.from(document.querySelectorAll('input[name="tags_filter"]:checked'));
+            const selectedIds = checkedBoxes.map(cb => cb.value);
+            hiddenInput.value = selectedIds.join(',');
+
+            if (selectedIds.length === 0) {
+                exerciseList.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
+                return;
+            }
+
+            const params = new URLSearchParams();
+            selectedIds.forEach(id => params.append('tag_id', id));
+
+            if(selectedIds.length > 0) {
+                try {
+                    const res = await fetch(`/exercises/tags/?${params}`);
+                    const data = await res.json();
+
+                    if(data.length > 0) {
+                        exerciseList.innerHTML = data.map(ex => `
+                            <li class="card mb-2 shadow-sm border-0 p-1" style="cursor: pointer;" 
+                                onclick='addExercise(${JSON.stringify(ex)})'>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small">${ex.name}</span>
+                                    <span class="badge bg-primary">+</span>
+                                </div>
+                            </li>
+                        `).join('');
+                    }
+                    else {
+                        exerciseList.innerHTML = '<li class="text-danger small text-center py-3">No exercises found for selected tag(s)</li>';
+                    }
+                } 
+                catch (err) {
+                    exerciseList.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
+                }
+            }
+        }
+    </script>
 {% endblock %}
