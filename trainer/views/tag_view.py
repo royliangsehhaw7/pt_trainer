@@ -22,8 +22,7 @@ from ..forms.tag_form import TagForm
 #     # -- normal get exercises count
 #     # tag = Tag.objects.get(id=1)
 #     # count1 = tag.exercises.count()
-#     # count2 = Exercise.objects.filter(tags__id=1).count()
-    
+#     # count2 = Exercise.objects.filter(tags__id=1).count()    
     
 #     # using annotate to create a computer property
 #     # 2. Get tags for this trainer and "attach" the count
@@ -35,36 +34,21 @@ from ..forms.tag_form import TagForm
 #     return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
 
 
-# list view with search
-"""
-def tag_list(request):
-    trainer_instance = get_object_or_404(Trainer, pk=logged_in_trainer)
-
-    search = request.GET.get('search', '')
-    if search:
-        # Use icontains for a better user search experience
-        tags = Tag.objects.filter(trainer=trainer_instance, name__icontains=search)
-    else:     
-        tags = Tag.objects.filter(trainer=trainer_instance)
-
-    return render(request, 'trainer/tag/tag_list.html', {'tags': tags, 'search': search})
-"""
-
 # list view with search and pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def tag_list(request):
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
     search = request.GET.get('search', '')
     if search:
-        # Use icontains for a better user search experience
+        # icontains to ignore char case
         tags = Tag.objects.filter(trainer=trainer, name__icontains=search).order_by('name')
     else:     
         tags = Tag.objects.filter(trainer=trainer).order_by('name')
 
-    # pagination controls
+    # page controls - paginators with model data - 4 rows per page
     paginator = Paginator(tags, 4)
-    #
     page_number = request.GET.get('page')
 
     try:
@@ -77,7 +61,7 @@ def tag_list(request):
     return render(request, 'trainer/tags/tag_list.html', {'tags': pager, 'search': search, 'page_obj': pager})
 
 def tag_add(request):
-    # Saas tenant - get logged in tenant for data filtering
+    # Saas tenant - get logged in trainer for data filtering
     trainer= get_object_or_404(Trainer, pk=request.user.id)
 
     if request.method == "POST":
@@ -86,8 +70,6 @@ def tag_add(request):
             try:
                 tag = form.save(commit=False)   # don't save yet, get the tag model
                 tag.trainer = trainer           # attach trainer here
-
-                tag.full_clean()                # triggre model validation
                 tag.save()
                 messages.success(request, "Tag added successfully!")
 
@@ -96,7 +78,6 @@ def tag_add(request):
                 form.add_error(None, str(e))
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")
-
     else:
         form = TagForm()
 
@@ -104,7 +85,7 @@ def tag_add(request):
 
 
 def tag_edit(request, pk):
-    # Saas tenant - get logged in tenant for data filtering
+    # Saas tenant - get logged in trainer for data filtering
     trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
 
     # getting data from database first
@@ -136,7 +117,7 @@ def tag_edit(request, pk):
 
 
 def tag_delete(request, pk):
-    # Saas requirement, tenant
+    # Saas tenant - get logged in trainer for data filtering
     trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
 
     # Ensure the tag belongs to this trainer before deleting
@@ -157,7 +138,7 @@ def tag_delete(request, pk):
 
 
 def get_tags(request):
-    # Saas requirement, tenant
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
     tags = Tag.objects.filter(trainer = trainer)
 

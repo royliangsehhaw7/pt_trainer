@@ -9,10 +9,13 @@ from orm.models import UserTrainer as Trainer
 
 from ..forms import ClientForm
 
+# - simulate logged in trainer
+# logged_in_trainer = 1
+
 # list view with search and pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def client_list(request):
-    # Saas tenant requirement
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     search = request.GET.get('search', '')
@@ -21,8 +24,8 @@ def client_list(request):
     else:     
         tags = Client.objects.filter(trainer=trainer).order_by('name')
 
-    # pagination controls
-    paginator = Paginator(tags, 3)
+    # page controls - paginators with model data - 4 rows per page
+    paginator = Paginator(tags, 4)
     page_number = request.GET.get('page')
 
     try:
@@ -36,7 +39,7 @@ def client_list(request):
 
 
 def client_add(request):
-    # Saas tenant requirement
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     if request.method == "POST":
@@ -44,10 +47,7 @@ def client_add(request):
         if form.is_valid():            
             try:
                 client = form.save(commit=False)    # dont save first
-                client.trainer = trainer            # attach trainer
-                # client.preferred_times = "123"
-                
-                client.full_clean()                 # trigger model validation
+                client.trainer = trainer            # attach trainer                
                 client.save()
                 messages.success(request, 'Client updated successfully')
 
@@ -63,7 +63,7 @@ def client_add(request):
 
 
 def client_edit(request, pk):
-    # Saas tenant requirement
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     # have to check if client belongs to the current logged in user
@@ -88,10 +88,11 @@ def client_edit(request, pk):
     else:
         form = ClientForm(instance=client)
 
-    return render(request, 'trainer/clientsclient_edit.html', {'form': form})
+    return render(request, 'trainer/clients/client_edit.html', {'form': form})
         
 
 def client_delete(request, pk):
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
     # Ensure the tag belongs to this trainer before deleting
@@ -111,7 +112,7 @@ def client_delete(request, pk):
 
 
 def get_client_by_id(request, pk):
-    # Saas requirement, tenant
+    # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
     client = Client.objects.get(id=pk, trainer=trainer)
 

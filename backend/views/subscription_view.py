@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
 def sub_list(request):
-    pass
+    return render(request, "backend\subscriptions\sub_list.html")
 
 def sub_add(request):
     pass

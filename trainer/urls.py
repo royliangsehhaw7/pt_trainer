@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+
 from .views import account_view, index_view, home_view
-from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view, subscription_view
+from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view
 
 from django.contrib.auth.decorators import login_required
-from orm.decorators import trainer_required
+
 
 urlpatterns = [
     path('', index_view.index, name="index"),
@@ -13,24 +14,12 @@ urlpatterns = [
     path('index/', index_view.index, name='index'),
     path('home/', login_required(home_view.home), name='home'),
 
-    # path('login/', account_view.login_page, name='login'),
-    # path('register/', account_view.register_page, name='register'),
-    # path('logout/', account_view.account_logout, name="logout"),
-    # 1. PLACE CUSTOM OVERRIDES FIRST
-    # path('accounts/password_reset/', auth_views.PasswordResetView.as_view(
-    #     template_name='trainer/registration/password_reset_form.html'
-    # ), name='password_reset'),
-    # 2. THEN INCLUDE THE REST OF THE AUTH URLS
-    path("accounts/", include("django.contrib.auth.urls")),
+    # default django auth
+    path("accounts/login/", account_view.login_page, name="login"),
     path("accounts/register/", account_view.register_page, name="register"),
+    path("accounts/", include("django.contrib.auth.urls")),
 
-    # ========== backend subscriptions
-    path('backend/subscription/', login_required(subscription_view.sub_list), name='sub_list'),
-    path('backend/subscription/add/', login_required(subscription_view.sub_add), name='sub_add'),
-    path('backend/subscription/edit/<int:pk>', login_required(subscription_view.sub_edit), name='sub_edit'),
-    path('backend/subscription/delete/<int:pk>', login_required(subscription_view.sub_delete), name='sub_delete'),
-
-    # ========== trainer processes
+    # =====================================  trainer app processes =============================================== #
     path('client/', login_required(client_view.client_list), name="client_list"),
     path('client/add/', login_required(client_view.client_add), name='client_add'),
     path("client/edit/<int:pk>/", login_required(client_view.client_edit), name="client_edit"),

@@ -11,16 +11,17 @@ class Tag(models.Model):
         # unique = True,
         # blank = True,
         # null = True,
-        # help_text = "Help for Exercise Name"    # Adds a small sub-label or hint below the input field
+        # help_text = "Help for Exercise Name"    # if needed, can display on form later
 
-        # we can add servre side validation model ONLY validation, nothing to do with db
+        # this validators are onyl model level validation, nothing to do with db
         validators = [MinLengthValidator(4), MaxLengthValidator(50)]
     )
     
     # saas requirement - tenant
     trainer = models.ForeignKey(
         Trainer, 
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,      # no deletion of trainer if tags still exists (DB and model)
+                                        # PROTECT only for django model checks
         related_name='tags'
     ) 
     
@@ -29,7 +30,7 @@ class Tag(models.Model):
 
 
     def save(self, *args, **kwargs):
-        # mnually trigger the validators to ensure they run even if modelform not used
+        # mnually trigger the validators when modelform not used
         self.full_clean() 
         super().save(*args, **kwargs)        
 

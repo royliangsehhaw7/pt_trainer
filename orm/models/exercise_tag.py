@@ -7,12 +7,6 @@ from .tag import Tag
 # Junction table for Tags and Exercises
 
 class ExerciseTag(models.Model):
-    # saas requirement - tenant
-    trainer = models.ForeignKey(
-        Trainer, 
-        on_delete=models.CASCADE, 
-        related_name='exercises_tags'
-    )
     exercise = models.ForeignKey(
         Exercise, 
         on_delete=models.CASCADE, 
@@ -24,9 +18,10 @@ class ExerciseTag(models.Model):
         related_name="tag_exercises"
     )
     
-    # # Your extra columns
+    # # can add additional columns if needed
     # added_at = models.DateTimeField(auto_now_add=True)
     # is_featured = models.BooleanField(default=False)
+
 
     class Meta:
         unique_together = ('exercise', 'tag')   # THIS IS A MAST TO ENSURE DATA INTEGRITY

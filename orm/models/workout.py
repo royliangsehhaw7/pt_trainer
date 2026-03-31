@@ -6,12 +6,12 @@ from .client import Client
 class Workout(models.Model):
     trainer = models.ForeignKey(
         Trainer,
-        on_delete = models.CASCADE,
+        on_delete = models.PROTECT,     # cannot delete trainer if workouts still exists
         related_name = 'workouts'
     )
     client = models.ForeignKey(
         Client,
-        on_delete = models.CASCADE,
+        on_delete = models.PROTECT,     # cannot delete client if workouts still exists
         related_name = "workouts"
     )
 
@@ -27,7 +27,7 @@ class Workout(models.Model):
         db_table = "workouts"
 
     def save(self, *args, **kwargs):
-        # mnually trigger the validators to ensure they run even if modelform not used
+        # mnually trigger the validators when modelform not used
         self.full_clean() 
         super().save(*args, **kwargs)        
 

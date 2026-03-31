@@ -11,7 +11,7 @@ class WorkoutExercise(models.Model):
     )
     exercise = models.ForeignKey(
         Exercise,
-        on_delete = models.CASCADE,
+        on_delete = models.RESTRICT,
         related_name = 'workout_exercises'
     )
 
@@ -65,7 +65,7 @@ class WorkoutExercise(models.Model):
         db_table = "workout_exercises"
 
     def save(self, *args, **kwargs):
-        # mnually trigger the validators to ensure they run even if modelform not used
+        # mnually trigger the validators even if modelform not used
         self.full_clean() 
         super().save(*args, **kwargs)
 

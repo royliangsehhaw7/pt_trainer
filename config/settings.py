@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     'orm',
     'trainer',
+    'backend'
 ]
 
 MIDDLEWARE = [

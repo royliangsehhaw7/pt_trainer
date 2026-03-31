@@ -8,10 +8,10 @@ class UserTrainer(AbstractUser):
     # email, 
     # first_name, 
     # last_name
-    # is_active, is_staff, is_superuser, groups
+    # is_active, is_staff, is_superuser
     # date_joined, last_login
 
-    is_trainer = models.BooleanField(default=False)
+    is_trainer = models.BooleanField(default=False) # to identify as tenant of saas
 
     class Meta:
         db_table = "user_trainers"
@@ -23,7 +23,7 @@ class UserTrainer(AbstractUser):
         ]
 
     def save(self, *args, **kwargs):
-        # mnually trigger the validators to ensure they run even if modelform not used
+        # mnually trigger the validators if modelform not used, when using objec save
         self.full_clean() 
         super().save(*args, **kwargs)
 
