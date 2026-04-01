@@ -1,0 +1,139 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center">
+            <h3 class="mb-0">trainers</h3>
+        </div>
+    </div>
+
+    <hr class="opacity-100" style="height:2px;" />
+
+    <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        
+        <div class="flex-grow-1">
+            <form method="GET" action="#" class="d-flex gap-2" style="max-width: 600px;">
+                
+                <input type="text" name="search" value="{{search}}" 
+                    class="form-control form-control-sm flex-grow-1" 
+                    placeholder="search name...">
+                
+                <select name="subscriptionType" class="form-select form-select-sm w-auto" style="opacity: 0.8;">
+                    <option value="" selected>type</option>
+                    <option value="Free">Free</option>
+                    <option value="Premium">Premium</option>
+                </select>
+                
+                <button type="submit" class="btn btn-sm btn-outline-secondary px-3">go</button>
+                
+            </form>
+        </div>
+
+        <div class="text-end">
+            <a href="{% url 'subscription_add' %}" class="btn btn-primary px-4">
+                add
+            </a>
+        </div>
+
+    </div>
+
+    <!-- trainer card list -->
+    <div class="container-fluid mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for trainer in trainers %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title mb-1 text-primary">
+                                        {{ trainer.first_name }} {{ trainer.last_name }}
+                                    </h6>
+                                    <p class="card-subtitle text-muted mb-2">
+                                        <i class="bi bi-envelope"></i> {{ trainer.email }}
+                                    </p>
+                                </div>
+                                <span class="badge {% if trainer.groups.first.name == 'Premium' %} bg-warning {% endif %} text-dark">
+                                    {{ trainer.groups.first.name }}
+                                </span>
+                                <span class="badge {% if trainer.is_active == 0 %} bg-danger text-white {% endif %} text-dark">
+                                    {% if trainer.is_active %} Active {% else %} NotActive {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <!-- Left Side -->
+                            <div>
+                            <span class="mb-0 display-6">{{ trainer.client_count }}</span><span>clients</span>
+
+                            </div>
+
+                            <!-- Right Side -->
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'subscription_edit' trainer.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'subscription_delete' trainer.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-light text-center py-5 shadow-sm">
+                        <p class="mb-0 text-muted">No trainers found</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr class="opacity-100" style="height:2px;" />
+
+    <!-- bootstrap 5 pagination -->
+    <div>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
+            <!-- Page Counter (Far Left) -->
+            <div class="text-muted small">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+
+            <!-- pager-->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination mb-0">                    
+                    <!-- Previous -->
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}&search={{ search }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>    
+{% endblock %}
