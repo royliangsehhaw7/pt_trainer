@@ -1,0 +1,110 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+    <!-- row 1: page title -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3 class="mb-0">appointments</h3>
+        </div>
+    </div>
+
+    <hr class="opacity-100" style="height:2px; background-color: #F971B0;" />
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <!-- Search Aligned Far Left -->
+        <form method="GET" action="{% url 'appointment_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
+            <div class="input-group">
+                <input type="text" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
+                <button type="submit" class="btn btn-outline-secondary">GO</button>
+            </div>
+        </form>
+
+        <a href="{% url 'appointment_add' %}" class="btn px-4" style="background-color: #F971B0">
+            add
+        </a>
+    </div>
+
+    <!-- row 3: main tags list -->
+    <div class="table-responsive mt-4">
+        <table class="table table-hover table-red-borders shadow-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>Date</th>
+                    <th class="text-end">actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td class="text-break">{{ appointment.name }}</td>
+                    <td class="text-break">{{ appointment.email }}</td>
+                    <td class="text-break"></td>
+                    <td class="text-end">
+                        <div class="btn-group flex-column flex-sm-row">
+                            <a href="{% url 'appointment_edit' client.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>
+                            <a href="{% url 'appointment_delete' client.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">No clients</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- row 4: pagination -->
+    <div>
+        <!-- Container for Counter (Left) and Pager (Right) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
+            <!-- Page Counter (Far Left) -->
+            <div class="text-muted small">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <!-- Pager (Far Right) -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination mb-0">
+                    
+                    <!-- Previous -->
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}&search={{ search }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 fw-bold text-dark">{{ target_date|date:"F Y" }}</h5>
+            <div>
+                <!-- Navigation buttons -->
+                <a href="?month={{ prev_month }}&year={{ year }}" class="btn btn-sm btn-outline-secondary">&laquo;</a>
+                <a href="?month={{ next_month }}&year={{ year }}" class="btn btn-sm btn-outline-secondary">&raquo;</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0" style="table-layout: fixed;">
+                <thead class="table-light text-center text-uppercase small fw-bold">
+                    <tr>
+                        <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in matrix %}
+                        <tr>
+                            {% for day in week %}
+                                <td class="p-2 {% if day == 0 %}bg-light-subtle{% endif %}" 
+                                    style="min-height: 100px; height: 1px; vertical-align: top;">
+                                    
+                                    {% if day != 0 %}
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="fw-bold {% if day == today.day and month == today.month %}text-primary{% else %}text-muted{% endif %}">
+                                                {{ day }}
+                                            </span>
+                                            <!-- URL with date parameters for the add form -->
+                                            <a href="{% url 'appointment_add' %}?date={{ year }}-{{ month }}-{{ day }}" 
+                                               class="text-decoration-none text-primary fw-bold" style="font-size: 1.1rem; line-height: 1;">
+                                                +
+                                            </a>
+                                        </div>
+
+                                        <div class="appointment-container">
+                                            {% for day_num, appts in appt_dict.items %}
+                                                {% if day_num == day %}
+                                                    {% for appt in appts %}
+                                                        <div class="badge w-100 text-start mb-1 shadow-sm 
+                                                            {% if appt.time_slot == 'MORNING' %}bg-info-subtle text-info-emphasis
+                                                            {% elif appt.time_slot == 'AFTERNOON' %}bg-primary-subtle text-primary-emphasis
+                                                            {% else %}bg-dark text-white{% endif %} 
+                                                            p-1 border-0" 
+                                                            style="font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            <!-- Display time slot first letter and client name -->
+                                                            <strong>{{ appt.get_time_slot_display|first }}</strong> | {{ appt.client.name }}
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Table styling for better layout */
+    .table {
+        height: 100%;
+        min-width: 800px; /* Prevents squishing on small screens */
+    }
+    
+    td:hover {
+        background-color: rgba(13, 110, 253, 0.03) !important;
+    }
+
+    /* Container for the badges within each day cell */
+    .appointment-container {
+        max-height: 120px;
+        overflow-y: auto;
+    }
+    
+    /* Scrollbar styling for a cleaner look */
+    .appointment-container::-webkit-scrollbar { width: 3px; }
+    .appointment-container::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 10px; }
+</style>
+{% endblock %}

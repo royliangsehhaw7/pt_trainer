@@ -7,3 +7,5 @@ from .exercise_tag import *
 
 from .workout import *
 from .workout_exercise import *
+
+from .appointment import *

@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 from .views import account_view, index_view, home_view
-from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view
+from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view, appointment_view
 
 from django.contrib.auth.decorators import login_required
 
@@ -50,4 +50,13 @@ urlpatterns = [
     path('workout/add/', workout_view.workout_add, name='workout_add'),
     path('workout/<int:pk>/edit/', workout_view.workout_edit, name='workout_edit'),
     path('workout/<int:pk>/delete/', workout_view.workout_delete, name='workout_delete'),
+
+    path('appointment/', appointment_view.appoint_list, name='appointment_list'),
+    path('appointment/add/', appointment_view.appoint_add, name='appointment_add'),
+    path('appointment/<int:pk>/edit/', appointment_view.appoint_edit, name='appointment_edit'),
+    path('appointment/<int:pk>/delete/', appointment_view.appoint_delete, name='appointment_delete'),
+
+    path('calendar/', appointment_view.calendar_view, name='calendar'),
+    path('calendar_json', appointment_view.calendar_json_view, name='calendar_json'),
+    path('calendar_full/', appointment_view.calendar_full_view, name='calendar_full')
 ]
