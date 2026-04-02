@@ -4,7 +4,8 @@ from orm.models import Exercise, Tag
 
 class ExerciseForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.none(),  # will set dynamically in __init__
+        # queryset = Tag.objects.all(),
+        queryset=Tag.objects.none(),        # have to pass in filtered tags based on trainer
         # widget=forms.CheckboxSelectMultiple()
         widget=forms.CheckboxSelectMultiple(attrs={"class": "btn-check"})
     )
@@ -31,15 +32,10 @@ class ExerciseForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"})
     )        
 
-
-    # option 1
-    # name = forms.TextInput(attrs={"class": "form-control", "placeholder": "Exercise name"})
-
     class Meta:
         model = Exercise
         fields = ["name", "instructions", "def_sets", "def_reps", "def_weight", "def_duration", "tags"]
         widgets = {
-            # option 2
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Exercise Name"}
             ),
@@ -53,14 +49,14 @@ class ExerciseForm(forms.ModelForm):
 
         # have to remote this trainer from **kwargs
         # we use this trainer to filter exercises for this trainer only (Saas)
-        trainer = kwargs.pop("trainer", None)
+        trainer_tags = kwargs.pop("trainer_tags", None)
         # when calling superclass/parent, **kwargs can be only one item
         # we have remove the trainer from **kwargs using pop above
         super().__init__(*args, **kwargs)
 
-        if trainer:
+        if trainer_tags:
             # this will create a list of tags when used in the template
-            self.fields['tags'].queryset = Tag.objects.filter(trainer=trainer)
+            self.fields['tags'].queryset = trainer_tags
 
         # # Apply Bootstrap invalid class automatically
         # for field_name, field in self.fields.items():

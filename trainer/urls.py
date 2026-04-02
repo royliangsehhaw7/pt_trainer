@@ -57,6 +57,6 @@ urlpatterns = [
     path('appointment/<int:pk>/delete/', appointment_view.appoint_delete, name='appointment_delete'),
 
     path('calendar/', appointment_view.calendar_view, name='calendar'),
-    path('calendar_json', appointment_view.calendar_json_view, name='calendar_json'),
+    path('calendar_json/', appointment_view.calendar_json_view, name='calendar_json'),
     path('calendar_full/', appointment_view.calendar_full_view, name='calendar_full')
 ]

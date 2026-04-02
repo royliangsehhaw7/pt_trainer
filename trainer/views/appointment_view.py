@@ -1,38 +1,58 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 import calendar
 from django.http import JsonResponse
 from datetime import date
-from orm.models import Appointment
+from orm.models import Appointment, Trainer, Client
 from ..forms import AppointmentForm
 from django.contrib import messages
 from django.urls import reverse
+from django.core.validators import ValidationError
 
 def appoint_list(request):
     return render(request, 'trainer/appointments/appointment_list.html', {})
+
 def appoint_add(request):
-# If coming from a calendar click, we might have a date in the URL
+    trainer = get_object_or_404(Trainer, pk = request.user.id)
+    trainer_clients = Client.objects.filter(trainer = trainer)
+
+    # If coming from a calendar click, we might have a date in the URL
     initial_date = request.GET.get('date') 
     
     if request.method == 'POST':
-        form = AppointmentForm(request.POST)
+        form = AppointmentForm(request.POST, trainer_clients = trainer_clients)
         if form.is_valid():
-            # The Save method will trigger the Database UniqueConstraint check
             try:
-                # Set end_date manually before saving since it's required in your model
                 appointment = form.save(commit=False)
-                appointment.end_date = appointment.start_date
+                appointment.trainer = trainer
                 appointment.save()
                 messages.success(request, "Appointment scheduled successfully!")
-                return redirect('calendar')
+
+                return redirect('appointment_list')
+            except ValidationError as e:
+                form.erros.add(None, str(e))
             except Exception:
-                form.add_error(None, "This slot is already booked for this client or trainer.")
+                messages.error(request, f"Exceptions: {str(e)}")
     else:
-        form = AppointmentForm(initial={'start_date': initial_date})
+        form = AppointmentForm(trainer_clients = trainer_clients, initial={'start_date': initial_date})
 
     return render(request, 'trainer/appointments/appointment_add.html', {'form': form})
+
 def appoint_edit(request):
     return render(request, 'trainer/appointments/appointment_edit.html', {})
-def appoint_delete(request):
+
+def appoint_delete(request, pk):
+    # Ensure the tag belongs to this trainer before deleting
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if request.method == "POST":
+        try:
+            appointment.delete()
+            messages.success(request, f"Appointment deleted.")
+            
+            return redirect('appointment_list')
+        except Exception as e:
+            messages.error(request, f"Exceptions: {str(e)}")
+    
     return render(request, 'trainer/appointments/appointment_delete.html', {})
 
 
@@ -46,7 +66,7 @@ def calendar_view(request):
     matrix = cal.monthdayscalendar(year, month) 
 
     # Keep all other logic exactly the same
-    appointments = Appointment.objects.filter(start_date__year=year, start_date__month=month)
+    appointments = Appointment.objects.filter(scheduled_date__year=year, scheduled_date__month=month)
     
     appt_dict = {}
     for appt in appointments:
@@ -89,11 +109,11 @@ def calendar_json_view(request):
         events.append({
             'id': str(appt.id),
             'title': f"{appt.scheduled_time[0]} | {appt.client.name}",
-            'start': appt.start_date.isoformat(), # Must be YYYY-MM-DD
-            'end': appt.end_date.isoformat(),
+            'start': appt.scheduled_date.isoformat(),   # Must be YYYY-MM-DD
+            'end': appt.scheduled_date.isoformat(),     # eaach appointment is only for one day
             'backgroundColor': color,
             'borderColor': color,
-            'allDay': True, # Since you only have dates, not times
+            'allDay': True,             # Since we three time blocks (M/F/N)
             'url': reverse('appointment_edit', kwargs={'pk': appt.id}),
         })
         

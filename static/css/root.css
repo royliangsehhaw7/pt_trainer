@@ -1,17 +1,26 @@
-/* app.css */
-
+/* root.css */
 
 :root {
-  /* 1. Segoe UI: Standard Windows
-     2. -apple-system / BlinkMacSystemFont: Standard Mac/iOS
-     3. Roboto: Standard Android
-     4. sans-serif: The generic fallback
-  */
   --bs-body-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* --- FullCalendar Global Dark Theme Variables --- */
+  --fc-page-bg-color: #212529;
+  --fc-border-color: #495057;
+  --fc-neutral-bg-color: #2c3034;
+  --fc-neutral-text-color: #adb5bd;
+  --fc-button-bg-color: #198754; 
+  --fc-button-border-color: #198754;
+  --fc-button-hover-bg-color: #157347;
+  --fc-button-active-bg-color: #146c43;
+  --fc-event-bg-color: #198754;
+  --fc-event-border-color: #198754;
+  --fc-event-text-color: #fff;
+  --fc-today-bg-color: rgba(25, 135, 84, 0.1);
+  --fc-small-font-size: 0.85rem;
 }
+
 body {
   font-family: var(--bs-body-font-family);
-  /* Optional: Segoe UI looks better with a slightly cleaner rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -20,35 +29,98 @@ body {
     opacity: 0.6 !important;
     font-weight: 100;
 }
+
 .col-form-label {
     opacity: 0.6 !important; 
 }
 
 
 
-/* :root {
-  --bs-body-font-family: "Roboto", "Segoe UI", system-ui, -apple-system,  Arial, sans-serif;
+
+/* ==========================================================================
+   AI: FullCalendar 6 Custom Overrides
+   ========================================================================== */
+
+/* 1. Force Full Width */
+#calendar {
+    width: 100% !important;
+    display: block !important;
 }
-body {
-  font-family: "Segoe UI", "Roboto", sans-serif !important;
-} */
 
-/* 3. Force headings to scale down too (Bootstrap headings don't always follow the body variable) */
-/* h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-    font-family: var(--bs-body-font-family);
-    font-weight: 600; 
-} */
+.fc-view-harness, 
+.fc-view-harness-active, 
+.fc-scroller, 
+.fc-scroller-harness, 
+.fc-scrollgrid, 
+.fc-list-table {
+    width: 100% !important;
+    min-width: 100% !important;
+}
 
-/* 4. Ensure inputs and buttons match the small Segoe font */
-/* .form-control, .form-select, .btn, .table {
+/* 2. Clean up Day Headers (No Underline + Smaller Font) */
+.fc-list-day-cushion {
+    background-color: #2c3034 !important;
+    padding: 8px 12px !important;
+}
+
+/* Remove underlines from the header links */
+.fc-list-day-cushion a {
+    text-decoration: none !important;
+    box-shadow: none !important;
+    color: #198754 !important;
+    font-weight: 600;
+    font-size: 0.9rem !important;
+}
+
+/* 3. Event Styling (No Underline + Smaller Font) */
+.fc-list-event-title {
+    font-size: 0.85rem !important;
+}
+
+.fc-list-event-title a {
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+/* 4. Table UI Fixes */
+.fc-theme-bootstrap5 thead {
+    background-color: transparent !important;
+}
+
+.fc-list-event:hover td {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* --- Grid View Fixes (Week/Month) --- */
+
+/* 1. Remove underline from top headers (Sun 3/29, Mon 3/30, etc.) */
+.fc-col-header-cell-cushion {
+    text-decoration: none !important;
+    color: #198754 !important; /* Your success green */
+    font-size: 0.85rem !important;
+    font-weight: 600;
+}
+
+/* 2. Remove underline from the blue/cyan event blocks */
+.fc-daygrid-event {
+    text-decoration: none !important;
+}
+
+.fc-event-title, .fc-event-main {
+    text-decoration: none !important;
+}
+
+/* 3. If the dates inside the squares (in Month view) are underlined */
+.fc-daygrid-day-number {
+    text-decoration: none !important;
+    color: #adb5bd !important; /* Muted text color */
     font-size: 0.8rem !important;
-} */
-
-
-
-/* 200, 200, 200 is a light gray base. 0.4 is 40% opacity. */
-/* .card {
-    border: 1px solid rgba(200, 200, 200, 0.2); 
-    border-radius: 6px;
 }
- */
+
+/* 4. Fix hover state so it doesn't reappear */
+.fc-col-header-cell-cushion:hover,
+.fc-daygrid-day-number:hover,
+.fc-event:hover {
+    text-decoration: none !important;
+    color: inherit;
+}

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 
-from orm.models import Exercise, ExerciseTag
+from orm.models import Exercise, ExerciseTag, Tag
 from orm.models import UserTrainer as Trainer
 from ..forms.exercise_form import ExerciseForm
 
@@ -25,7 +25,7 @@ def exercise_list(request):
         exercises = Exercise.objects.filter(trainer=trainer).order_by('name')
     
     # page controls - paginators with model data - 4 rows per page
-    paginator = Paginator(exercises, 3)
+    paginator = Paginator(exercises, 4)
     page_number = request.GET.get('page')
 
     try:
@@ -38,16 +38,16 @@ def exercise_list(request):
     return render(request, 'trainer/exercise/exercise_list.html', {'exercises': pager, 'search': search, 'page_obj': pager})
 
 def exercise_add(request):
-    trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
 
     if request.method == 'POST':
-        form = ExerciseForm(request.POST, trainer=trainer_instance)
+        form = ExerciseForm(request.POST, trainer=trainer)
         if form.is_valid():
             try:
                 # to maintain data integrity, using transaction
                 with transaction.atomic():
                     exercise = form.save(commit=False)
-                    exercise.trainer = trainer_instance
+                    exercise.trainer = trainer
                     exercise.save()
 
                     # junction table
@@ -56,7 +56,7 @@ def exercise_add(request):
                     if selected_tags:
                         for tag in selected_tags:
                             exercise_tag = ExerciseTag(
-                                trainer=trainer_instance, 
+                                trainer=trainer, 
                                 exercise=exercise, 
                                 tag=tag
                             )
@@ -69,7 +69,8 @@ def exercise_add(request):
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")
     else:
-        form = ExerciseForm(trainer=trainer_instance)
+        trainer_tags = Tag.objects.filter(trainer = trainer)
+        form = ExerciseForm(trainer_tags=trainer_tags)
 
     return render(request, 'trainer/exercise/exercise_add.html', {'form': form})
 
@@ -119,9 +120,11 @@ def exercise_edit(request, pk):
         # get existing tag IDs for initial display
         # selected_tags = ExerciseTag.objects.filter( exercise=exercise, trainer=trainer_instance).values_list('tag_id', flat=True)
         selected_tags = exercise.exercise_tags.values_list("tag_id", flat=True)
+        #
+        trainer_tags = Tag.objects.filter(trainer=trainer)
         form = ExerciseForm(
             instance=exercise, 
-            trainer=trainer,
+            trainer_tags=trainer_tags,
             initial = {'tags': selected_tags})  # pass in previously selected tags here as initial
 
     return render(request, 'trainer/exercise/exercise_edit.html', {'form': form})

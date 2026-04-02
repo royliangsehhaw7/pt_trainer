@@ -15,15 +15,13 @@ class Appointment(models.Model):
         on_delete = models.CASCADE,
         related_name = "appointments"
     )
-
     client = models.ForeignKey(
         Client,
         on_delete = models.CASCADE,
         related_name = "appointments"
     )
 
-    start_date = models.DateField()
-    end_date = models.DateField()
+    scheduled_date = models.DateField()
     scheduled_time = models.CharField(
         max_length=12,
         choices = PREFERRED_TIMES,
@@ -31,14 +29,16 @@ class Appointment(models.Model):
     )
 
     class Meta:
-        # ????? workable to ensure no double booking at least for the same client ?????
-        # unique_together = ['client_id', 'start_date', 'scheduled_time']
+        # ????? workable to ensure no double booking ?????
+        unique_together = ['scheduled_date', 'scheduled_time']
         db_table  = "appointments"
 
 
-    def clean():
-        pass
-    def save():
-        pass
+    def clean(self):
+        super().clean()
+    
+    def save(self):
+        super().save()
+
     def __str__(self):
         return f"Appointment"

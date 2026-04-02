@@ -32,7 +32,7 @@
         left: 'prev,next today',
         center: 'title',
         // FIX 2: Swap timeGridWeek for dayGridWeek here too
-        right: 'dayGridMonth,dayGridWeek,listMonth' 
+        right: 'dayGridMonth,dayGridWeek' 
       },
 
       events: '{% url "calendar_json" %}', 
@@ -54,77 +54,4 @@
 });
 
 </script>
-
-<style>
-/* 1. Target the top-level row and its nested table structure */
-    .fc-scrollgrid-section-header, 
-    .fc-scrollgrid-section-header th, 
-    .fc-scrollgrid-section-header td,
-    .fc-col-header,
-    .fc-col-header thead,
-    .fc-col-header tr {
-        background-color: transparent !important;
-        background: none !important;
-        border-top: none !important;
-    }
-
-    /* 2. Remove underline from the Date Numbers (1, 2, 3...) in the grid */
-    .fc .fc-daygrid-day-number,
-    .fc .fc-daygrid-day-number:hover,
-    .fc .fc-daygrid-day-number:focus {
-        border-bottom: none !important;
-    }
-
-    /* 3. The "Nuclear" reset for the calendar container */
-    #calendar a {
-        text-decoration: none !important;
-        box-shadow: none !important;
-    }
-
-
-    /* 1. Shrink the Header Text and Buttons */
-    .fc .fc-toolbar-title {
-        font-size: 1.1rem !important;
-        font-weight: 700;
-        color: #334155;
-    }
-    .fc .fc-button {
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.8rem !important;
-        text-transform: capitalize;
-    }
-
-    /* 2. Compact the Day Cells */
-    .fc .fc-daygrid-day-number {
-        font-size: 0.75rem;
-        padding: 4px !important;
-        color: #64748b;
-    }
-    .fc .fc-col-header-cell-cushion {
-        font-size: 0.65rem;
-        /* text-transform: uppercase; */
-        letter-spacing: 0.05em;
-        /* color: #94a3b8; */
-        padding: 8px 0 !important;
-    }
-
-    /* 3. Professional Event Badges (Flat Design) */
-    .fc-event {
-        border-radius: 4px !important;
-        border: none !important;
-        padding: 2px 5px !important;
-        font-size: 0.7rem !important;
-        margin: 1px 2px !important;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    
-    /* 4. Highlight Today subtly */
-    .fc .fc-day-today {
-        background-color: rgba(13, 110, 253, 0.04) !important;
-    }
-
-    /* 5. Clean up the scrollbar inside the calendar */
-    .fc-scroller::-webkit-scrollbar { width: 4px; }
-    .fc-scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-</style>
 {% endblock %}

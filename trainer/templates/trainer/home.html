@@ -108,18 +108,54 @@
             <div class="card h-100 bg-dark shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title text-success">Upcoming Appointments</h5>
-                    <p class="card-text text-body-secondary">Full width on mobile, half width on desktop.</p>
+            <div class="card h-100 bg-dark shadow-sm">
+                <div class="card-body" id="calendar">
+                </div>
+            </div>
                 </div>
             </div>
         </div>
         <div class="col">
-            <div class="card h-100 bg-dark shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-success">Calendar</h5>
-                    <p class="card-text text-body-secondary">List of trainers awaiting approval from the staff.</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      // FIX 1: Use dayGridWeek instead of timeGridWeek
+      initialView: 'listMonth',
+      
+    //   aspectRatio: 2, 
+      displayEventTime: false, 
+      height: 'auto',
+
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        // FIX 2: Swap timeGridWeek for dayGridWeek here too
+        right: 'listMonth' 
+      },
+
+      events: '{% url "calendar_json" %}', 
+      themeSystem: 'bootstrap5',
+      
+      dateClick: function(info) {
+        window.location.href = "{% url 'appointment_add' %}?date=" + info.dateStr;
+      },
+      
+    //   eventClick: function(info) {
+    //     if (info.event.url) {
+    //       info.jsEvent.preventDefault();
+    //       window.location.href = info.event.url;
+    //     }
+    //   }
+    });
+
+    calendar.render();
+});
+
+</script>
 {% endblock %}

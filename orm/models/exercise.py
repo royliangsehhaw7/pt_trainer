@@ -13,7 +13,7 @@ class Exercise(models.Model):
         # help_text = "Help for Exercise Name"    # can display later on form
 
         # we can add servre side validation model ONLY validation, nothing to do with db
-        validators = [MinLengthValidator(4), MaxLengthValidator(100)]
+        validators = [MinLengthValidator(4), MaxLengthValidator(80)]
     )
     instructions = models.TextField()
 

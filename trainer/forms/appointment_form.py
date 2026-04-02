@@ -1,19 +1,28 @@
 from django import forms
-from orm.models import Appointment
+from orm.models import Appointment, Client
 
 class AppointmentForm(forms.ModelForm):
+    client = forms.ModelChoiceField(
+        queryset = Client.objects.none(),
+        widget = forms.Select(attrs={"class":"form-select"})
+    )
+
     class Meta:
         model = Appointment
-        fields = ['client', 'start_date', 'scheduled_time']
+        fields = ['client', 'scheduled_date', 'scheduled_time']
         widgets = {
-            # Use the HTML5 date picker (no JS needed)
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'client': forms.Select(attrs={'class': 'form-select'}),
+            # 'clients': forms.Select(attrs={'class': 'form-select'}),
+            'scheduled_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), # normal html date picker
             'scheduled_time': forms.Select(attrs={'class': 'form-select'}),
         }
 
-    def clean(self):
-        cleaned_data = super().clean()
-        # We also set end_date equal to start_date for simple daily slots
-        cleaned_data['end_date'] = cleaned_data.get('start_date')
-        return cleaned_data
+    def __init__(self, *args, **kwargs):
+                # have to remote this trainer from **kwargs
+        # we use this trainer to filter exercises for this trainer only (Saas)
+        trainer_clients = kwargs.pop("trainer_clients", None)
+        # when calling superclass/parent, **kwargs can be only one item
+        # we have remove the trainer from **kwargs using pop above
+        super().__init__(*args, **kwargs)
+
+        if trainer_clients:
+            self.fields['client'].queryset = trainer_clients

@@ -107,4 +107,4 @@ Create a new app
 Social Login
 =============================================================================================
 REFERENCES:
-    --- 
+    --- https://python-social-auth.readthedocs.io/en/latest/configuration/django.html

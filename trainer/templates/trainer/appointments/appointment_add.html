@@ -19,9 +19,10 @@
                         {% endif %}
 
                         {% for field in form %}
-                            <div class="mb-3">
-                                <label class="form-label">{{ field.label }}</label>
+                            <div class="mb-3 row">
+                                <label class="col-form-label">{{ field.label }}</label>
                                 {{ field }}
+
                                 {% if field.errors %}
                                     <div class="text-danger small">{{ field.errors|striptags }}</div>
                                 {% endif %}
@@ -30,7 +31,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success">Confirm Booking</button>
-                            <a href="{% url 'calendar' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="{% url 'appointment_list' %}" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
