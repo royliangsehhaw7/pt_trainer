@@ -1,0 +1,47 @@
+
+4/4/2026
+    ---- Project Setup
+        --- static folder
+            --- settings.py
+
+    ---- Global settings
+        --- messages
+        --- 
+
+    ---- shared css
+        --- static\
+            --- css\
+                --- root.css
+                --- exercise.css
+                --- tag.css
+                --- client.css
+                --- workout.css
+                --- appointment.css
+                
+    ---- shared htmls
+        --- includes
+            --- _nav_bar.html
+            --- _form_errors.html
+            --- _pagination.html
+            --- _stepper.html
+
+    ---- ORM Models
+        --- finalize and test
+
+    ---- Setup django Authentication
+        --- run default / orm migration
+        --- django-admin
+            --- create two groups (Free/Premium)
+                --- Mark Premium with can_use_ai permission
+
+        --- settings.py
+            --- AUTH_USER_MODEL
+            --- Login URL and REDIRECT_URL
+            --- TEMPLATES
+                ---- set DIRS
+        --- login/registers
+            --- 
+
+        ---- protect paths
+            --- urls.py
+                --- wrap login_required

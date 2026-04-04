@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+# load environment variables
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +32,8 @@ SECRET_KEY = 'django-insecure-8x+sj4@^!vj^u7@v*aa2b$*(a=tevr*69ips6v60)go78jnxpx
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
-# application messages
+
+# 1. application messages, bootstrap 5 styled
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
@@ -47,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'social_django',
 
     'orm',
     'trainer',
@@ -68,7 +76,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,35 +95,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-
-    # 'default': {
-    #     'ENGINE'    : 'django.db.backends.mysql',
-    #     'NAME'      : 'uni_db',
-    #     'USER'      : 'pt_user',
-    #     'PASSWORD'  : '123123123',
-    #     'HOST'      : '34.142.192.182',
-    #     'PORT'      : '3306'
-    # },
     'default': {
         'ENGINE'    : 'django.db.backends.mysql',
-        'NAME'      : 'db30',
-        'USER'      : 'root',
-        'PASSWORD'  : '123456',
-        'HOST'      : 'localhost',
-        'PORT'      : '3306'
-    }     
-    # 'default': {
-    #     'ENGINE'    : 'django.db.backends.mysql',
-    #     'NAME'      : 'db30',
-    #     'USER'      : 'root',
-    #     'PASSWORD'  : 'returntoRL!',
-    #     'HOST'      : '103.3.173.137',
-    #     'PORT'      : '3306'
-    # } 
+
+        'NAME'      : os.getenv('DB_NAME'),
+        'USER'      : os.getenv('DB_USER'),
+        'PASSWORD'  : os.getenv('DB_PASSWORD'),
+        'HOST'      : os.getenv('DB_HOST'),
+        'PORT'      : os.getenv('DB_PORT')
+    } 
 }
 
 
@@ -128,7 +116,6 @@ LOGOUT_REDIRECT_URL = 'index'
 
 # customized User with is_trainer indicator
 AUTH_USER_MODEL = "orm.UserTrainer"
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -145,7 +132,52 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+
+# =================================== SOCIAL LOGINS =========================================== #
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',  # Keep for username/password login
+)
+
+# Google OAuth2
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+# Github OAuth2
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
+
+
+
+# 1. This prevents the "Yellow Screen of Death" when an email isn't found
+SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+# 2. This sends the user back to your view if the email doesn't match
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
+# 3. CRITICAL: Add this to clear the partial session on failure
+SOCIAL_AUTH_CLEAN_USER_KEEP_SESSION = True
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'prompt': 'select_account'
+}
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',  # Finds your record
+    'social_core.pipeline.social_auth.associate_user',      # <--- THE MISSING LINK
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+
+
+# ======================================= Internationalization ================================== #
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -154,7 +186,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+
+# ========================== Static files (CSS, JavaScript, Images) =============================== #
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 # 1. The URL used to access static files in the browser
@@ -164,6 +197,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-# 3. Where Django COPIES files for production (Ignore this for now)
-# We name it 'staticfiles' to avoid a name conflict with your source folder
+# 3. Where Django COPIES files for hosting later (Ignore this for now)
+# have to name it 'staticfiles' to avoid a name conflict with your source folder
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

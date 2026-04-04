@@ -9,12 +9,12 @@ from django.contrib.auth import authenticate, login, logout
 UserTrainer = get_user_model()
 
 def login_page(request):
-
     if request.method == "POST":
         email = request.POST.get('username')
         password = request.POST.get('password')
 
         # for simplicity, will consider username = email
+        # and for social login
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
@@ -30,8 +30,8 @@ def login_page(request):
 
     return render(request, 'registration/login.html')
 
-def register_page(request):
 
+def register_page(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')

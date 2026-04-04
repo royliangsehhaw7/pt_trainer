@@ -3,7 +3,7 @@ from orm.models import UserTrainer
 from orm.models import Client
 
 class Appointment(models.Model):
-
+    # setup apppointment buckets
     class PREFERRED_TIMES(models.TextChoices):
         MORNING = "Morning", "Morning"
         AFTERNOON = "Afternoon", "Afternoon"
@@ -34,11 +34,14 @@ class Appointment(models.Model):
         db_table  = "appointments"
 
 
+    ## for future overrding
     def clean(self):
         super().clean()
     
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators when modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Appointment"

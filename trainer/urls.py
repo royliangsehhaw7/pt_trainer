@@ -14,12 +14,19 @@ urlpatterns = [
     path('index/', index_view.index, name='index'),
     path('home/', login_required(home_view.home), name='home'),
 
-    # default django auth
-    path("accounts/login/", account_view.login_page, name="login"),
-    path("accounts/register/", account_view.register_page, name="register"),
-    path("accounts/", include("django.contrib.auth.urls")),
 
-    # =====================================  trainer app processes =============================================== #
+    # ============================== social auth django ======================================= #
+    # social-auth-django provides the 'social:begin' namespace
+    path('social-auth/', include('social_django.urls', namespace='social')),
+
+
+    # =============================  django authentication ==================================== #
+    path("login/", account_view.login_page, name="login"),
+    path("register/", account_view.register_page, name="register"),
+    path("", include("django.contrib.auth.urls")),
+
+
+    # =============================  trainer app processes ==================================== #
     path('client/', login_required(client_view.client_list), name="client_list"),
     path('client/add/', login_required(client_view.client_add), name='client_add'),
     path("client/edit/<int:pk>/", login_required(client_view.client_edit), name="client_edit"),
@@ -59,4 +66,7 @@ urlpatterns = [
     path('calendar/', appointment_view.calendar_view, name='calendar'),
     path('calendar_json/', appointment_view.calendar_json_view, name='calendar_json'),
     path('calendar_full/', appointment_view.calendar_full_view, name='calendar_full')
+
+    # 
+    # path('', include('social_django.urls', namespace='social')),
 ]

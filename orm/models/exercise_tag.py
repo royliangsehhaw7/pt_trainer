@@ -1,10 +1,9 @@
 from django.db import models
 
-from orm.models import Trainer
 from .exercise import Exercise
 from .tag import Tag
 
-# Junction table for Tags and Exercises
+# ========== JUUNCTION TABLE for Tags and Exercises ========== #
 
 class ExerciseTag(models.Model):
     exercise = models.ForeignKey(
@@ -24,8 +23,15 @@ class ExerciseTag(models.Model):
 
 
     class Meta:
-        unique_together = ('exercise', 'tag')   # THIS IS A MAST TO ENSURE DATA INTEGRITY
+        unique_together = ('exercise', 'tag')   # THIS IS A MAST TO ENSURE NOT DUPLICATES
         db_table = 'exercises_tags'
+
+
+    def save(self, *args, **kwargs):
+        # mnually trigger the validators when modelform not used
+        self.full_clean() 
+        super().save(*args, **kwargs)        
+
 
     def __str__(self):
         return f"{self.exercise.name} - {self.tag.name}"

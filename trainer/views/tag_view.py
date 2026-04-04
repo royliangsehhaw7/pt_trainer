@@ -12,28 +12,6 @@ from ..forms.tag_form import TagForm
 # - simulate logged in trainer
 # logged_in_trainer = 1
 
-# # simple list view
-# def tag_list(request):
-#     # Saas tenant check
-#     trainer = get_object_or_404(Trainer, pk=request.user.id)
-#     # filter tags 
-#     tags = Tag.objects.filter(trainer=trainer)
-
-#     # -- normal get exercises count
-#     # tag = Tag.objects.get(id=1)
-#     # count1 = tag.exercises.count()
-#     # count2 = Exercise.objects.filter(tags__id=1).count()    
-    
-#     # using annotate to create a computer property
-#     # 2. Get tags for this trainer and "attach" the count
-#     # 'exercises' matches the related_name we set in the ManyToManyField
-#     tags = Tag.objects.filter(trainer=trainer).annotate(
-#         exercise_count=Count('exercises')
-#     )
-
-#     return render(request, 'trainer/tag/tag_list.html', {'tags': tags})
-
-
 # list view with search and pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def tag_list(request):

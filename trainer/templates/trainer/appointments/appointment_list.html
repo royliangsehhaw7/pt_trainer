@@ -2,9 +2,17 @@
 
 {% block content %}
     <!-- row 1: page title -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <h3 class="mb-0">appointments</h3>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div>
+            <h3 class="mb-0">appointments</h3>            
+        </div>
+        <div>
+            <a href="{% url 'appointment_list' %}">
+                <button type="button" class="btn btn-secondary">list</button>
+            </a>
+            <a href="{% url 'calendar_full' %}">
+                <button type="button" class="btn btn-secondary">calendar</button>
+            </a>
         </div>
     </div>
 
@@ -57,54 +65,7 @@
         </table>
     </div>
 
-    <!-- row 4: pagination -->
-    <div>
-        <!-- Container for Counter (Left) and Pager (Right) -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
-            <!-- Page Counter (Far Left) -->
-            <div class="text-muted small">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            </div>
-            <!-- Pager (Far Right) -->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination mb-0">
-                    
-                    <!-- Previous -->
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                    {% endif %}
-
-                    <!-- Page Numbers -->
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}&search={{ search }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    <!-- Next -->
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                    {% endif %}
-
-                </ul>
-            </nav>
-        </div>
-    </div>
+    <!-- bootstrap 5 pagination -->
+    {% include 'trainer/includes/_pagination.html' %}
 
 {% endblock %}

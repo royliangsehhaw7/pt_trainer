@@ -20,6 +20,7 @@ def client_list(request):
 
     search = request.GET.get('search', '')
     if search:
+        # icontains to ignore char case
         tags = Client.objects.filter(trainer=trainer, name__icontains=search).order_by('name')
     else:     
         tags = Client.objects.filter(trainer=trainer).order_by('name')

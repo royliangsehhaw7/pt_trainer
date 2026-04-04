@@ -20,6 +20,10 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # This provides the 'social:begin' namespace (social-auth-app-django)
+    # path('social-auth/', include('social_django.urls', namespace='social')),
+
+
     path('', include('backend.urls')),
     path('', include('trainer.urls')),
 

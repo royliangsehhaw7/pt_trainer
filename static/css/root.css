@@ -2,22 +2,7 @@
 
 :root {
   --bs-body-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
-  
-  /* --- FullCalendar Global Dark Theme Variables --- */
-  --fc-page-bg-color: #212529;
-  --fc-border-color: #495057;
-  --fc-neutral-bg-color: #2c3034;
-  --fc-neutral-text-color: #adb5bd;
-  --fc-button-bg-color: #198754; 
-  --fc-button-border-color: #198754;
-  --fc-button-hover-bg-color: #157347;
-  --fc-button-active-bg-color: #146c43;
-  --fc-event-bg-color: #198754;
-  --fc-event-border-color: #198754;
-  --fc-event-text-color: #fff;
-  --fc-today-bg-color: rgba(25, 135, 84, 0.1);
-  --fc-small-font-size: 0.85rem;
-}
+}  
 
 body {
   font-family: var(--bs-body-font-family);

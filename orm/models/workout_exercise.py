@@ -17,7 +17,7 @@ class WorkoutExercise(models.Model):
 
     is_done = models.BooleanField(db_default=False)
 
-    # prescribed
+    # prescribed workout
     pre_sets = models.PositiveIntegerField(
         default=0,
         db_default=0
@@ -37,7 +37,7 @@ class WorkoutExercise(models.Model):
         blank=True
     )
 
-    # actual
+    # actual done
     actual_sets = models.PositiveIntegerField(
         default=0,
         db_default=0,

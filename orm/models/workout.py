@@ -14,14 +14,17 @@ class Workout(models.Model):
         on_delete = models.PROTECT,     # cannot delete client if workouts still exists
         related_name = "workouts"
     )
-
-    scheduled_date = models.DateTimeField(null = True, blank = True)
+   
     is_completed = models.BooleanField(default=False)
 
     # using TextField - will generaete TextArea in forms
     # max_length is only for admin forms
     trainer_review = models.TextField(null = True, blank = True)
     client_remarks = models.TextField(null = True, blank = True)
+
+    # possibly to have ai evaluate client workout based
+    # preset vs actual activities
+    ai_feedback = models.TextField()
 
     class Meta:
         db_table = "workouts"
