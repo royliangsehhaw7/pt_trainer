@@ -8,8 +8,35 @@ from django.contrib import messages
 from django.urls import reverse
 from django.core.validators import ValidationError
 
+# list view with search and pagination
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def appoint_list(request):
-    return render(request, 'trainer/appointments/appointment_list.html', {})
+    # stepper highlight
+    request.session['module'] = "appointment"
+
+    # Saas tenant - get logged in trainer for data filtering
+    trainer = get_object_or_404(Trainer, pk = request.user.id)
+
+    search = request.GET.get('search', '')
+    if search:
+        # icontains to ignore char case
+        appts = Appointment.objects.filter(trainer=trainer, client__name=search).order_by('client__name')
+    else:     
+        appts = Appointment.objects.filter(trainer=trainer).order_by('client__name')
+
+    # page controls - paginators with model data - 4 rows per page
+    paginator = Paginator(appts, 4)
+    page_number = request.GET.get('page')
+
+    try:
+        pager = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        pager = paginator.page(1)
+    except EmptyPage:
+        pager = paginator.page(paginator.num_pages)    
+
+    return render(request, 'trainer/appointments/appointment_list.html', {'appointments': pager, 'search': search, 'page_obj': pager})
+
 
 def appoint_add(request):
     trainer = get_object_or_404(Trainer, pk = request.user.id)
@@ -17,6 +44,7 @@ def appoint_add(request):
 
     # If coming from a calendar click, we might have a date in the URL
     initial_date = request.GET.get('date') 
+    print(f"DATE DATE : {initial_date}" )
     
     if request.method == 'POST':
         form = AppointmentForm(request.POST, trainer_clients = trainer_clients)
@@ -33,12 +61,17 @@ def appoint_add(request):
             except Exception:
                 messages.error(request, f"Exceptions: {str(e)}")
     else:
-        form = AppointmentForm(trainer_clients = trainer_clients, initial={'start_date': initial_date})
+        form = AppointmentForm(
+            trainer_clients = trainer_clients, 
+            initial={'scheduled_date': initial_date}
+        )
 
-    return render(request, 'trainer/appointments/appointment_add.html', {'form': form})
+    return render(request, 'trainer/appointments/appointment_add.html', {'form': form })
+
 
 def appoint_edit(request):
     return render(request, 'trainer/appointments/appointment_edit.html', {})
+
 
 def appoint_delete(request, pk):
     # Ensure the tag belongs to this trainer before deleting

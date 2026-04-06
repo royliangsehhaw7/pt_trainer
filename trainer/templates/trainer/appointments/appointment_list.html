@@ -1,7 +1,6 @@
 {% extends 'trainer/base.html' %}
 
 {% block content %}
-    <!-- row 1: page title -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
         <div>
             <h3 class="mb-0">appointments</h3>            
@@ -46,13 +45,13 @@
             <tbody>
                 {% for appointment in appointments %}
                 <tr>
-                    <td class="text-break">{{ appointment.name }}</td>
-                    <td class="text-break">{{ appointment.email }}</td>
-                    <td class="text-break"></td>
+                    <td class="text-break">{{ appointment.client.name }}</td>
+                    <td class="text-break">{{ appointment.client.email }}</td>
+                    <td class="text-break">{{ appointment.scheduled_date }}</td>
                     <td class="text-end">
                         <div class="btn-group flex-column flex-sm-row">
-                            <a href="{% url 'appointment_edit' client.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>
-                            <a href="{% url 'appointment_delete' client.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            <a href="{% url 'appointment_edit' appointment.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>
+                            <a href="{% url 'appointment_delete' appointment.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
                         </div>
                     </td>
                 </tr>

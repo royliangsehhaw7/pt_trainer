@@ -1,8 +1,4 @@
-from django.contrib.auth.models import Group
-
 from django.db.models import Count
-
-
 from django.contrib import messages
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -25,9 +21,11 @@ def sub_list(request):
         trainers = trainers.filter(groups__name = subType)
 
     # annotate client count
+    # trainer model has one to many to clients (thru foreign key in client model)
     trainers =  trainers.annotate(client_count = Count('clients'))
 
-    # page controls - paginators with model data - 4 rows per page
+
+    # === page controls - paginators with model data - 4 rows per page
     paginator = Paginator(trainers, 3)
     page_number = request.GET.get('page')
 
@@ -45,10 +43,17 @@ def sub_add(request):
     if request.method == "POST":
         # set form to request.POST data from client
         form = SubscriptionForm(request.POST)
-
         if form.is_valid():
             try:
-                trainer = form.save()
+                trainer = form.save(commit=False)
+
+                trainer.username = trainer.email
+                trainer.is_trainer = True
+                password = form.cleaned_data.get("password")
+                if password:
+                    trainer.set_password(password)
+                
+                trainer.save()
                 
                 new_group = form.cleaned_data['group']
                 # NOTE: must clear trainer group before updating the one from form
@@ -64,6 +69,7 @@ def sub_add(request):
 
     return render(request, 'backend/subscriptions/subscription_add.html', {'form': form})
 
+
 def sub_edit(request, pk):
     # 1. Fetch the Model Instance (The Entity)
     trainer = get_object_or_404(Trainer, pk=pk)
@@ -73,7 +79,7 @@ def sub_edit(request, pk):
 
     current_group = trainer.groups.first()      # this is the trainer groups (currently on one group per trainer)
     if current_group:
-        initial_state['group'] = current_group.id
+        initial_state['group'] = current_group.id   # have to set the trainer current group in the form 
 
     if request.method == "POST":
         # set form to request.POST data from client

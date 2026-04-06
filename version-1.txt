@@ -80,6 +80,10 @@ REFERENCES:
     --- https://medium.com/@jaeyeonjung3/asynchronous-http-requests-ajax-axios-and-fetch-af5103480a8f
     --- https://www.raphaeluziel.com/coding/
 
+    9. Session/cookies/cache Handling
+    --- https://python.plainenglish.io/how-to-use-sessions-in-django-for-persistent-data-d397d5980309
+    --- https://medium.com/@sagorrobidush/how-django-manages-data-sessions-tokens-databases-cache-cookies-sessions-cookies-cache-8c004d6bfa52
+
 
 
 AI:

@@ -55,13 +55,13 @@ urlpatterns = [
 
     path('workout/', workout_view.workout_list, name='workout_list'),
     path('workout/add/', workout_view.workout_add, name='workout_add'),
-    path('workout/<int:pk>/edit/', workout_view.workout_edit, name='workout_edit'),
-    path('workout/<int:pk>/delete/', workout_view.workout_delete, name='workout_delete'),
+    path('workout/edit/<int:pk>/', workout_view.workout_edit, name='workout_edit'),
+    path('workout/delete/<int:pk>/', workout_view.workout_delete, name='workout_delete'),
 
     path('appointment/', appointment_view.appoint_list, name='appointment_list'),
     path('appointment/add/', appointment_view.appoint_add, name='appointment_add'),
-    path('appointment/<int:pk>/edit/', appointment_view.appoint_edit, name='appointment_edit'),
-    path('appointment/<int:pk>/delete/', appointment_view.appoint_delete, name='appointment_delete'),
+    path('appointment/edit/<int:pk>/', appointment_view.appoint_edit, name='appointment_edit'),
+    path('appointment/delete/<int:pk>/', appointment_view.appoint_delete, name='appointment_delete'),
 
     path('calendar/', appointment_view.calendar_view, name='calendar'),
     path('calendar_json/', appointment_view.calendar_json_view, name='calendar_json'),

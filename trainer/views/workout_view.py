@@ -12,6 +12,10 @@ from ..forms import WorkoutForm, ExerciseFormSet
 # list view with search and pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def workout_list(request):
+    # stepper highlight
+    request.session['module'] = "workout"
+
+
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 

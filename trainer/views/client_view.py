@@ -15,6 +15,9 @@ from ..forms import ClientForm
 # list view with search and pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def client_list(request):
+    # stepper highlight
+    request.session['module'] = "client"
+    
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 

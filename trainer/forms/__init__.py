@@ -4,3 +4,5 @@ from .workout_form import *
 
 from .client_form import *
 from .appointment_form import *
+
+from .account_form import *

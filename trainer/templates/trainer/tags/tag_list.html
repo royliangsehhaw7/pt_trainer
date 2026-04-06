@@ -1,4 +1,5 @@
 {% extends 'trainer/base.html' %}
+{% load process_header_tag %}
 
 {% block custom_styles %}
     {% load static %}
@@ -7,24 +8,23 @@
 
 
 {% block content %}
-    <div class="row mb-3">
-        <div class="col-12">
-            <h3 class="mb-0">tags</h3>
-        </div>
-    </div>
+    <!-- <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3 class="mb-2 mb-sm-0">tags</h3>
+    </div> -->
 
+    {% render_process_header "tags" "" %}
     <hr class="opacity-100" style="height:2px; background-color: #3ABEF9;" />
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-        <!-- search box (aligned left) -->
+        <!-- Search Aligned Far Left -->
         <form method="GET" action="{% url 'tag_list' %}" class="flex-grow-1 flex-sm-grow-0" style="min-width: 300px;">
             <div class="input-group">
-                <input type="text" id="search" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
-                <button type="submit" id="go" name="go" class="btn btn-outline-secondary">go</button>
+                <input type="text" name="search" value="{{search}}" class="form-control" placeholder="Search by name...">
+                <button type="submit" class="btn btn-outline-secondary">GO</button>
             </div>
         </form>
 
-        <a href="{% url 'tag_add' %}" class="btn btn-primary px-4" style="background-color: #3ABEF9;">
+        <a href="{% url 'tag_add' %}" class="btn px-4" style="background-color: #F971B0">
             add
         </a>
     </div>
@@ -62,4 +62,5 @@
 
     <!-- bootstrap 5 pagination -->
     {% include 'trainer/includes/_pagination.html' %}
+
 {% endblock %}

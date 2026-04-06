@@ -6,36 +6,41 @@
             <div class="card-body p-4">
                 <h3 class="text-center fw-bold mb-4">Login</h3>
 
-                <!-- 1. CATCHES STANDARD LOGIN ERRORS (Username/Password) -->
-                {% if form.errors %}
-                    <div class="alert alert-danger py-2 small text-center">
-                        Invalid username or password.
-                    </div>
-                {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small text-center">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
-                <!-- STANDARD DJANGO LOGIN FORM -->
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <span class="input-group-text text-muted border-end-0">
-                            <i class="bi bi-person-fill"></i>
-                        </span>
-                        <input type="text" name="username" placeholder="Email / Username" required
-                            class="form-control border-start-0">
-                    </div>
+                        {% if form.errors and not form.non_field_errors %}
+                            <div class="alert alert-warning py-2 small text-center">
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        {{ field.label }}: {{ field.errors|striptags }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
-                    <div class="input-group mb-4">
-                        <span class="input-group-text text-muted border-end-0">
-                            <i class="bi bi-lock-fill"></i>
-                        </span>
-                        <input type="password" name="password" placeholder="Password" required
-                            class="form-control border-start-0"/>
-                    </div>
+                        <!-- email/username -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                            {{ form.username }}
 
-                    <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">
-                        Login
-                    </button>
-                </form>
+                        </div>
+                        <!-- password -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            {{ form.password }}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
 
                 <div class="text-center my-3 text-muted small">or</div>
 
@@ -53,7 +58,6 @@
                     </div>                    
                 </div>
                 
-
                 <div class="text-center mt-4">
                     <a href="{% url 'password_reset' %}" class="small text-decoration-none d-block mb-2 text-muted">
                         Forgot password?

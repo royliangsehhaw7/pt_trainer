@@ -24,8 +24,14 @@ class SubscriptionForm(forms.ModelForm):
 
     # ===== These two are forms only fields =====
     # DO NOT ADD TO META FIELDS LIST IF NOT IT WILL LOOK FOR FIELDS IN TO MODEL
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    confirm_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
 
     #REF: https://www.guguweb.com/2014/09/10/group-combo-box-django-user-profile-form/
     group = forms.ModelChoiceField(
@@ -33,6 +39,7 @@ class SubscriptionForm(forms.ModelForm):
         required=True,
         widget = forms.Select(attrs={"class": "form-control"})
     )
+
 
     class Meta:
         model = Trainer
@@ -42,8 +49,19 @@ class SubscriptionForm(forms.ModelForm):
             # "confirm-password": "Confirm Password"
         }
 
+    def __init__(self, *args, **kwargs):
+        super(SubscriptionForm, self).__init__(*args, **kwargs)
+        
+        # AI:
+        # prompt for password / confirm password when ADDING !!!
+        if not self.instance or not self.instance.pk:
+            self.fields['password'].required = True
+            self.fields['confirm_password'].required = True
+
+    
     def clean(self):
         cleaned_data = super().clean()
+
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 

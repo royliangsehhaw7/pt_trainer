@@ -45,7 +45,7 @@ class ExerciseForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # **kwargs = {'instance': instance, 'trainer': trainer'} from the views for edit/add
+        # **kwargs = {'instance': instance, 'trainer_tags': trainer_tags'} from the views for edit/add
 
         # have to remote this trainer from **kwargs
         # we use this trainer to filter exercises for this trainer only (Saas)

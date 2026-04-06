@@ -1,0 +1,16 @@
+
+<!--  original process header
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h3 class="mb-2 mb-sm-0">add tags</h3>
+    <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Back</a>
+</div> 
+-->
+
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h3 class="mb-2 mb-sm-0">{{ title }}</h3>
+
+    {% if back_url %}
+        <a href="{{ back_url }}" class="btn btn-outline-secondary">Back</a>
+    {% endif %}
+</div>

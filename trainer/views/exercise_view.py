@@ -15,6 +15,9 @@ from ..forms.exercise_form import ExerciseForm
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def exercise_list(request):
+    # stepper highlight
+    request.session['module'] = "exercise"
+
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 

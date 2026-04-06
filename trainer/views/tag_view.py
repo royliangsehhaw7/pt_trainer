@@ -12,9 +12,16 @@ from ..forms.tag_form import TagForm
 # - simulate logged in trainer
 # logged_in_trainer = 1
 
-# list view with search and pagination
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+# list view with search and pagination
+# https://medium.com/django-unleashed/django-pagination-tutorial-with-example-745cefd54eb3
+
+ 
 def tag_list(request):
+    # stepper highlight
+    request.session['module'] = "tag"
+
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 

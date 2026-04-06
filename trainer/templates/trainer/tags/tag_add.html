@@ -1,45 +1,47 @@
 {% extends "trainer/base.html" %}
+{% load process_header_tag %}
 
 
 {% block content %}
-<div class="px-2">
+    <!-- 
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2 mb-sm-0">add tags</h3>
-        <!-- You can put a back button if needed -->
-        <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">Back</a>
-    </div>
+        <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary">
+            Back
+        </a>
+    </div> 
+    -->
 
+    {% render_process_header "add tags" "tag_list" %}
     <hr class="opacity-100" style="height:3px; background-color: #3ABEF9;" />
 
-    <div>
-        <form method="POST">
-            {% csrf_token %}
+    <form method="POST">
+        {% csrf_token %}
+        {% include "trainer\includes\_form_errors.html" %}            
 
-            <!-- Tag Name -->
-            <div class="border rounded p-4 mt-4">
-                <div class="row mb-3">
-                    <label for="{{ form.name.id_for_label}}" class="col-12 col-md-2 col-form-label">
-                        {{ form.name.label }}
-                    </label>
-                    
-                    <div class="col-12 col-md">
-                        {{ form.name }}
+        <!-- Tag Name -->
+        <div class="border rounded p-4 mt-4">
+            <div class="row mb-3">
+                <label for="{{ form.name.id_for_label}}" class="col-12 col-md-2 col-form-label">
+                    {{ form.name.label }}
+                </label>
+                
+                <div class="col-12 col-md">
+                    {{ form.name }}
 
-                        {% for error in form.name.errors %}
-                            <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+                    {% for error in form.name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
             </div>
+        </div>
 
-            <!-- buttons actions -->      
-            <div class="mt-4 d-flex gap-2 justify-content-end">
-                <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary w-50">
-                    Cancel
-                </a>
-                <button type="submit" class="btn btn-primary w-50">Save</button>
-            </div>
-        </form>
-    </div>
-</div>
+        <!-- buttons actions -->      
+        <div class="mt-4 d-flex gap-2 justify-content-end">
+            <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary w-50">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary w-50">Save</button>
+        </div>
+    </form>
 {% endblock %}
