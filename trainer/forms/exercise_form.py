@@ -45,18 +45,18 @@ class ExerciseForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # **kwargs = {'instance': instance, 'trainer_tags': trainer_tags'} from the views for edit/add
+        # **kwargs = {'instance': instance, 'trainer': trainer'} from the views for edit/add
 
         # have to remote this trainer from **kwargs
         # we use this trainer to filter exercises for this trainer only (Saas)
-        trainer_tags = kwargs.pop("trainer_tags", None)
+        trainer = kwargs.pop("trainer", None)
         # when calling superclass/parent, **kwargs can be only one item
         # we have remove the trainer from **kwargs using pop above
         super().__init__(*args, **kwargs)
 
-        if trainer_tags:
+        if trainer:
             # this will create a list of tags when used in the template
-            self.fields['tags'].queryset = trainer_tags
+            self.fields['tags'].queryset = Tag.objects.filter(trainer=trainer)
 
         # # Apply Bootstrap invalid class automatically
         # for field_name, field in self.fields.items():

@@ -24,7 +24,7 @@ class Workout(models.Model):
 
     # possibly to have ai evaluate client workout based
     # preset vs actual activities
-    ai_feedback = models.TextField()
+    ai_feedback = models.TextField(null = True, blank = True)
 
     class Meta:
         db_table = "workouts"

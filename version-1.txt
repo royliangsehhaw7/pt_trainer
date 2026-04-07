@@ -52,8 +52,6 @@ REFERENCES:
         Responsive pagination
         ---
 
-
-
     2. Handling static files (css,js,images)
     ---- https://www.digitalocean.com/community/tutorials/working-with-django-templates-static-files
 
@@ -84,7 +82,13 @@ REFERENCES:
     --- https://python.plainenglish.io/how-to-use-sessions-in-django-for-persistent-data-d397d5980309
     --- https://medium.com/@sagorrobidush/how-django-manages-data-sessions-tokens-databases-cache-cookies-sessions-cookies-cache-8c004d6bfa52
 
+    10.Many to Many CRUD
+    --- 
 
+    11. FullCalendar6
+    --- https://fullcalendar.io/
+    --- https://medium.com/@azzouzhamza13/django-fullcalendar6-1-11-rrule-8a4e63100d0b
+    --- https://awstip.com/how-to-use-the-fullcalendar-io-to-integrate-the-calendar-events-in-django-project-b6305959d989
 
 AI:
     1. How to mark multiplechoicefields in a django form during editing an existing record

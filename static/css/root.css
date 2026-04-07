@@ -109,6 +109,9 @@ body {
     text-decoration: none !important;
     color: inherit;
 }
+.fc-h-event {
+    background-color: #198754;
+}
 
 /* Ensure the calendar container allows the grid to fill space */
 .fc .fc-daygrid-body, 
@@ -135,7 +138,7 @@ body {
 /* 3. Event Block Styling in Month View */
 .fc-daygrid-event {
     border: none !important;
-    background-color: #198754 !important; /* Matching your green theme */
+    /* background-color: #198754 !important; Matching your green theme */
     margin-top: 2px !important;
     padding: 2px 4px !important;
     border-radius: 4px !important;

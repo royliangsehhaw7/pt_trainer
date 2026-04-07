@@ -32,7 +32,26 @@ class Tag(models.Model):
     def save(self, *args, **kwargs):
         # mnually trigger the validators when modelform not used
         self.full_clean() 
-        super().save(*args, **kwargs)        
+        super().save(*args, **kwargs)
+
+
+    #******************* ??? WARNING - THIS IS A MUST ??? ******************** #
+    # IF NOT THE EXERCISES ARE NOT PYHSICALLY DELETE FROM THE DATABASE *
+    # # I dont understand why we have to do this to physically delete from the database
+    # def delete(self, *args, **kwargs):
+    #     # self.exercises.all().delete()
+    #     # super().delete(*args, **kwargs)
+
+    #     # get the exercises for currrent to be deleted tag from the junction table
+    #     related_exercises = list(self.exercises.all())        
+    #     # 1. Delete the tag first (this removes the junction records)
+    #     super().delete(*args, **kwargs)
+        
+    #     # 2. have to check exercise, if it has 0 tags now, delete the exercise
+    #     for exercise in related_exercises:
+    #         if not exercise.tags.exists():  
+    #             exercise.delete()
+
 
     def __str__(self):
         return self.name

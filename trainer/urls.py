@@ -59,13 +59,14 @@ urlpatterns = [
     path('workout/delete/<int:pk>/', workout_view.workout_delete, name='workout_delete'),
 
     path('appointment/', appointment_view.appoint_list, name='appointment_list'),
+    path('appointment/calender/', appointment_view.appoint_calendar, name='appointment_calendar'),
     path('appointment/add/', appointment_view.appoint_add, name='appointment_add'),
     path('appointment/edit/<int:pk>/', appointment_view.appoint_edit, name='appointment_edit'),
     path('appointment/delete/<int:pk>/', appointment_view.appoint_delete, name='appointment_delete'),
 
-    path('calendar/', appointment_view.calendar_view, name='calendar'),
+
+    # path('calendar/', appointment_view.calendar_view, name='calendar'),
     path('calendar_json/', appointment_view.calendar_json_view, name='calendar_json'),
-    path('calendar_full/', appointment_view.calendar_full_view, name='calendar_full')
 
     # 
     # path('', include('social_django.urls', namespace='social')),

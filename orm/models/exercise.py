@@ -51,18 +51,12 @@ class Exercise(models.Model):
                                         # PROTECT only for django model checks 
         related_name='exercises'
     )
-
-    # =================== M2M (funny behaviour) ===================== #
-    # ??????? records delete in django app stil remains in the database ?????????
-    # tags = models.ManyToMany(
-    #   Tag,
-    #   related_name = "tag_exercises",
-    #   reverse_related_name = "exercise_tags"
-    # )
-    # 
-    # AI: in django orm, why when using M2m relations, records delete in app still remains in the database
-    # ============================================================ #
-
+    # many to many with tags
+    tags = models.ManyToManyField(      # NO on_delete, THIS IS NOT A PARENT CHILD RELATIONSHIP
+        Tag,
+        related_name = "exercises",
+        db_table = "tags_exercises"
+    )    
 
     class Meta:
         db_table = 'exercises'

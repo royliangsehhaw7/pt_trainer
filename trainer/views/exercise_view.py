@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 
-from orm.models import Exercise, ExerciseTag, Tag
+from orm.models import Exercise
 from orm.models import UserTrainer as Trainer
 from ..forms.exercise_form import ExerciseForm
 
@@ -40,6 +40,7 @@ def exercise_list(request):
 
     return render(request, 'trainer/exercise/exercise_list.html', {'exercises': pager, 'search': search, 'page_obj': pager})
 
+
 def exercise_add(request):
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
@@ -47,88 +48,55 @@ def exercise_add(request):
         form = ExerciseForm(request.POST, trainer=trainer)
         if form.is_valid():
             try:
-                # to maintain data integrity, using transaction
-                with transaction.atomic():
-                    exercise = form.save(commit=False)
+                with transaction.atomic():                    # better have this
+                    exercise = form.save(commit=False)      # dont save first
                     exercise.trainer = trainer
+
+                    # exercise.full_clean()
                     exercise.save()
+                    # this is a must for the manytomany junctioan table
+                    form.save_m2m() # Django handles the hidden junction table automatically.
 
-                    # junction table
-                    selected_tags = form.cleaned_data.get('tags')
-                    # using manual loop thru tags coz we use a manual junction table
-                    if selected_tags:
-                        for tag in selected_tags:
-                            exercise_tag = ExerciseTag(
-                                trainer=trainer, 
-                                exercise=exercise, 
-                                tag=tag
-                            )
-                            exercise_tag.save()
-
-                messages.success(request, f"Exercise added.")
-                return redirect('exercise_list')        # 'exercise_list' is the name of the path in urls.py
+                messages.success(request, f"Exercise '{exercise.name}' added.")
+                return redirect('exercise_list')
             except ValidationError as e:
                 form.add_error(None, str(e))
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")
     else:
-        trainer_tags = Tag.objects.filter(trainer = trainer)
-        form = ExerciseForm(trainer_tags=trainer_tags)
+        form = ExerciseForm(trainer=trainer)
 
     return render(request, 'trainer/exercise/exercise_add.html', {'form': form})
 
+
 def exercise_edit(request, pk):
-    # Saas tenant - get logged in trainer for data filtering    
+    # Ensure SaaS security: exercise must belong to the trainer
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
-    # get the exercise to be edited first
     exercise = get_object_or_404(Exercise, pk=pk, trainer=trainer)
 
     if request.method == 'POST':
-        # trainer is passed in so the tags are selected by trainer in the form
         form = ExerciseForm(request.POST, instance=exercise, trainer=trainer)
 
         if form.is_valid():
             try:
-                with transaction.atomic():
+                with transaction.atomic():        # better have this
                     exercise = form.save(commit=False)
-                    exercise.trainer = trainer
                     exercise.save()
 
-                    # simpler logic, remove all previous tags for this edited exercise
-                    # before inserting new ones
-                    ExerciseTag.objects.filter(
-                        exercise=exercise,
-                        trainer=trainer
-                    ).delete()
-
-                    # insert new tags
-                    selected_tags = form.cleaned_data.get('tags')
-                    if selected_tags:
-                        for tag in selected_tags:
-                            ExerciseTag.objects.create(
-                                trainer=trainer,
-                                exercise=exercise,
-                                tag=tag
-                            )
+                    # save_m2m() identifies which tags were removed and which were added.
+                    form.save_m2m()
 
                 messages.success(request, f"Exercise '{exercise.name}' updated.")
+
                 return redirect('exercise_list')
             except ValidationError as e:
                 form.add_error(None, str(e))                    
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")
     else:
-        # IMPORTANT: we have to get the previously update tags and pass into the form to be marked since we are using a manual junction table
-        # get existing tag IDs for initial display
-        # selected_tags = ExerciseTag.objects.filter( exercise=exercise, trainer=trainer_instance).values_list('tag_id', flat=True)
-        selected_tags = exercise.exercise_tags.values_list("tag_id", flat=True)
-        #
-        trainer_tags = Tag.objects.filter(trainer=trainer)
-        form = ExerciseForm(
-            instance=exercise, 
-            trainer_tags=trainer_tags,
-            initial = {'tags': selected_tags})  # pass in previously selected tags here as initial
+        # pre-selects the tags currently linked to this exercise.
+        form = ExerciseForm(instance=exercise, trainer=trainer)
 
     return render(request, 'trainer/exercise/exercise_edit.html', {'form': form})
 
@@ -174,20 +142,100 @@ def get_exercises_params(request):
 
 
 
-# ======================================================= #
-# def add_using_M2M(request):
-#     # Fetch the actual User object to pass to the form
-#     trainer_user = get_object_or_404(Trainer, pk=logged_in_trainer)
+
+
+
+
+# =========================== WHEN USING MANUAL JUNCTION TABLE =============================== #
+# def exercise_add(request):
+#     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
 #     if request.method == 'POST':
-#         form = ExerciseForm(request.POST, trainer=trainer_user)
+#         form = ExerciseForm(request.POST, trainer=trainer)
 #         if form.is_valid():
-#             exercise = form.save(commit=False)
-#             exercise.trainer = trainer_user # Assign the object
-#             exercise.save()
-#             form.save_m2m() # Critical for Tags!
-#             return redirect('exercise_list')
-#     else:
-#         form = ExerciseForm(trainer=trainer_user)
+#             try:
+#                 # to maintain data integrity, using transaction
+#                 with transaction.atomic():
+#                     exercise = form.save(commit=False)
+#                     exercise.trainer = trainer
+#                     exercise.save()
 
-#     return render(request, 'trainer/exercise/exercise_add.html', {'form': form })
+#                     # junction table
+#                     selected_tags = form.cleaned_data.get('tags')
+#                     # using manual loop thru tags coz we use a manual junction table
+#                     if selected_tags:
+#                         for tag in selected_tags:
+#                             exercise_tag = ExerciseTag(
+#                                 trainer=trainer, 
+#                                 exercise=exercise, 
+#                                 tag=tag
+#                             )
+#                             exercise_tag.save()
+
+#                 messages.success(request, f"Exercise added.")
+#                 return redirect('exercise_list')        # 'exercise_list' is the name of the path in urls.py
+#             except ValidationError as e:
+#                 form.add_error(None, str(e))
+#             except Exception as e:
+#                 messages.error(request, f"Exceptions: {str(e)}")
+#     else:
+#         trainer_tags = Tag.objects.filter(trainer = trainer)
+#         form = ExerciseForm(trainer_tags=trainer_tags)
+
+#     return render(request, 'trainer/exercise/exercise_add.html', {'form': form})
+
+# def exercise_edit(request, pk):
+#     # Saas tenant - get logged in trainer for data filtering    
+#     trainer = get_object_or_404(Trainer, pk=request.user.id)
+
+#     # get the exercise to be edited first
+#     exercise = get_object_or_404(Exercise, pk=pk, trainer=trainer)
+
+#     if request.method == 'POST':
+#         # trainer is passed in so the tags are selected by trainer in the form
+#         form = ExerciseForm(request.POST, instance=exercise, trainer=trainer)
+
+#         if form.is_valid():
+#             try:
+#                 with transaction.atomic():
+#                     exercise = form.save(commit=False)
+#                     exercise.trainer = trainer
+#                     exercise.save()
+
+#                     # simpler logic, remove all previous tags for this edited exercise
+#                     # before inserting new ones
+#                     ExerciseTag.objects.filter(
+#                         exercise=exercise,
+#                         trainer=trainer
+#                     ).delete()
+
+#                     # insert new tags
+#                     selected_tags = form.cleaned_data.get('tags')
+#                     if selected_tags:
+#                         for tag in selected_tags:
+#                             ExerciseTag.objects.create(
+#                                 trainer=trainer,
+#                                 exercise=exercise,
+#                                 tag=tag
+#                             )
+
+#                 messages.success(request, f"Exercise '{exercise.name}' updated.")
+#                 return redirect('exercise_list')
+#             except ValidationError as e:
+#                 form.add_error(None, str(e))                    
+#             except Exception as e:
+#                 messages.error(request, f"Exceptions: {str(e)}")
+#     else:
+#         # IMPORTANT: we have to get the previously update tags and pass into the form to be marked since we are using a manual junction table
+#         # get existing tag IDs for initial display
+#         # selected_tags = ExerciseTag.objects.filter( exercise=exercise, trainer=trainer_instance).values_list('tag_id', flat=True)
+#         selected_tags = exercise.exercise_tags.values_list("tag_id", flat=True)
+#         #
+#         trainer_tags = Tag.objects.filter(trainer=trainer)
+#         form = ExerciseForm(
+#             instance=exercise, 
+#             trainer_tags=trainer_tags,
+#             initial = {'tags': selected_tags})  # pass in previously selected tags here as initial
+
+#     return render(request, 'trainer/exercise/exercise_edit.html', {'form': form})
+# ======================================================================================================================

@@ -6,11 +6,11 @@
             <h3 class="mb-0">appointments</h3>            
         </div>
         <div>
-            <a href="{% url 'appointment_list' %}">
-                <button type="button" class="btn btn-secondary">list</button>
+            <a href="{% url 'appointment_calendar' %}">
+                <button type="button" class="btn btn-outline-secondary">calendar</button>
             </a>
-            <a href="{% url 'calendar_full' %}">
-                <button type="button" class="btn btn-secondary">calendar</button>
+            <a href="{% url 'appointment_list' %}">
+                <button type="button" class="btn btn-outline-secondary">list</button>
             </a>
         </div>
     </div>
@@ -37,17 +37,17 @@
             <thead class="table-dark">
                 <tr>
                     <th>name</th>
-                    <th>email</th>
-                    <th>Date</th>
+                    <th>date</th>
+                    <th>time</th>
                     <th class="text-end">actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for appointment in appointments %}
                 <tr>
-                    <td class="text-break">{{ appointment.client.name }}</td>
-                    <td class="text-break">{{ appointment.client.email }}</td>
+                    <td class="text-wrap">{{ appointment.client.name }}</td>
                     <td class="text-break">{{ appointment.scheduled_date }}</td>
+                    <td class="text-break">{{ appointment.scheduled_time }}</td>
                     <td class="text-end">
                         <div class="btn-group flex-column flex-sm-row">
                             <a href="{% url 'appointment_edit' appointment.id %}" class="btn btn-sm btn-outline-primary mb-1 mb-sm-0">Edit</a>

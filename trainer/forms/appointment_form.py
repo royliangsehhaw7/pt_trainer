@@ -17,12 +17,12 @@ class AppointmentForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-                # have to remote this trainer from **kwargs
+        # have to remote this trainer from **kwargs
         # we use this trainer to filter exercises for this trainer only (Saas)
-        trainer_clients = kwargs.pop("trainer_clients", None)
+        trainer = kwargs.pop("trainer", None)
         # when calling superclass/parent, **kwargs can be only one item
         # we have remove the trainer from **kwargs using pop above
         super().__init__(*args, **kwargs)
 
-        if trainer_clients:
-            self.fields['client'].queryset = trainer_clients
+        if trainer:
+            self.fields['client'].queryset = Client.objects.filter(trainer=trainer)
