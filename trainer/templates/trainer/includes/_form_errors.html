@@ -1,19 +1,28 @@
-{% if form.errors %}
-    {% if form.non_field_errors %}
-        <div class="alert alert-danger py-2 small text-center">
+{% if form.errors or formset.errors or formset.non_form_errors %}
+    <div class="alert alert-danger py-2 small shadow-sm">
+        
+        {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
-                {{ error }}
+                <div class="text-center">{{ error }}</div>
             {% endfor %}
-        </div>
-    {% endif %}
+        {% endif %}
 
-    {% if form.errors and not form.non_field_errors %}
-        <div class="alert alert-warning py-2 small text-center">
-            {% for field in form %}
-                {% if field.errors %}
-                    {{ field.label }}: {{ field.errors|striptags }}
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+        {% if form.errors and not form.non_field_errors %}
+            <div class="text-center">
+                <strong>Main Form:</strong>
+                {% for field in form %}
+                    {% if field.errors %}
+                        {{ field.label }}: {{ field.errors|striptags }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if formset.non_form_errors %}
+            <div class="text-center border-top mt-1 pt-1">
+                <strong>Exercise List Error:</strong> {{ formset.non_form_errors|striptags }}
+            </div>
+        {% endif %}
+
+    </div>
 {% endif %}

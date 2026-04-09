@@ -1,0 +1,13 @@
+.hr-tag {
+    height: 2px;
+    background-color: #F971B0;
+    opacity: 100
+}
+
+.btn-tag {
+    background-color: #F971B0;
+}
+
+.active>.page-link, .page-link.active {
+    background-color: #F971B0;
+}

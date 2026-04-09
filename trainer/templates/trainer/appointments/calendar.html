@@ -1,5 +1,10 @@
 {% extends 'trainer/base.html' %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/appointment.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-3">
     <div class="card shadow-sm border-0">

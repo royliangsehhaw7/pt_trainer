@@ -118,26 +118,28 @@ def exercise_delete(request, pk):
     return render(request, 'trainer/exercise/exercise_delete.html', {'exercise': exercise})
 
 
-def get_exercises_params(request):
+def get_exercises_by_tags(request, tag_ids):
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
-    #  get tags first passed in 
-    tag_ids = request.GET.getlist('tag_id')
+
+    # 2. Split the path string "9,11" into ['9', '11']
+    # We use a list comprehension to strip whitespace and remove empty strings
+    tag_ids = [tid.strip() for tid in tag_ids.split(',') if tid.strip()]
 
     # exercises = ExerciseTag.objects.filter(tag_id__in=tag_ids)
     #                 .values('exercise__id', 'exercise__name').distinct()
     # distinct as some tags have the same exercises - we only display the exercise once for selection
-    exercises = Exercise.objects.filter(exercise_tags__tag_id__in=tag_ids, trainer=trainer).distinct()
+    exercises = Exercise.objects.filter(tags__id__in=tag_ids, trainer=trainer).distinct()
 
     # return JsonResponse(list(exercises.values('id', 'name')), safe=False)
     return JsonResponse(list(exercises.values(
-    'id',
-    'name',
-    'def_sets',
-    'def_reps',
-    'def_weight',
-    'def_duration'
-)), safe=False)
+        'id',
+        'name',
+        'def_sets',
+        'def_reps',
+        'def_weight',
+        'def_duration'
+    )), safe=False)
 
 
 

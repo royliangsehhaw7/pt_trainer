@@ -45,8 +45,8 @@ urlpatterns = [
     path("exercise/edit/<int:pk>/", login_required(exercise_view.exercise_edit), name="exercise_edit"),
     path("exercise/delete/<int:pk>/", login_required(exercise_view.exercise_delete), name="exercise_delete"),
     # json
-    path("exercises/tags/", exercise_view.get_exercises_params, name='get_exerises_by_tags'),
-
+    path('exercises/tags/<str:tag_ids>/', exercise_view.get_exercises_by_tags, name='exercises_by_tags'),
+    
     path('client/', login_required(client_view.client_list), name='client_list'),
     path('client/add/', login_required(client_view.client_add), name='client_add'),
     path("client/edit/<int:pk>/", login_required(client_view.client_edit), name="client_edit"),

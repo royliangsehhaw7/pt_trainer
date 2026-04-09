@@ -1,0 +1,13 @@
+.hr-appointment {
+    height: 2px;
+    background-color: #22be0e;
+    opacity: 100
+}
+
+.btn-appointment {
+    background-color: #22be0e;
+}
+
+.active>.page-link, .page-link.active {
+    background-color: #22be0e;
+}

@@ -1,5 +1,10 @@
 {% extends 'trainer/base.html' %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/client.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2 mb-sm-0">clients</h3>

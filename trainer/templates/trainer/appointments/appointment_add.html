@@ -1,5 +1,10 @@
 {% extends "trainer/base.html" %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/appointment.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2 mb-sm-0">add appointment</h3>
@@ -8,7 +13,7 @@
         </a>
     </div>
 
-    <hr class="opacity-100" style="height:2px; background-color: #F971B0;" />
+    <hr class="hr-workout opacity-100" />
 
     <div>
         <form method="post" novalidate>
@@ -30,6 +35,9 @@
                     </label>
                     <div class="col-sm-10">
                         {{form.scheduled_date}}
+                        {% for error in form.scheduled_date.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}                        
                     </div>
                 </div>
                 <div class="mb-3 row">

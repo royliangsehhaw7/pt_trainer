@@ -62,8 +62,8 @@
         </div>
 
         <div class="col">
-            <div class="card h-100 {% if request.session.module == 'appointment' %} border-5 {% endif %}" style="border-color: #37B7C3">
-                <a href="{% url 'appointment_list' %}" style="text-decoration: none;">
+            <div class="card h-100 {% if request.session.module == 'appointment' %} border-5 {% endif %}" style="border-color: #22be0e">
+                <a href="{% url 'appointment_calendar' %}" style="text-decoration: none;">
                     <div class="card-body p-1 d-flex flex-column justify-content-center align-items-center">
                         <div class="{% if request.session.module == 'appointment' %} fs-4 {% else %} text-muted {% endif %}">6</div>
                         <div class="opacity-50 d-none d-md-block mt-1 small">Appointments</div>

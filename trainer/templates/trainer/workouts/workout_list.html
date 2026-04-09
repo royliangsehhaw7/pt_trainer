@@ -2,7 +2,7 @@
 
 {% block custom_styles %}
     {% load static %}
-    <link href="{% static 'css/exercise.css' %}" rel="stylesheet">
+    <link href="{% static 'css/workout.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <hr class="opacity-100" style="height:2px; background-color: #FF8A08;" />
+    <hr class="hr-workout" />
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
         <!-- Search Aligned Far Left -->
@@ -26,7 +26,7 @@
             </div>
         </form>
 
-        <a href="{% url 'workout_add' %}" class="btn px-4" style="background-color: #FF8A08;">
+        <a href="{% url 'workout_add' %}" class="btn btn-workout px-4">
             add
         </a>
     </div>
@@ -36,8 +36,9 @@
             <thead class="table-dark">
                 <tr>
                     <th>Client</th>
-                    <th>Scheduled Date</th>
                     <th>Status</th>
+                    <th class="text-center">Exercises</th>
+                    <th class="text-center">ExercisesDone</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -45,7 +46,6 @@
                 {% for workout in workouts %}
                 <tr>
                     <td class="fw-bold">{{ workout.client.name }}</td>
-                    <td>{{ workout.scheduled_date|date:"d M Y, H:i" }}</td>
                     <td>
                         {% if workout.is_completed %}
                             <span class="badge bg-success">Completed</span>
@@ -53,6 +53,8 @@
                             <span class="badge bg-warning text-dark">Pending</span>
                         {% endif %}
                     </td>
+                    <td class="text-center">{{ workout.exercise_count }}</td>
+                    <td class="text-center">{{ workout.done_count }}</td>
                     <td class="text-end">
                         <div class="btn-group">
                             <a href="{% url 'workout_edit' workout.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
@@ -70,50 +72,5 @@
     </div>
 
     <!-- bootstrap 5 pagination -->
-    <div>
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">    
-            <!-- Page Counter (Far Left) -->
-            <div class="text-muted small">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            </div>
-
-            <!-- pager-->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination mb-0">                    
-                    <!-- Previous -->
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                    {% endif %}
-
-                    <!-- Page Numbers -->
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}&search={{ search }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    <!-- Next -->
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>    
+    {% include 'trainer/includes/_pagination.html' %}    
 {% endblock %}

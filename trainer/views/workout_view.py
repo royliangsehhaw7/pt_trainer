@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Count,Q
 from orm.models import Workout, Exercise, Tag, Trainer, Client, WorkoutExercise
 from ..forms import WorkoutForm, ExerciseFormSet
 
@@ -19,13 +20,24 @@ def workout_list(request):
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
 
-    # workouts = Workout.objects.all().select_related('client', 'trainer')
+    workouts = Workout.objects.all().select_related('client', 'trainer')
     search = request.GET.get('search', '')
     if search:
         # Use icontains for a better user search experience
         workouts = Workout.objects.filter(trainer=trainer, client__name__icontains=search).order_by('client__name')
     else:     
         workouts = Workout.objects.filter(trainer=trainer).order_by('client__name')
+
+    # -- https://ctrlzblog.com/django-annotate-7-examples-to-supercharge-your-querysets
+    workouts = workouts.annotate(
+        exercise_count = Count("exercises"),
+        done_count=Count('exercises', filter=Q(exercises__is_done=True))        
+        # done_count=Count(
+        #     'exercises', 
+        #     filter=Q(exercises__is_done=True), 
+        #     distinct=True
+        # ) 
+    )
 
     # page controls - paginators with model data - 4 rows per page
     paginator = Paginator(workouts, 4)
@@ -48,7 +60,7 @@ def workout_add(request):
     if request.method == "POST":
         selected_tag_ids = request.POST.getlist('tags_filter')
 
-        form = WorkoutForm(request.POST)
+        form = WorkoutForm(request.POST, trainer = trainer)
         formset = ExerciseFormSet(request.POST, prefix='exercises')
 
         if form.is_valid() and formset.is_valid():
@@ -62,22 +74,18 @@ def workout_add(request):
                     formset.save()
 
                 messages.success(request, "New workout created successfully!")
-
                 return redirect('workout_list')
             except ValidationError as e:
                 form.add_error(None, str(e))
             except Exception as e:
                 messages.error(request, f"Error: {str(e)}")
 
-            return redirect('workout_list')
-
         return render(request, 'trainer/workouts/workout_add.html', {
             'form': form,
-            'formset': formset,
-            'selected_tag_ids': selected_tag_ids
+            'formset': formset
         })
 
-    form = WorkoutForm()
+    form = WorkoutForm(trainer = trainer)
     formset = ExerciseFormSet(queryset=WorkoutExercise.objects.none(), prefix='exercises')
 
     return render(request, 'trainer/workouts/workout_add.html', {
@@ -86,7 +94,6 @@ def workout_add(request):
         'selected_tag_ids': []
     })
 
-
 def workout_edit(request, pk):
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk = request.user.id)
@@ -94,7 +101,7 @@ def workout_edit(request, pk):
     workout = get_object_or_404(Workout, pk=pk, trainer = trainer)
 
     if request.method == "POST":
-        form = WorkoutForm(request.POST, instance=workout)
+        form = WorkoutForm(request.POST, instance=workout, trainer=trainer)
         formset = ExerciseFormSet(request.POST, instance=workout)
 
         if form.is_valid() and formset.is_valid():
@@ -111,7 +118,7 @@ def workout_edit(request, pk):
             except Exception as e:
                 messages.error(request, f"Exceptions: {str(e)}")            
     else:
-        form = WorkoutForm(instance=workout)
+        form = WorkoutForm(instance=workout, trainer=trainer)
         formset = ExerciseFormSet(instance=workout)
 
     return render(request, 'trainer/workouts/workout_edit.html', {'form': form, 'formset': formset, 'workout': workout})

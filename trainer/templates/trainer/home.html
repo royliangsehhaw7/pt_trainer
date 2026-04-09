@@ -11,32 +11,25 @@
                 <div class="card-body">
                     <h6 class="card-title text-success mb-3">Clients</h6>
 
-                    <div class="row align-items-center">
-                        
-                        <!-- LEFT: Big number -->
+                    <div class="row align-items-center">                        
                         <div class="col-6 text-center border-end">
-                            <div class="display-2 text-white">12</div>
-                            <small class="text-body-secondary">Clients</small>
+                            <div class="display-5 text-white">{{ summary.clients.total }}</div>
                         </div>
 
-                        <!-- right vertical stack -->
                         <div class="col-6">
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">Active</span>
-                                <span class="fw-bold text-success">3</span>
+                                <span class="text-muted text-small">5+ workouts</span>
+                                <span class="fw-bold text-success">{{ summary.clients.completed }}</span>
                             </div>
-
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">Registered</span>
-                                <span class="fw-bold text-info">5</span>
+                                <span class="text-muted text-small">2+ workouts</span>
+                                <span class="fw-bold text-info">{{ summary.clients.pending }}</span>
                             </div>
-
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">Retired</span>
-                                <span class="fw-bold text-secondary">4</span>
+                                <span class="text-muted text-small">New</span>
+                                <span class="fw-bold text-info">{{ summary.clients.pending }}</span>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -49,19 +42,13 @@
                     <div class="row text-center">
                         <!-- Metric 1 -->
                         <div class="col-6">
-                            <h1 class="display-3 text-white mb-0">5</h1>
+                            <h1 class="display-5 text-white mb-0">{{ summary.tag_count }}</h1>
                             <small class="text-body-secondary">Tags</small>
                         </div>
-
-                        <!-- Metric 2 -->
                         <div class="col-6">
-                            <h1 class="display-3 text-white mb-0">22</h1>
+                            <h1 class="display-5 mb-0">{{ summary.exe_count }}</h1>
                             <small class="text-body-secondary">Exercises</small>
                         </div>
-                    </div>
-
-                    <div class="mt-3 text-center">
-                        <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
                     </div>
                 </div>
             </div>
@@ -69,31 +56,27 @@
         <div class="col">
             <div class="card h-100 bg-dark shadow-sm">
                 <div class="card-body">
-                    <h6 class="card-title text-success mb-3 text-end">Workouts</h6>
+                    <h5 class="card-title text-success mb-3 text-end">Workouts</h5>
 
                     <div class="row align-items-center">
                         <!-- RIGHT: Vertical stack -->
                         <div class="col-6  border-end">
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">Not Started</span>
-                                <span class="fw-bold text-success">3</span>
+                                <span class="text-body-secondary text-small">In Progress</span>
+                                <span class="fw-bold text-info">{{ summary.workouts.pending }}</span>
                             </div>
-
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">In Progress</span>
-                                <span class="fw-bold text-info">5</span>
+                                <span class="text-body-secondary text-small">Completed</span>
+                                <span class="fw-bold text-secondary">{{ summary.workouts.completed }}</span>
                             </div>
-
                             <div class="d-flex justify-content-between">
-                                <span class="text-body-secondary">Completed</span>
-                                <span class="fw-bold text-secondary">4</span>
+                                <span class="text-body-secondary text-small">Not Started</span>
+                                <span class="fw-bold text-secondary">{{ summary.workouts.completed }}</span>
                             </div>
                         </div>
-                        
-                        <!-- LEFT: Big number -->
                         <div class="col-6 text-center">
-                            <div class="display-2 text-white">12</div>
-                            <small class="text-body-secondary">Clients</small>
+                            <div class="display-5">{{ summary.workouts.total }}</div>
+                            <!-- <small class="text-body-secondary">Clients</small> -->
                         </div>
                     </div>
                 </div>
@@ -102,55 +85,51 @@
 
     </div>
 
-    <!-- Second Row: 2 Cards (Stacks on mobile, 2-wide on medium screens+) -->
-    <div class="row row-cols-1 row-cols-md-2 g-4">
-        <div class="col">
+    <!-- second row: left appointments -->
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
             <div class="card h-100 bg-dark shadow-sm">
+                <h5 class="card-header text-success text-center">upcoming appointments</h5>
                 <div class="card-body">
-                    <h5 class="card-title text-success">Upcoming Appointments</h5>
-                    <div class="card-body" id="calendar">
+                    <!-- <h5 class="card-title text-success">Upcoming Appointments</h5> -->
+                    <div class="card-body" id="calendar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card h-100 bg-dark shadow-sm">
+                <h5 class="card-header text-success text-center">pending workouts</h5>
+                <div class="card-body">
+                    {%for workout in summary.pending_workouts %}
+                        <h6>{{ workout.client__name }}</h6>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      // FIX 1: Use dayGridWeek instead of timeGridWeek
-      initialView: 'listMonth',
-      
-    //   aspectRatio: 2, 
-      displayEventTime: false, 
-      height: 'auto',
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'listMonth',    
+            displayEventTime: false, 
+            height: 'auto',
+            themeSystem: 'bootstrap5',
 
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        // FIX 2: Swap timeGridWeek for dayGridWeek here too
-        right: 'listMonth' 
-      },
+            headerToolbar: {
+                left: 'prev,next', // Removed 'today' from here
+                center: 'title',
+                right: ''          // Leave empty or add view buttons like 'dayGridMonth'
+            },            
 
-      events: '{% url "calendar_json" %}', 
-      themeSystem: 'bootstrap5',
-      
-      dateClick: function(info) {
-        window.location.href = "{% url 'appointment_add' %}?date=" + info.dateStr;
-      },
-      
-    //   eventClick: function(info) {
-    //     if (info.event.url) {
-    //       info.jsEvent.preventDefault();
-    //       window.location.href = info.event.url;
-    //     }
-    //   }
+            events: '{% url "calendar_json" %}',             
+        });
+
+        calendar.render();
     });
-
-    calendar.render();
-});
-
 </script>
+
 {% endblock %}

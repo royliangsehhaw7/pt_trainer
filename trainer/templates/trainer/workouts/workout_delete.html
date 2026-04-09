@@ -1,5 +1,10 @@
 {% extends 'trainer/base.html' %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/workout.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">

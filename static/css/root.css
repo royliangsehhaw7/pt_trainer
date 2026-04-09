@@ -20,6 +20,20 @@ body {
 }
 
 
+/* ========================================================================= */
+.hr-workout {
+    height: 2px;
+    background-color: #FF8A08;
+    opacity: 100
+}
+
+.btn-workout {
+    background-color: #FF8A08;
+}
+
+.nav-workout>.active>.page-link, .page-link.active {
+    background-color: #FF8A08;
+}
 
 
 /* ==========================================================================

@@ -1,19 +1,16 @@
-/* Targets the outer table and all cell borders
-.table-red-borders, 
-.table-red-borders th, 
-.table-red-borders td {
-    border: 1px solid #ae4343 !important;
+.hr-tag {
+    height: 2px;
+    background-color: #3ABEF9;
+    opacity: 100
 }
 
-/* Specifically fixes the top border of the first row in the body */
-/* .table-red-borders thead th {
-    border-bottom: 2px solid #ff0000 !important;
-} */
-
-/* .button {
-    background-color: red;
-} */
-
-.active>.page-link, .page-link.active {
+.btn-tag {
     background-color: #3ABEF9;
+}
+/* Note the space between .nav-workout and .active */
+.nav-workout .active > .page-link, 
+.nav-workout .page-link.active {
+    background-color: #3ABEF9 !important;
+    border-color: #3ABEF9 !important;
+    color: white !important;
 }

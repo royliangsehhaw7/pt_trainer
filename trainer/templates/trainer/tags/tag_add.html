@@ -1,6 +1,10 @@
 {% extends "trainer/base.html" %}
 {% load process_header_tag %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/tag.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
     <!-- 
@@ -13,7 +17,7 @@
     -->
 
     {% render_process_header "add tags" "tag_list" %}
-    <hr class="opacity-100" style="height:3px; background-color: #3ABEF9;" />
+    <hr class="hr-tag opacity-100" />
 
     <form method="POST">
         {% csrf_token %}

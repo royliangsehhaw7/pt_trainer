@@ -39,6 +39,9 @@ def appoint_list(request):
 
 
 def appoint_add(request):
+    # stepper highlight
+    request.session['module'] = "appointment"
+
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     # If coming from a calendar click, we might have a date in the URL
@@ -68,6 +71,8 @@ def appoint_add(request):
 
 
 def appoint_edit(request, pk):
+    # stepper highlight
+    request.session['module'] = "appointment"    
     trainer = get_object_or_404(Trainer, pk = request.user.id)
 
     appointment = get_object_or_404(Appointment, pk = pk, trainer = trainer)
@@ -93,6 +98,9 @@ def appoint_edit(request, pk):
 
 
 def appoint_delete(request, pk):
+    # stepper highlight
+    request.session['module'] = "appointment"
+
     # Ensure the tag belongs to this trainer before deleting
     appointment = get_object_or_404(Appointment, pk=pk)
 
@@ -109,7 +117,9 @@ def appoint_delete(request, pk):
 
 
 def appoint_calendar(request):
-    """Simple view to render the new FullCalendar template"""
+    # stepper highlight
+    request.session['module'] = "appointment"
+    
     return render(request, 'trainer/appointments/appointment_calendar.html')
 
 

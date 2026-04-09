@@ -55,7 +55,8 @@ class Exercise(models.Model):
     tags = models.ManyToManyField(      # NO on_delete, THIS IS NOT A PARENT CHILD RELATIONSHIP
         Tag,
         related_name = "exercises",
-        db_table = "tags_exercises"
+        db_table = "tags_exercises",
+        
     )    
 
     class Meta:

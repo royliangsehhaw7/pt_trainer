@@ -1,3 +1,14 @@
+
+.hr-exercise {
+    height: 2px;
+    background-color: #A07CFE;
+    opacity: 100
+}
+
+.btn-exercise {
+    background-color: #A07CFE;
+}
+
 .active>.page-link, .page-link.active {
     background-color: #A07CFE;
 }

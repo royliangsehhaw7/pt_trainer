@@ -1,5 +1,10 @@
 {% extends 'trainer/base.html' %}
 
+{% block custom_styles %}
+    {% load static %}
+    <link href="{% static 'css/workout.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
     <h3 class="mb-2 mb-sm-0">edit workout program</h3>
@@ -9,31 +14,26 @@
 <hr class="opacity-100" style="height:5px; background-color: #FF8A08;" />
 
 <div class="container-fluid mt-4">
-    <form id="workout-form" method="post">
+    <form id="workout-form" method="POST">
         {% csrf_token %}
         
         <div class="row">
-            <div class="col-12 col-md-4 border-end">
-                <div class="card mb-4 border-0">
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
                     <div class="card-header bg-primary text-white">
-                        <h6 class="mb-0">Select client</h6>
+                        <h6 class="mb-0">Client</h6>
                     </div>
                     <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label small" for="{{form.client.id_for_label}}">{{form.client.label}}</label>
+                        <div class="row mb-3">
+                            <div class="col-sm-10">
                                 {{ form.client }}
-                                <input type="hidden" name="client" value="{{ workout.client.id }}">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label small" for="{{form.scheduled_date.id_for_label}}">Scheduled Date</label>
-                                {{ form.scheduled_date }}
-                            </div>
+                            <!-- <input type="hidden" name="client" value="{{ workout.client.id }}"> -->
                         </div>
                         <div class="row g-3 mt-2">
                             <div class="col-12">
                                 <label class="form-label small" for="client-goals">Goals</label>
-                                <textarea class="form-control" disabled readonly id="client-goals" rows="2"></textarea>
+                                <textarea class="form-control" disabled readonly id="client-goals" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,6 @@
             </div>
 
             <div class="col-12 col-md-8 col-lg-8">
-                <h3>ERRORS HEREs</h3>
                 {% include 'trainer/includes/_form_errors.html' %}
                 
                 <input type="hidden" id="persist-tag-ids" name="tags_filter" value="{{ selected_tag_ids|join:',' }}">
@@ -84,20 +83,28 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    {{ ex_form.actual_sets.label_tag }}
-                                    {{ ex_form.actual_sets }}
+                                    {% if ex_form.pre_sets.value > 0 %}
+                                        {{ ex_form.actual_sets.label_tag }}
+                                        {{ ex_form.actual_sets }}
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-2">
-                                    {{ ex_form.actual_reps.label_tag }}
-                                    {{ ex_form.actual_reps }}
+                                    {% if ex_form.pre_reps.value > 0 %}
+                                        {{ ex_form.actual_reps.label_tag }}
+                                        {{ ex_form.actual_reps }}
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-2">
-                                    {{ ex_form.actual_weight.label_tag }}
-                                    {{ ex_form.actual_weight }}
+                                    {% if ex_form.pre_weight.value > 0 %}
+                                        {{ ex_form.actual_weight.label_tag }}
+                                        {{ ex_form.actual_weight }}
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-2">
-                                    {{ ex_form.actual_duration.label_tag }}
-                                    {{ ex_form.actual_duration }}
+                                    {% if ex_form.pre_duration.value > 0 %}
+                                        {{ ex_form.actual_duration.label_tag }}
+                                        {{ ex_form.actual_duration }}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -112,74 +119,4 @@
     </form>
 </div>
 
-<script>
-    const multiTagsElement = document.getElementById('multi-tags-container');
-    const exerciseList = document.getElementById('exercise-card-list');
-    const hiddenInput = document.getElementById('persist-tag-ids');
-    const workoutForm = document.getElementById('workout-form');
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-submit on exercise change
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.name && e.target.name.includes('-exercise')) {
-                workoutForm.submit();
-            }
-        });
-
-        // Load existing tags
-        const tagString = hiddenInput ? hiddenInput.value : "";
-        const savedIds = tagString ? tagString.split(',') : [];
-        if (savedIds.length > 0 && savedIds[0] !== "") {
-            savedIds.forEach(id => {
-                const cb = document.getElementById('tag' + id);
-                if (cb) cb.checked = true;
-            });
-            loadExercises(); 
-        }
-    });
-
-    function addExerciseToWorkout(exId) {
-        const totalFormsInput = document.getElementById('id_exercises-TOTAL_FORMS');
-        const currentIndex = parseInt(totalFormsInput.value);
-        
-        totalFormsInput.value = currentIndex + 1;
-
-        const exerciseInput = document.createElement('input');
-        exerciseInput.type = 'hidden';
-        exerciseInput.name = `exercises-${currentIndex}-exercise`;
-        exerciseInput.value = exId;
-        workoutForm.appendChild(exerciseInput);
-
-        workoutForm.submit();
-    }
-
-    async function loadExercises() {
-        const checkedBoxes = Array.from(document.querySelectorAll('input[name="tags_filter"]:checked'));
-        const selectedIds = checkedBoxes.map(cb => cb.value);
-        hiddenInput.value = selectedIds.join(',');
-
-        if (selectedIds.length === 0) {
-            exerciseList.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
-            return;
-        }
-
-        const params = new URLSearchParams();
-        selectedIds.forEach(id => params.append('tag_id', id));
-
-        try {
-            const res = await fetch(`/exercises/tags/?${params}`);
-            const data = await res.json();
-            exerciseList.innerHTML = data.map(ex => `
-                <li class="card mb-2 shadow-sm border-0 p-2" style="cursor: pointer;" onclick="addExerciseToWorkout(${ex.id})">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="small">${ex.name}</span>
-                        <span class="badge bg-primary">+</span>
-                    </div>
-                </li>
-            `).join('');
-        } catch (err) {
-            exerciseList.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
-        }
-    }
-</script>
 {% endblock %}

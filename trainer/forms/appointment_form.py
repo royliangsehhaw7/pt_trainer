@@ -1,3 +1,6 @@
+from datetime import datetime, date
+from django.core.exceptions import ValidationError
+
 from django import forms
 from orm.models import Appointment, Client
 
@@ -26,3 +29,14 @@ class AppointmentForm(forms.ModelForm):
 
         if trainer:
             self.fields['client'].queryset = Client.objects.filter(trainer=trainer)
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # this will check for inputs dates > current date else 
+        # raise error (non field error)
+        if self.cleaned_data.get('scheduled_date') < date.today():          # clearned_Date converts string to python object
+            # raise ValidationError("Must be a future date")                # non field error
+            self.add_error("scheduled_date", "Must be a future date")       # field error
+        
+        return cleaned_data
