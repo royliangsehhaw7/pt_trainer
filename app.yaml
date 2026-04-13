@@ -11,8 +11,3 @@ handlers:
   - url: /.*
     script: auto
 
-env_variables:
-  DB_HOST: "34.142.192.182"
-  DB_NAME: "uni_db"
-  DB_USER: "pt_user"
-  DB_PASS: "123123123"

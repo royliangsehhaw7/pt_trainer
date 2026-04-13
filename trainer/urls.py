@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 from .views import account_view, index_view, home_view
-from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view, appointment_view
+from .views import index_view, tag_view, exercise_view, workout_view, client_view, account_view, appointment_view, ai_view
 
 from django.contrib.auth.decorators import login_required
 
@@ -70,4 +70,7 @@ urlpatterns = [
 
     # 
     # path('', include('social_django.urls', namespace='social')),
+
+
+    path('ai/generate/<str:prompt>', ai_view.generate, name='ai_gen')
 ]

@@ -40,8 +40,6 @@ HTML Elements
 
 
 
-
-
 REFERENCES:
 =========================================================================================
     1. Bootstrap 
@@ -89,6 +87,13 @@ REFERENCES:
     --- https://fullcalendar.io/
     --- https://medium.com/@azzouzhamza13/django-fullcalendar6-1-11-rrule-8a4e63100d0b
     --- https://awstip.com/how-to-use-the-fullcalendar-io-to-integrate-the-calendar-events-in-django-project-b6305959d989
+
+    12. GCloud App Engine django
+    --- https://vishalbulbule.medium.com/deploying-django-application-on-gcp-google-app-engine-with-cloud-sql-and-custom-domain-mapping-bf419c9c3ea7
+    --- https://testdriven.io/blog/django-gae/
+
+    13. Google AI Python SDK
+    --- 
 
 AI:
     1. How to mark multiplechoicefields in a django form during editing an existing record

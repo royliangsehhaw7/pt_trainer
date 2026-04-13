@@ -27,4 +27,6 @@ Dockerfile
 docker-compose.yml
 
 # Environment variables file (if used for local development)
-.envg c
+.env
+
+!staticfiles/
