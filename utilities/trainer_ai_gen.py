@@ -2,6 +2,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
+from django.conf import settings
 from django.http import JsonResponse
 from orm.models import Trainer, Tag, Exercise, Client
 
@@ -16,7 +17,7 @@ class TrainerGeminiAI:
         # Prefix with _ to make it "protected/private"
         self._llm = ChatGoogleGenerativeAI(
             model=model_name,
-            google_api_key=api_key,
+            google_api_key=settings.GOOGLE_API_KEY,
             temperature=0.3
         )
 

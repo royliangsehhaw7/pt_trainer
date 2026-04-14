@@ -2,6 +2,7 @@
 from django.contrib import messages
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 
 from orm.models import Tag 
@@ -32,8 +33,10 @@ def tag_list(request):
     else:     
         tags = Tag.objects.filter(trainer=trainer).order_by('name')
 
+    tags = tags.annotate(exercise_count=Count('exercises'))
+
     # page controls - paginators with model data - 4 rows per page
-    paginator = Paginator(tags, 4)
+    paginator = Paginator(tags, 6)
     page_number = request.GET.get('page')
 
     try:
@@ -71,20 +74,22 @@ def tag_add(request):
 
 def tag_edit(request, pk):
     # Saas tenant - get logged in trainer for data filtering
-    trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
+    trainer = get_object_or_404(Trainer, pk=request.user.id)
 
     # getting data from database first
     # actually this has NO concurrency check, 
     # data from this get could have been changed before
     # STILL this is required to let django knows this is an update nor insert
-    tag = get_object_or_404(Tag, pk=pk, trainer=trainer_instance)
+    # tag = get_object_or_404(Tag, pk=pk, trainer=trainer_instance)
+    tag = Tag.objects.get(pk = pk, trainer = trainer)
+    exercises = tag.exercises.all()
 
     if request.method == "POST":
         form = TagForm(request.POST, instance=tag)
         if form.is_valid():
             try:
                 tag = form.save(commit=False)
-                tag.trainer = trainer_instance  # optional but safe
+                tag.trainer = trainer  # optional but safe
                 
                 tag.full_clean()
                 tag.save()
@@ -98,7 +103,7 @@ def tag_edit(request, pk):
     else:
         form = TagForm(instance=tag)
 
-    return render(request, "trainer/tags/tag_edit.html", {"form": form})
+    return render(request, "trainer/tags/tag_edit.html", {"form": form, "exercises": exercises})
 
 
 def tag_delete(request, pk):

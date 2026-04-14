@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.db import transaction
+from django.db.models import Count
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 
@@ -23,12 +24,14 @@ def exercise_list(request):
 
     search = request.GET.get('search', '')
     if search:
-        exercises = Exercise.objects.filter(trainer=trainer, name__icontains=search).orderBy('name')
+        exercises = Exercise.objects.filter(trainer=trainer, name__icontains=search).order_by('name')
     else:
         exercises = Exercise.objects.filter(trainer=trainer).order_by('name')
     
+    exercises = exercises.annotate(tags_count=Count('tags'))
+
     # page controls - paginators with model data - 4 rows per page
-    paginator = Paginator(exercises, 4)
+    paginator = Paginator(exercises, 6)
     page_number = request.GET.get('page')
 
     try:

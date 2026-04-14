@@ -17,8 +17,7 @@ from pathlib import Path
 load_dotenv()
 
 # ========================================
-if "GOOGLE_API_KEY" not in os.environ:
-    os.environ["GOOGLE_API_KEY"] = "AIzaSyAYRe9kTVyq_QS__BxdRKuesya07sug_FE"
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -114,10 +113,9 @@ DATABASES = {
 
 # using path names
 LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'index'
-
 LOGIN_REDIRECT_URL = 'social_login'         ## this is to facilitate the post social login checking
                                             ## normal django auth will be redirected from the view
+LOGOUT_REDIRECT_URL = 'index'
 
 # customized User with is_trainer indicator
 AUTH_USER_MODEL = "orm.UserTrainer"
@@ -135,7 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 
 # =================================== SOCIAL LOGINS =========================================== #
@@ -159,7 +156,6 @@ SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 
 
 
-# 1. This prevents the "Yellow Screen of Death" when an email isn't found
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 

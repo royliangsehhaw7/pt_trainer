@@ -8,7 +8,7 @@
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2 mb-sm-0">add appointment</h3>
-        <a href="{% url 'appointment_list' %}" class="btn btn-outline-secondary">
+        <a href="{% url 'appointment_calendar' %}" class="btn btn-outline-secondary">
             Back
         </a>
     </div>
@@ -54,7 +54,7 @@
 
             <!-- buttons actions -->      
             <div class="mt-4 d-flex gap-2 justify-content-end flex-wrap">
-                <a href="{% url 'appointment_list' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
+                <a href="{% url 'appointment_calendar' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
                     Cancel
                 </a>
                 <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save</button>

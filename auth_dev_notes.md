@@ -39,8 +39,10 @@ REFERENCES:
     Configure auth flow and redirection
         --- settings.py
             LOGIN_URL = 'login'
-            LOGIN_REDIRECT_URL = 'home'
+
+            LOGIN_REDIRECT_URL = 'social_login'
             LOGOUT_REDIRECT_URL = 'index'
+
             !!! IMPORTANT
             AUTH_USER_MODEL = "orm.UserTrainer"     # tells django to use this new model as the default auth user
 

@@ -15,30 +15,42 @@
     {% render_process_header "edit tags" "tag_list" %}
     <hr class="opacity-100" style="height:5px; background-color: #3ABEF9;" />
 
-    <form method="POST">
-        {% csrf_token %}
-        {% include "trainer\includes\_form_errors.html" %}        
+    <div class="row">
+        <div class="col-12 col-md-8 col-lg-8">
+            <form method="POST">
+                {% csrf_token %}
+                {% include "trainer\includes\_form_errors.html" %}        
 
-        <!-- tag Name -->
-        <div class="border rounded p-4 mt-4">
-            <div class="mb-3 row">
-                <label class="col-12 col-md-2 col-form-label">{{ form.name.label }}</label>
-                <div class="col">
-                    {{ form.name }}
+                <!-- tag Name -->
+                <div class="border rounded p-4 mt-4">
+                    <div class="mb-3 row">
+                        <label class="col-12 col-md-2 col-form-label">{{ form.name.label }}</label>
+                        <div class="col">
+                            {{ form.name }}
 
-                    {% for error in form.name.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
+                            {% for error in form.name.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- buttons actions -->      
-        <div class="mt-4 d-flex gap-2 justify-content-end">
-            <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
-                Cancel
-            </a>
-            <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save</button>
+                <!-- buttons actions -->      
+                <div class="mt-4 d-flex gap-2 justify-content-end">
+                    <a href="{% url 'tag_list' %}" class="btn btn-outline-secondary w-100 w-sm-auto">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary w-100 w-sm-auto">Save</button>
+                </div>
+            </form>
         </div>
-    </form>
+        <div class="col-12 col-md-4 col-lg-4">
+            <ul class="list-group p-2">
+                {% for exercise in exercises %}
+                    <li class="list-group-item">{{ exercise.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
 {% endblock %}

@@ -12,6 +12,7 @@ db.sqlite3
 # Environment variables and secrets
 .env
 local_settings.py
+app.yaml
 
 # MEDIA FILES (Excluding the entire folder)
 # MEDIA FOLDERS ARE FOR USER UPLOADED RESOURCES
