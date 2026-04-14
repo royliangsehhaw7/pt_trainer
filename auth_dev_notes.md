@@ -132,6 +132,7 @@ Social Login
 =============================================================================================
 REFERENCES:
     --- https://python-social-auth.readthedocs.io/en/latest/configuration/django.html
+    --- https://medium.com/@kennethjiang/python-social-auth-for-django-tutorial-16bbe792659f
 
 Setup
     --- CMD: pip install social-auth-app-django

@@ -26,12 +26,12 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <label class="fw-bold small">Filter by Tags</label>
-                                <div id="multi-tags-container" class="d-flex flex-wrap gap-2 mb-3">
+                                <div id="tags-container" class="d-flex flex-wrap gap-2 mb-3">
                                     <span class="text-muted small">Loading tags...</span>
                                 </div>
                                 <label class="fw-bold small">Exercises</label>
                                 <div class="border rounded style="max-height: 600px; overflow-y: auto;">
-                                    <ul id="exercise-card-list" class="list-unstyled p-2 mb-0">
+                                    <ul id="exercises-container" class="list-unstyled p-2 mb-0">
                                         <li class="text-muted small text-center py-3">Select tags to see exercises</li>
                                     </ul>
                                 </div>
@@ -152,17 +152,14 @@
                     <label class="small text-muted mb-0" style="font-size: 0.7rem;">Sets</label>
                     {{ formset.empty_form.pre_sets }}
                 </div>
-
                 <div class="col px-0">
                     <label class="small text-muted mb-0" style="font-size: 0.7rem;">Reps</label>
                     {{ formset.empty_form.pre_reps }}
                 </div>
-
                 <div class="col px-0 pe-1">
                     <label class="small text-muted mb-0" style="font-size: 0.7rem;">Wgts</label>
                     {{ formset.empty_form.pre_weight }}
                 </div>
-
                 <div class="col px-0">
                     <label class="small text-muted mb-0" style="font-size: 0.7rem;">Mins</label>
                     {{ formset.empty_form.pre_duration }}
@@ -180,8 +177,8 @@
     <!-- ========================== /EMPTY TEMPLATE (used for JS cloning) ========================= -->
 
     <script>
-        const multiTagsElement = document.getElementById('multi-tags-container');
-        const exerciseList = document.getElementById('exercise-card-list');
+        const tagsContainerEl = document.getElementById('tags-container');
+        const exercisesContainerEl = document.getElementById('exercises-container');
 
         const formsetContainer = document.getElementById("formset-container");
         const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
@@ -212,13 +209,15 @@
         function delExercise(ex) {
         }    
 
+
         async function load_tags() {
+            debugger;
             fetch('/tags/')
                 .then(res => {
                     return res.json();
                 })
                 .then(data => {
-                    multiTagsElement.innerHTML = data.map(tag => `
+                    tagsContainerEl.innerHTML = data.map(tag => `
                         <input class="btn-check" type="checkbox" onchange="loadExercises()" 
                             name="tags_filter" value="${tag.id}" id="tag${tag.id}">
                         
@@ -228,31 +227,32 @@
                     `).join('');
                 })
                 .catch(err => {
-                    multiTagsElement.innerHTML = '<span class="text-danger">Error loading tags.</span>';
+                    tagsContainerEl.innerHTML = '<span class="text-danger">Error loading tags.</span>';
                 });
         }
         async function loadExercises() {
             debugger;
 
             // 1. Get all checkboxes with that name
-            const allBoxes = document.querySelectorAll('input[name="tags_filter"]');
+            const allTags = document.querySelectorAll('input[name="tags_filter"]');
             const selectedIds = [];
-            for (let i = 0; i < allBoxes.length; i++) {
-                if (allBoxes[i].checked) {
-                    selectedIds.push(allBoxes[i].value);
+            for (let i = 0; i < allTags.length; i++) {
+                if (allTags[i].checked) {
+                    selectedIds.push(allTags[i].value);
                 }
             }
  
-            // 3. build string of tags to get  /exercises/tags/1,2,3/
-            const tagString = selectedIds.join(',');
 
             if(selectedIds.length > 0) {
+                // 3. build string of tags to get  /exercises/tags/1,2,3/
+                const tagString = selectedIds.join(',');                
+                
                 try {
                     await fetch(`/exercises/tags/${tagString}`)
                         .then(res => res.json())
                         .then(data => {
                             if(data.length) {
-                                exerciseList.innerHTML = data.map(ex => `
+                                exercisesContainerEl.innerHTML = data.map(ex => `
                                     <li class="card mb-2 shadow-sm border-0 p-1" style="cursor: pointer;" 
                                         onclick='addExercise(${JSON.stringify(ex)})'>
                                         <div class="d-flex justify-content-between align-items-center">
@@ -265,11 +265,11 @@
                         })
                 } 
                 catch (err) {
-                    exerciseList.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
+                    exercisesContainerEl.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
                 }
             }
             else {
-                exerciseList.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
+                exercisesContainerEl.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
             }
         }
     </script>

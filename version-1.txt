@@ -71,6 +71,9 @@ REFERENCES:
     --- https://medium.com/@adandan01/django-inline-formsets-example-mybook-420cc4b6225d
     --- https://awstip.com/django-inline-formset-factory-with-examples-27576b915b5a
     --- 
+    7a. HTMX
+    --- 
+
 
     8. Ajax calls with django
     --- https://medium.com/@jaeyeonjung3/asynchronous-http-requests-ajax-axios-and-fetch-af5103480a8f
@@ -91,6 +94,9 @@ REFERENCES:
     12. GCloud App Engine django
     --- https://vishalbulbule.medium.com/deploying-django-application-on-gcp-google-app-engine-with-cloud-sql-and-custom-domain-mapping-bf419c9c3ea7
     --- https://testdriven.io/blog/django-gae/
+
+    13. 
+    13. HTMX
 
     13. Google AI Python SDK
     --- 

@@ -11,7 +11,14 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
+
+# ========================================
+if "GOOGLE_API_KEY" not in os.environ:
+    os.environ["GOOGLE_API_KEY"] = "AIzaSyAYRe9kTVyq_QS__BxdRKuesya07sug_FE"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -93,11 +100,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE'    : 'django.db.backends.mysql',
-        'NAME'      : 'db30',
-        'USER'      : 'root',
-        'PASSWORD'  : 'returntoRL!',
-        'HOST'      : '103.3.173.137',
-        'PORT'      : '3306'        
+        'NAME'      : os.getenv('DB_NAME'),
+        'USER'      : os.getenv('DB_USER'),
+        'PASSWORD'  : os.getenv('DB_PWD'),
+        'HOST'      : os.getenv('DB_HOST'),
+        'PORT'      : os.getenv('DB_PORT')    
     }
 }
 
@@ -136,15 +143,15 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Google OAuth2
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "178830027421-o5ac3m89hinnvgt6aj2al1hngqlie8td.apps.googleusercontent.com"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
 # Github OAuth2
-SOCIAL_AUTH_GITHUB_KEY = "Ov23liadupAuJUoHvtg0"
-SOCIAL_AUTH_GITHUB_SECRET = "4157da5a852e5dcb49dc9316eafe64331c3b58f4"
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 
 
@@ -152,7 +159,7 @@ SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 # 1. This prevents the "Yellow Screen of Death" when an email isn't found
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 # 2. This sends the user back to your view if the email doesn't match
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'login/'
 # 3. CRITICAL: Add this to clear the partial session on failure
 SOCIAL_AUTH_CLEAN_USER_KEEP_SESSION = True
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {

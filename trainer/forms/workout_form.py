@@ -42,7 +42,6 @@ class WorkoutForm(forms.ModelForm):
             # self.fields['client'].required = False
             # self.fields['client'].widget.attrs['class'] = 'form-control-plaintext border-bottom fw-bold'            
 
-
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = WorkoutExercise
@@ -75,7 +74,7 @@ class ExerciseForm(forms.ModelForm):
 
 
 
-# The Factory MUST use the ExerciseForm class defined above
+# this is for the empty / new rows
 ExerciseFormSet = inlineformset_factory(
     Workout,
     WorkoutExercise,

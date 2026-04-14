@@ -41,22 +41,27 @@ class WorkoutExercise(models.Model):
     actual_sets = models.PositiveIntegerField(
         default=0,
         db_default=0,
-        blank=True
+        blank=True,
+        null=True
     )
     actual_reps = models.PositiveIntegerField(
         default=0,
         db_default=0,
-        blank=True
+        blank=True,
+        null=True
+
     )
     actual_weight = models.PositiveIntegerField(
         default=0,
         db_default=0,
-        blank=True
+        blank=True,
+        null=True
     )
     actual_duration = models.PositiveIntegerField(
         default=0,
         db_default=0,
-        blank=True
+        blank=True,
+        null=True
     )
 
 
