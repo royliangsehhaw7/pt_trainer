@@ -18,6 +18,7 @@ urlpatterns = [
     # ============================== social auth django ======================================= #
     # social-auth-django provides the 'social:begin' namespace
     path('social-auth/', include('social_django.urls', namespace='social')),
+    path("social-login/", account_view.social_login, name="social_login"),
 
 
     # =============================  django authentication ==================================== #

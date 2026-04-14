@@ -23,6 +23,7 @@ class UserTrainer(AbstractUser):
         permissions = [
             ("can_use_ai", "Can use AI features")
         ]
+        
 
     def save(self, *args, **kwargs):
         # mnually trigger the validators if modelform not used, when using objec save

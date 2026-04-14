@@ -30,7 +30,6 @@ class AccountForm(forms.ModelForm):
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
-        # Only validate matching if both are present (Registration mode)
         if password and confirm_password:
             if password != confirm_password:
                 self.add_error('confirm_password', "Passwords do not match")

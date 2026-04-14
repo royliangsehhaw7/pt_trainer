@@ -9,7 +9,6 @@ REFERENCES:
     --- https://www.pragnakalp.com/django-tutorial-a-comprehensive-guide-to-use-djangos-authentication-system/
 
 
-
     NOTE: *** have to create trainer groups first after first migrate ***
 
     RUN makemigrations and migrate first
@@ -29,41 +28,34 @@ REFERENCES:
     auth_user_groups            -- replaced by user_trainers_groups
     auth_user_user_permission   -- replaced by user_trainers_user_permissions
 
-    *****
     --- urls.py
-    to configure default django authentication path
-        --- path("accounts/", include("django.contrib.auth.urls"))  # all path for authentication is now avalablt for use
-        --- protecting path
-            --- wrap  views with login_required()
-    NOTE: path name is use accounts/
-0.  
+        path("login/", account_view.login_page, name="login"),              # will override this
+        path("register/", account_view.register_page, name="register"),     # will override this
 
-    **** IMPORTANT *****
-    --- django authentication will strictly look for folder or filenames 
+        # default django auth urls
+        path("", include("django.contrib.auth.urls")),
+0.  
 
     Configure auth flow and redirection
         --- settings.py
             LOGIN_URL = 'login'
             LOGIN_REDIRECT_URL = 'home'
             LOGOUT_REDIRECT_URL = 'index'
+            !!! IMPORTANT
+            AUTH_USER_MODEL = "orm.UserTrainer"     # tells django to use this new model as the default auth user
 
-            AUTH_USER_MODEL = "orm.UserTrainer"     # tells django to use this new model as the default auth user !!! IMPORTANT
-
-            --- TEMPLATES = [
-                'DIRS': [BASE_DIR / 'templates']        *** THIS IS A MUST ***
-                'APP_DIRS': True,
-            ]
 
     Auth Folder Layout
-    --- project root/templates/registration folder
-        --- login.html
-        --- register.html
-        --- password_reset_form.html
+        --- project root/templates/registration folder
+            --- login.html
+            --- register.html
+            --- password_reset_form.html (???)
 
-    THE NAMES OF FOLDER AND FILES MUST BE NAMED ACCORDINGLY IN ORDER FOR THE AUTHENTICATION TO WORK
-        --- MUST PROVIDE LOGIN/REGISTER/FORGOT PASSWORD TEMPLATES
+        THE NAMES OF FOLDER AND FILES MUST BE NAMED ACCORDINGLY IN ORDER FOR THE AUTHENTICATION TO WORK
+            --- MUST PROVIDE LOGIN/REGISTER/FORGOT PASSWORD TEMPLATES
 
-        NOTE: all path in urls.py MUST USED login_required
+    Secure all views !!!
+    NOTE: all path in urls.py MUST USED login_required
 
 
 User Redirection based on Group
@@ -79,7 +71,6 @@ Default Django Group
             --- login_page
                     ---- users will be redirectod based on the flag is_trainer
                     ---- if is_trainer is true redirect to trainer app
-                    ---- if NOT is_trainer tredirect o backend app
         NOTE: FOR THE BASE.HTML (for trainer/ app)
             --- will have to check for is_trainer to direct access to the urls
           FOR THE BASE_PUBLIC (for for landing,login,register)
@@ -87,12 +78,10 @@ Default Django Group
           FOR THE BASE.HTML (for backend/ app)
             --- will have to check for is_staff
 
-NOTE: this will result in 3 base html pages
+    NOTE: this will result in 2 base html pages
     --- trainer/templates/trainer
-        1. --- base_public.html    (THIS WILL BE USED BY LANDING,LOGIN,REGISTER HTML)
+        1. --- base_public.html    (THIS WILL BE USED BY PUBLIC PAGES, LANDING,LOGIN,REGISTER HTML)
         2. --- base.html           (THIS WILL BE USED ONCE TRAINER HAS BEEN AUTHENTICATED AND AUTHORISED)
-    --- backend/tempaltes/backend
-        3 --- base.html             (THIS IS THE FOR BACKEND STAFF USERS / ADMINISTRTOR)
 
 
 
@@ -144,6 +133,11 @@ Setup
             ...
             'social-django'
         ]
+        --- AUTHENTICATION_BACKENDS = (
+            'social_core.backends.google.GoogleOAuth2',
+            'social_core.backends.github.GithubOAuth2',
+            'django.contrib.auth.backends.ModelBackend',  # Keep for username/password login
+        )
         --- SOCIAL_AUTH_PIPELINE = (
             'social_core.pipeline.social_auth.social_details',      # get email/name from google
             'social_core.pipeline.social_auth.social_uid',          # get unique Google ID
@@ -157,17 +151,16 @@ Setup
 
             # Note: 'social_core.pipeline.user.create_user' THIS MUST BE REMARKED, IF NOT IT WILL AUTO REGISTER TO DATABASE FOR NEW LOGIN
         )
-        --- AUTHENTICATION_BACKENDS = (
-            'social_core.backends.google.GoogleOAuth2',
-            'django.contrib.auth.backends.ModelBackend',  # Keep for username/password login
-        )
 
         SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-        SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
         SOCIAL_AUTH_CLEAN_USER_KEEP_SESSION = True
         SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
             'prompt': 'select_account'
         }
+
+        urls.py
+            --- path('social-auth/', include('social_django.urls', namespace='social')),
+
 
         # ============= auth keys from social medias ======== #
         # have to register and get auth key from google cloud and github to link our app
@@ -180,8 +173,6 @@ Setup
         SOCIAL_AUTH_GITHUB_KEY = '...'
         SOCIAL_AUTH_GITHUB_SECRET = '...'
 
-    --- urls.py
-        --- path('social-auth/', include('social_django.urls', namespace='social')),
 
     --- templates/registration/login.html
         --- add for both login links
@@ -199,6 +190,7 @@ Google API OAuth Keys
 
 From google console, search for "OAuth Consent Screen"
     --- Select External
+    --- select clients
     --- Key in App Name
     --- key in email and developer info
     NOTE: This is just to create a container to link our oauth clients later

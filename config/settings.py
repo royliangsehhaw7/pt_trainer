@@ -112,9 +112,12 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
+# using path names
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'index'
+
+LOGIN_REDIRECT_URL = 'social_login'         ## this is to facilitate the post social login checking
+                                            ## normal django auth will be redirected from the view
 
 # customized User with is_trainer indicator
 AUTH_USER_MODEL = "orm.UserTrainer"
@@ -158,8 +161,8 @@ SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 
 # 1. This prevents the "Yellow Screen of Death" when an email isn't found
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-# 2. This sends the user back to your view if the email doesn't match
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'login/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
+
 # 3. CRITICAL: Add this to clear the partial session on failure
 SOCIAL_AUTH_CLEAN_USER_KEEP_SESSION = True
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
