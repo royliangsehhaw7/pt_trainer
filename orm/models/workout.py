@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from orm.models import UserTrainer as Trainer
 from .client import Client
@@ -29,6 +30,13 @@ class Workout(models.Model):
     class Meta:
         db_table = "workouts"
 
+    # def clean(self):
+    #     super().clean()
+        
+    #     exercises = self.exercises.all()
+    #     if len(exercises) <= 1:
+    #         raise ValidationError(None, "asd")
+    
     def save(self, *args, **kwargs):
         # mnually trigger the validators when modelform not used
         self.full_clean() 

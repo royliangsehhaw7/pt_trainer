@@ -13,21 +13,21 @@
 
                     <div class="row align-items-center">                        
                         <div class="col-6 text-center border-end">
-                            <div class="display-5 text-white">{{ summary.clients.total }}</div>
+                            <div class="display-5 text-white">0</div>
                         </div>
 
                         <div class="col-6">
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted text-small">5+ workouts</span>
-                                <span class="fw-bold text-success">{{ summary.clients.completed }}</span>
+                                <span class="text-muted text-small">>= 5 workouts</span>
+                                <span class="fw-bold text-success">{{summary.workout_agg.high}}</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted text-small">2+ workouts</span>
-                                <span class="fw-bold text-info">{{ summary.clients.pending }}</span>
+                                <span class="text-muted text-small">>= 1 workouts</span>
+                                <span class="fw-bold text-info">{{ summary.workout_agg.medium }}</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted text-small">New</span>
-                                <span class="fw-bold text-info">{{ summary.clients.pending }}</span>
+                                <span class="text-muted text-small">0</span>
+                                <span class="fw-bold text-info">{{ summary.workout_agg.low }}</span>
                             </div>
                         </div>
                     </div>

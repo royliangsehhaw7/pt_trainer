@@ -65,21 +65,25 @@ def workout_add(request):
         formset = ExerciseFormSet(request.POST, prefix='exercises')
 
         if form.is_valid() and formset.is_valid():
-            try:
-                with transaction.atomic():
-                    workout = form.save(commit=False)
-                    workout.trainer = trainer       # assign current trainer
-                    workout.save()
+            if len(formset.forms) > 0:
+                try:
+                    with transaction.atomic():
+                        workout = form.save(commit=False)
+                        workout.trainer = trainer       # assign current trainer
+                        workout.save()
 
-                    formset.instance = workout
-                    formset.save()
+                        formset.instance = workout
+                        formset.save()
 
-                messages.success(request, "New workout created successfully!")
-                return redirect('workout_list')
-            except ValidationError as e:
-                form.add_error(None, str(e))
-            except Exception as e:
-                messages.error(request, f"Error: {str(e)}")
+                    messages.success(request, "New workout created successfully!")
+                    return redirect('workout_list')
+                except ValidationError as e:
+                    form.add_error(None, str(e))
+                except Exception as e:
+                    messages.error(request, f"Error: {str(e)}")
+            else:
+                form.add_error(None, "Must have at least one exercise")
+
 
         return render(request, 'trainer/workouts/workout_add.html', {
             'form': form,

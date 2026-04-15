@@ -52,7 +52,18 @@ urlpatterns = [
     path('client/add/', login_required(client_view.client_add), name='client_add'),
     path("client/edit/<int:pk>/", login_required(client_view.client_edit), name="client_edit"),
     path("client/delete/<int:pk>/", login_required(client_view.client_delete), name="client_delete"),
-    path('client/id/<int:pk>', login_required(client_view.get_client_by_id), name="get_client_by_id"),
+    # json
+    path('client/info/<int:pk>', client_view.get_client_info, name='get_client_info'),
+
+    #
+    # NOTE:
+    # path('client/info/<int:pk>', client_view.get_client_info, name='get_client_info') => client/info/1
+    # def get_client_info(request, pk)
+    #
+    # path('client/info/', client_view.get_client_info, name='get_client_info')
+    # def get_client_info(request)
+    # pk = request.GET.get('pk')
+    #
 
     path('workout/', workout_view.workout_list, name='workout_list'),
     path('workout/add/', workout_view.workout_add, name='workout_add'),

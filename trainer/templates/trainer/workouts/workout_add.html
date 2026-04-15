@@ -13,7 +13,6 @@
 
     <hr class="hr-workout" />
 
-    <div class="container-fluid mt-4">
         <div class="row">
             <div class="col-12 col-md-4 col-lg-4">                
                 <div class="accordion" id="accordionExample">
@@ -40,9 +39,15 @@
                     </div>
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                                <h6 class="mb-3">ai generation</h6>
-                            </button>
+                            {% if perms.orm.can_use_ai %} 
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    <h6 class="mb-3">ai generation</h6>
+                                </button>
+                            {% else %}
+                                <button class="accordion-button" type="button" disabled>
+                                    <span class="text-muted">ai (only for premium trainer)</span>
+                                </button>
+                            {% endif %}
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
@@ -135,7 +140,6 @@
                 </form>
             </div>
         </div>
-    </div>
 
 
     <!-- ========================== EMPTY TEMPLATE (used for JS cloning) ========================= -->
@@ -184,8 +188,22 @@
         const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
         const totalForms = document.querySelector("input[name$='-TOTAL_FORMS']");
 
+        const clientEl = document.getElementById('id_client')
+        const goalsEl = document.getElementById('client-goals')
+
         document.addEventListener('DOMContentLoaded', async () => {
             await load_tags();
+
+            clientEl.addEventListener('change', async(e) => {
+                clientId = e.target.value
+
+                await fetch(`/client/info/${clientId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        alert(data.goals)
+                        goalsEl.innerHTML = data.goals
+                    })
+            })
         });
 
 

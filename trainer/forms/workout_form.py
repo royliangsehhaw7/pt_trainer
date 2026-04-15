@@ -10,10 +10,14 @@ class WorkoutForm(forms.ModelForm):
         queryset=Client.objects.none(),        # have to pass in filtered tags based on trainer
         widget= forms.Select(attrs={'class': 'form-control'})
     )
-
+    
     class Meta:
         model = Workout
         fields = ['is_completed', 'trainer_review', 'client_remarks', 'client']
+        labels = {
+            'trainer_review': 'Trainer Review',
+            "client_remarks": 'Client Remarks'
+        }
         widgets = {
             'trainer_review': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'client_remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -40,7 +44,8 @@ class WorkoutForm(forms.ModelForm):
             # self.fields['client'].initial = self.instance.client
             # self.fields['client'].widget.attrs['readonly'] = True
             # self.fields['client'].required = False
-            # self.fields['client'].widget.attrs['class'] = 'form-control-plaintext border-bottom fw-bold'            
+            # self.fields['client'].widget.attrs['class'] = 'form-control-plaintext border-bottom fw-bold'   
+            # 
 
 class ExerciseForm(forms.ModelForm):
     class Meta:
@@ -70,7 +75,7 @@ class ExerciseForm(forms.ModelForm):
                     self.fields[field_name].disabled = True
                     self.fields[field_name].widget.attrs['readonly'] = True
                     self.fields[field_name].required = False
-                    self.fields[field_name].widget.attrs['class'] = 'form-control-plaintext border-bottom fw-bold'
+                    self.fields[field_name].widget.attrs['class'] = 'form-control'
 
 
 

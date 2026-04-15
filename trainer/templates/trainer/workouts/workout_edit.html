@@ -28,13 +28,26 @@
                             <div class="col-sm-10">
                                 {{ form.client }}
                             </div>
-                            <!-- <input type="hidden" name="client" value="{{ workout.client.id }}"> -->
                         </div>
-                        <div class="row g-3 mt-2">
-                            <div class="col-12">
-                                <label class="form-label small" for="client-goals">Goals</label>
-                                <textarea class="form-control" disabled readonly id="client-goals" rows="3"></textarea>
+                        <div class="row">
+                            <div class="mb-3">
+                                <!-- <label class="form-label small" for="client-goals">Goals</label> -->
+                                <textarea class="form-control" disabled readonly id="client-goals" rows="3">
+                                    {{form.instance.client.goals}}
+                                </textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="{{ form.trainer_review.id_for_label }}" class="form-label">
+                                    {{ form.trainer_review.label}}
+                                </label>           
+                                {{ form.trainer_review}}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.client_remarks.id_for_label }}" class="form-label"> 
+                                    {{ form.client_remarks.label}}
+                                </label>
+                                {{ form.client_remarks}}
+                            </div>                                                        
                         </div>
                     </div>
                 </div>
@@ -43,68 +56,79 @@
             <div class="col-12 col-md-8 col-lg-8">
                 {% include 'trainer/includes/_form_errors.html' %}
                 
-                <input type="hidden" id="persist-tag-ids" name="tags_filter" value="{{ selected_tag_ids|join:',' }}">
-
-                <h5>Exercises in Workout</h5>
+                <div class="d-flex justify-content-between">
+                    <h5>Exercises</h5>
+                    <div class="form-check form-switch">
+                        {{ form.is_completed }}
+                        <label class="form-check-label" for="{{form.is_completed.id_for_label}}">Workout Completed?</label>
+                    </div>
+                </div>
                 {{ formset.management_form }}
                 
                 <div id="formset-container">
                     {% for ex_form in formset %}
                         {{ ex_form.id }}
-                        <div class="card mb-3 p-2 shadow-sm">
-                            <div class="row align-items-center mb-2">
-                                <div class="col-md-4">
-                                    {{ ex_form.exercise.label_tag }}
+                        <div class="card p-2 shadow-sm p-2">
+                            <div class="row g-2 mb-1">
+                                <div class="col-md-4 col-12">
                                     {{ ex_form.exercise }}
                                 </div>
-                                <div class="col-md-2">
-                                    {{ ex_form.pre_sets.label_tag }}
-                                    {{ ex_form.pre_sets }}
+                                <div class="col-md-2 col-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Sets</span>
+                                        {{ ex_form.pre_sets }}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {{ ex_form.pre_reps.label_tag }}
-                                    {{ ex_form.pre_reps }}
+                                <div class="col-md-2 col-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Reps</span>
+                                        {{ ex_form.pre_reps }}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {{ ex_form.pre_weight.label_tag }}
-                                    {{ ex_form.pre_weight }}
+                                <div class="col-md-2 col-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Weight</span>
+                                        {{ ex_form.pre_weight }}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {{ ex_form.pre_duration.label_tag }}
-                                    {{ ex_form.pre_duration }}
+                                <div class="col-md-2 col-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Dur</span>
+                                        {{ ex_form.pre_duration }}
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="row align-items-center border-top pt-2">
+                            
+                            <div class="row g-2">
                                 <div class="col-md-4">
                                     <div class="form-check form-switch">
                                         {{ ex_form.is_done }}
                                         <label class="form-check-label" for="{{ex_form.is_done.id_for_label}}">Done?</label>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {% if ex_form.pre_sets.value > 0 %}
-                                        {{ ex_form.actual_sets.label_tag }}
+                                <div class="col-md-2 col-4">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Sets</span>
                                         {{ ex_form.actual_sets }}
-                                    {% endif %}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {% if ex_form.pre_reps.value > 0 %}
-                                        {{ ex_form.actual_reps.label_tag }}
+                                <div class="col-md-2 col-4">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Reps</span>
                                         {{ ex_form.actual_reps }}
-                                    {% endif %}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {% if ex_form.pre_weight.value > 0 %}
-                                        {{ ex_form.actual_weight.label_tag }}
+                                <div class="col-md-2 col-4">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Weight</span>
                                         {{ ex_form.actual_weight }}
-                                    {% endif %}
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    {% if ex_form.pre_duration.value > 0 %}
-                                        {{ ex_form.actual_duration.label_tag }}
+                                <div class="col-md-2 col-4">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Dur</span>
                                         {{ ex_form.actual_duration }}
-                                    {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
