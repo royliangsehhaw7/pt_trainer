@@ -51,8 +51,19 @@
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <p>Client Roles</p>
-                                <button type="button" id="generate" name="generate">Generate</button>
+                                <div class="text-center col-12">
+                                    <p>Get AI Recommendations</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <div class="row mb-3">
+                                            <div class="form-label" for="{{form.exercise_count.id_for_label}}">{{form.exercise_count.label}}</div>
+                                            {{form.exercise_count}}                                            
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" id="ai-generate" name="generate">Generate</button>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -186,6 +197,7 @@
 
         const formsetContainer = document.getElementById("formset-container");
         const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
+        
         const totalForms = document.querySelector("input[name$='-TOTAL_FORMS']");
 
         const clientEl = document.getElementById('id_client')
@@ -206,13 +218,15 @@
             })
         });
 
-
+        // --- https://www.brennantymrak.com/articles/django-dynamic-formsets-javascript
+        // --- https://ianwaldron.com/blog/add-form-to-django-formset-dynamically-with-javascript/
         function addExercise(ex) {
-            const index = parseInt(totalForms.value);
-            const newRow = emptyTemplate.cloneNode(true);
+            const index = parseInt(totalForms.value);       // from the formset management hidden values
+            const newRow = emptyTemplate.cloneNode(true);   // true -copies the node and its entire subtree
 
             newRow.innerHTML = newRow.innerHTML.replace(/__prefix__/g, index);
             newRow.querySelector('select').value = ex.id;
+            // get the newRow inputs and update with selected exercise default values
             newRow.querySelectorAll('input').forEach(input => {
                 if (input.name.includes('pre_sets')) input.value = ex.def_sets;
                 if (input.name.includes('pre_reps')) input.value = ex.def_reps;
@@ -221,8 +235,7 @@
             });
 
             formsetContainer.appendChild(newRow);
-
-            totalForms.value = index + 1;
+            totalForms.value = index + 1;               // make sure to increase total after adding
         }
         function delExercise(ex) {
         }    

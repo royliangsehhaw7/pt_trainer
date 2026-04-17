@@ -1,0 +1,11 @@
+
+
+Langchain Templating
+====================
+https://medium.com/@laurentkubaski/python-data-classes-f98f8368f5c2
+https://medium.com/@mrcoffeeai/prompttemplate-and-chatprompttemplate-explained-87291576c6de
+https://medium.com/@thakur.rana/prompttemplate-vs-chatprompttemplate-understanding-and-invoking-them-in-langchain-b5fe5b203ec5
+
+Pydantic
+====================
+https://medium.com/@marcnealer/a-practical-guide-to-using-pydantic-8aafa7feebf6

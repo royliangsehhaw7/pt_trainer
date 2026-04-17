@@ -1,10 +1,14 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-# the output must match the workout_exercises model
+
+# Have to ensure result return from llm matches to workoutexercise model
+# in order for easy insertion into inline formset rows
+
 class WorkoutExercise(BaseModel):
-    exercise_id: int = Field(description="the id of the exercise from the provided data")
-    pre_sets: int = Field(description="no of sets to be perfromed")
+    id: int = Field(description="the id of the exercise from the provided data")
+    name: str = Field(descipriont="the name of the exercise")
+    pre_sets: int = Field(description="no of sets to perfrom")
     pre_reps: Optional[int] = Field(None, description="reptitions per set")
     pre_weight: float = Field(0.0, description="suggested weight in kg")
     pre_duration: int = Field(0, description="duration in minutes for cardio")
@@ -12,11 +16,5 @@ class WorkoutExercise(BaseModel):
 class WorkoutPlan(BaseModel):
     exercises: List[WorkoutExercise]
     ai_explanation: str = Field(description="""
-                                a brief explanation of why the workout was structured this way with the selection of exercises
+                                a brief overall explanation of why the workout was recommended
                                 """)
-
-class ClientProfile(BaseModel):
-    user_goals: str
-    age: int
-    weight: float
-    height: float

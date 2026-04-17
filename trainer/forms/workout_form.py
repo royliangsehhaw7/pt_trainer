@@ -3,6 +3,12 @@ from django.forms import inlineformset_factory
 
 from orm.models import Client, Workout, WorkoutExercise
 
+"""
+--- https://www.geeksforgeeks.org/python/add-forms-dynamically-in-django-using-formset-and-javascript/
+--- https://www.brennantymrak.com/articles/django-dynamic-formsets-javascript
+--- https://ianwaldron.com/blog/add-form-to-django-formset-dynamically-with-javascript/
+"""
+
 
 class WorkoutForm(forms.ModelForm):
     client = forms.ModelChoiceField(
@@ -11,6 +17,13 @@ class WorkoutForm(forms.ModelForm):
         widget= forms.Select(attrs={'class': 'form-control'})
     )
     
+    # AI: in django form, how could i add a simple select dropdown with range from 1 t 5
+    exercise_count = forms.ChoiceField(
+        label="No of exercises",
+        choices=[{i, str(i)} for i in range(1, 6)],         # needs key value pair (display, value)
+        widget= forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Workout
         fields = ['is_completed', 'trainer_review', 'client_remarks', 'client']

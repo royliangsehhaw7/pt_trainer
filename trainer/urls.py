@@ -84,5 +84,8 @@ urlpatterns = [
     # path('', include('social_django.urls', namespace='social')),
 
 
-    path('ai/generate/<str:prompt>', ai_view.generate, name='ai_gen')
+    path('ai/generate/<str:prompt>', ai_view.generate, name='ai_gen'),
+    path('ai/workout/unstructured/', ai_view.generate_workout_unstructured, name='ai_workout'),
+    path('ai/workout/structured/client/<int:pk>/', ai_view.generate_workout_structured, name='ai_workout')
+
 ]

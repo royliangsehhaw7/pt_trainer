@@ -11,13 +11,16 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
+from .info import \
+    G_API_KEY, DB_PWD, \
+    S_AUTH_GITHUB_K, S_AUTH_GITHUB_S, S_AUTH_GOOGLE_K, S_AUTH_GOOGLE_K, \
+    DB_HOST, DB_NAME, DB_USER, DB_PWD, DB_PORT
+
 
 # ========================================
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GOOGLE_API_KEY = G_API_KEY
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -99,11 +102,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE'    : 'django.db.backends.mysql',
-        'NAME'      : os.getenv('DB_NAME'),
-        'USER'      : os.getenv('DB_USER'),
-        'PASSWORD'  : os.getenv('DB_PWD'),
-        'HOST'      : os.getenv('DB_HOST'),
-        'PORT'      : os.getenv('DB_PORT')    
+        'NAME'      : DB_NAME,
+        'USER'      : DB_USER,
+        'PASSWORD'  : DB_PWD,
+        'HOST'      : DB_HOST,
+        'PORT'      : DB_PORT    
     }
 }
 
@@ -143,15 +146,16 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Google OAuth2
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "123"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "123"
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
 # Github OAuth2
-SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
-SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
+SOCIAL_AUTH_GITHUB_KEY = "123"
+SOCIAL_AUTH_GITHUB_SECRET = "123"
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 
 

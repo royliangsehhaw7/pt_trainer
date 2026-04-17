@@ -52,20 +52,20 @@ def home(request):
     #     pending=Count('id', filter=Q(workouts__is_completed=False), distinct=True)
     # )
 
-    pending_workouts = Workout.objects.filter(trainer = trainer, is_completed = 0)\
-                        .annotate(name='client__name', total_exe=Count(<<filter here>>))
+    # pending_workouts = Workout.objects.filter(trainer = trainer, is_completed = 0)\
+    #                     .annotate(name='client__name', total_exe=Count(<<filter here>>))
     
 
-    pending_workouts = pending_workouts.values(
-        'client__name', 'workout'
-    )
+    # pending_workouts = pending_workouts.values(
+    #     'client__name', 'workout'
+    # )
 
     summary = {
         'tag_count': tag_count, 
         'exe_count': exe_count, 
         'workout_agg': workout_agg,
         'workouts': workouts,
-        'pending_workouts': pending_workouts
+        # 'pending_workouts': pending_workouts
     }
 
     return render(request, 'trainer/home.html', {'summary': summary})
