@@ -115,11 +115,21 @@ def client_delete(request, pk):
     return render(request, 'trainer/clients/client_delete.html', {'client': client})
 
 
-def get_client_info(request, pk):
+def get_client_info(request):
+    client_id = request.GET.get('client')
+
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
-    client = Client.objects.get(id=pk, trainer=trainer)
+    client = Client.objects.get(trainer = trainer, id=client_id)
 
-    data = {"id": client.id, "name": client.name, "goals": client.goals }
-    return JsonResponse(data)
+    return render(request, 'trainer/partials/_client_partial.html', { 'client': client })
+
+
+# def get_client_info(request, pk):
+#     # Saas tenant - get logged in trainer for data filtering
+#     trainer = get_object_or_404(Trainer, pk=request.user.id)
+#     client = Client.objects.get(id=pk, trainer=trainer)
+
+#     data = {"id": client.id, "name": client.name, "goals": client.goals }
+#     return JsonResponse(data)
 

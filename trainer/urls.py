@@ -51,7 +51,7 @@ urlpatterns = [
     path("client/edit/<int:pk>/", login_required(client_view.client_edit), name="client_edit"),
     path("client/delete/<int:pk>/", login_required(client_view.client_delete), name="client_delete"),
     # json
-    path('client/info/<int:pk>', client_view.get_client_info, name='get_client_info'),
+    path('client/info/', client_view.get_client_info, name='get_client_info'),
 
     #
     # NOTE:
@@ -83,7 +83,7 @@ urlpatterns = [
 
 
     path('ai/generate/<str:prompt>', ai_view.generate, name='ai_gen'),
-    path('ai/workout/unstructured/', ai_view.generate_workout_unstructured, name='ai_workout'),
-    path('ai/workout/structured/client/<int:pk>/', ai_view.generate_workout_structured, name='ai_workout')
+    path('ai/workout/unstructured/', ai_view.generate_workout_unstructured, name='ai_workout_unstructured'),
+    path('ai/workout/client/<int:client_id>/', ai_view.generate_workout_structured, name='ai_workout_structured')
 
 ]

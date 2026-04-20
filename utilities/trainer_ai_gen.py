@@ -123,7 +123,8 @@ class TrainerGeminiAI:
         # python cannot convert custom classes to json
         return workout_data.model_dump()    
 
-    # --- return chatPromptTemplate content for generating exercises based on client info and exercises
+
+    # --- chatPromptTemplate content for generating exercises based on client info and exercises
     def _get_prompt_template(self):
         chat_prompt = ChatPromptTemplate.from_messages([
             (

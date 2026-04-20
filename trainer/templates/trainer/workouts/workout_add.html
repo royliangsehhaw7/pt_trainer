@@ -25,12 +25,14 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <label class="fw-bold small">Filter by Tags</label>
+                                <!-- tags -->
                                 <div id="tags-container" class="d-flex flex-wrap gap-2 mb-3"
                                     hx-get="/tags/" 
                                     hx-trigger="load"
                                     hx-target="this">
                                     <span class="text-muted small">Loading tags...</span>
                                 </div>
+                                <!-- exercises -->
                                 <label class="fw-bold small">Exercises</label>
                                 <div id="exercises-container" class="border rounded style="max-height: 600px; overflow-y: auto;">
                                 </div>
@@ -61,8 +63,10 @@
                                             {{form.exercise_count}}                                            
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-outline-primary" id="ai-generate" name="generate">Generate</button>
 
+                                    <button type="button" class="btn btn-outline-primary" id="ai-generate" name="generate" onclick="addAIExercises()">
+                                        Generate
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -85,8 +89,7 @@
                             <div class="row mb-3">
                                 <label for="{{ form.name.id_for_label}}" class="col-12 col-md-2 col-form-label">
                                     {{ form.client.label }}
-                                </label>
-                                
+                                </label>                                
                                 <div class="col-12 col-md">
                                     {{ form.client }}
 
@@ -97,8 +100,10 @@
                             </div>
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label small" for="client-goals">Goals</label>
-                                    <textarea type="text" class="form-control" disabled readonly id="client-goals" rows="2"></textarea>
+                                    <div id="client-container">
+                                        <label class="form-label small" for="client-goals">Goals</label>
+                                        <textarea type="text" class="form-control" disabled readonly id="client-goals" rows="2"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -193,26 +198,8 @@
 
     <script>
         const formsetContainer = document.getElementById("formset-container");
-        const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
-        
+        const emptyTemplate = document.querySelector("#empty-form-template .formset-row");        
         const totalForms = document.querySelector("input[name$='-TOTAL_FORMS']");
-
-        const clientEl = document.getElementById('id_client')
-        const goalsEl = document.getElementById('client-goals')
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            clientEl.addEventListener('change', async(e) => {
-                clientId = e.target.value
-
-                await fetch(`/client/info/${clientId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        alert(data.goals)
-                        goalsEl.innerHTML = data.goals
-                    })
-            })
-        });
-
 
         // --- https://www.brennantymrak.com/articles/django-dynamic-formsets-javascript
         // --- https://ianwaldron.com/blog/add-form-to-django-formset-dynamically-with-javascript/
@@ -235,7 +222,22 @@
         }
         function delExercise(ex) {
         }    
+        async function addAIExercises() {
+            // AI: get selected value of a dropdown from DOM
+            const selectElement = document.querySelector('#id_client');
+            const selectedValue = selectElement.value;
 
+            if(selectedValue) {
+                await fetch(`/ai/workout/client/${selectedValue}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        debugger;
+                        data.exercises.forEach(ex => {
+                            addExercise(ex)
+                        })
+                    })
+            }
+        }
     </script>
 {% endblock %}
 
@@ -244,6 +246,18 @@
 <!-- ========================= NORMAL AJAX CALLS WITH FETCH, NO HTMX ======================-->
 <!-- 
 <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        clientEl.addEventListener('change', async(e) => {
+          clientId = e.target.value
+        
+            await fetch(`/client/info/${clientId}`)
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.goals)
+                    goalsEl.innerHTML = data.goals
+                })
+        })
+    });
     async function load_tags() {
         debugger;
         fetch('/tags/')

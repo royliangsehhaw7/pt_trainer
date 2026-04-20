@@ -14,7 +14,12 @@ class WorkoutForm(forms.ModelForm):
     client = forms.ModelChoiceField(
         # queryset = Client.objects.all(),
         queryset=Client.objects.none(),        # have to pass in filtered tags based on trainer
-        widget= forms.Select(attrs={'class': 'form-control'})
+        widget= forms.Select(attrs={
+            'class': 'form-control',
+            'hx-get': '/client/info/',
+            'hx-target': '#client-container',
+            'hx-trigger': 'change'
+        })
     )
     
     # AI: in django form, how could i add a simple select dropdown with range from 1 t 5
