@@ -20,6 +20,7 @@ class WorkoutForm(forms.ModelForm):
     # AI: in django form, how could i add a simple select dropdown with range from 1 t 5
     exercise_count = forms.ChoiceField(
         label="No of exercises",
+        required=False,
         choices=[{i, str(i)} for i in range(1, 6)],         # needs key value pair (display, value)
         widget= forms.Select(attrs={'class': 'form-control'})
     )

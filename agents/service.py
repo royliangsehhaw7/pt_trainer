@@ -5,19 +5,18 @@ from .deps import AgentDeps
 
 class WorkoutOrchestrator:
     def __init__(self):
-        # Specialist 1
+        # -- specialist 1
         self.analyst = Agent(
             'google-gla:gemini-1.5-flash', 
             result_type=WorkoutStrategy,
             system_prompt="""
-                You are a Senior Physiological Analyst. Analyze the client's biometrics (age, weight, goals) 
-                and define a high-level workout strategy. Output the intensity level 
-                and focus areas (tags) that should be used
+                You are a Senior Physiological Analyst. Analyze the client's biometrics (age, weight, height, goals) 
+                and define a high-level workout strategy.
             """
         )
         self.analyst.tool(db_tools.get_client_profile)
 
-        # Specialist 2
+        # -- specialist 2
         self.selector = Agent(
             'google-gla:gemini-1.5-flash', 
             result_type=WorkoutPlan,
@@ -29,6 +28,7 @@ class WorkoutOrchestrator:
         )
         self.selector.tool(db_tools.get_available_exercises)
 
+    
     async def generate_workout(self, trainer_id: int, client_id: int):
         deps = AgentDeps(trainer_id=trainer_id, client_id=client_id)
 

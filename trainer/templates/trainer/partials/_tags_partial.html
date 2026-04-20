@@ -1,0 +1,8 @@
+<div hx-get="/exercises/tags/" hx-trigger="change from:input" hx-include="this" hx-target="#exercises-container" hx-swap="swap">
+    {% for tag in tags %}
+        <input class="btn-check" type="checkbox" name="tags_filter" value="{{tag.id}}" id="{{tag.id}}">
+        <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="{{tag.id}}">
+            {{tag.name}}
+        </label>
+    {% endfor %}
+</div>

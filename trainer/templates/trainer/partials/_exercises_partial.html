@@ -1,0 +1,18 @@
+
+<ul class="list-unstyled p-2 mb-0">
+    {% for ex in exercises %}
+        <li class="card mb-2 shadow-sm border-0 p-1" style="cursor: pointer;" 
+            onclick="addExercise({
+                id: '{{ ex.id }}', 
+                def_sets: '{{ ex.def_sets|default:0 }}', 
+                def_reps: '{{ ex.def_reps|default:0 }}', 
+                def_weight: '{{ ex.def_weight|default:0 }}', 
+                def_duration: '{{ ex.def_duration|default:0 }}'
+            })">    
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="small">{{ex.name}}</span>
+                <span class="badge bg-primary">+</span>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

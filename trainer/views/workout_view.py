@@ -95,8 +95,7 @@ def workout_add(request):
 
     return render(request, 'trainer/workouts/workout_add.html', {
         'form': form,
-        'formset': formset,
-        'selected_tag_ids': []
+        'formset': formset
     })
 
 def workout_edit(request, pk):

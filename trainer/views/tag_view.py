@@ -71,7 +71,6 @@ def tag_add(request):
 
     return render(request, "trainer/tags/tag_add.html", {"form": form})
 
-
 def tag_edit(request, pk):
     # Saas tenant - get logged in trainer for data filtering
     trainer = get_object_or_404(Trainer, pk=request.user.id)
@@ -105,7 +104,6 @@ def tag_edit(request, pk):
 
     return render(request, "trainer/tags/tag_edit.html", {"form": form, "exercises": exercises})
 
-
 def tag_delete(request, pk):
     # Saas tenant - get logged in trainer for data filtering
     trainer_instance = get_object_or_404(Trainer, pk=request.user.id)
@@ -132,4 +130,4 @@ def get_tags(request):
     trainer = get_object_or_404(Trainer, pk=request.user.id)
     tags = Tag.objects.filter(trainer = trainer)
 
-    return JsonResponse(list(tags.values()), safe=False)
+    return render(request, 'trainer/partials/_tags_partial.html', { 'tags': tags})

@@ -25,14 +25,14 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <label class="fw-bold small">Filter by Tags</label>
-                                <div id="tags-container" class="d-flex flex-wrap gap-2 mb-3">
+                                <div id="tags-container" class="d-flex flex-wrap gap-2 mb-3"
+                                    hx-get="/tags/" 
+                                    hx-trigger="load"
+                                    hx-target="this">
                                     <span class="text-muted small">Loading tags...</span>
                                 </div>
                                 <label class="fw-bold small">Exercises</label>
-                                <div class="border rounded style="max-height: 600px; overflow-y: auto;">
-                                    <ul id="exercises-container" class="list-unstyled p-2 mb-0">
-                                        <li class="text-muted small text-center py-3">Select tags to see exercises</li>
-                                    </ul>
+                                <div id="exercises-container" class="border rounded style="max-height: 600px; overflow-y: auto;">
                                 </div>
                             </div>
                         </div>
@@ -192,9 +192,6 @@
     <!-- ========================== /EMPTY TEMPLATE (used for JS cloning) ========================= -->
 
     <script>
-        const tagsContainerEl = document.getElementById('tags-container');
-        const exercisesContainerEl = document.getElementById('exercises-container');
-
         const formsetContainer = document.getElementById("formset-container");
         const emptyTemplate = document.querySelector("#empty-form-template .formset-row");
         
@@ -204,8 +201,6 @@
         const goalsEl = document.getElementById('client-goals')
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await load_tags();
-
             clientEl.addEventListener('change', async(e) => {
                 clientId = e.target.value
 
@@ -217,6 +212,7 @@
                     })
             })
         });
+
 
         // --- https://www.brennantymrak.com/articles/django-dynamic-formsets-javascript
         // --- https://ianwaldron.com/blog/add-form-to-django-formset-dynamically-with-javascript/
@@ -240,68 +236,74 @@
         function delExercise(ex) {
         }    
 
-
-        async function load_tags() {
-            debugger;
-            fetch('/tags/')
-                .then(res => {
-                    return res.json();
-                })
-                .then(data => {
-                    tagsContainerEl.innerHTML = data.map(tag => `
-                        <input class="btn-check" type="checkbox" onchange="loadExercises()" 
-                            name="tags_filter" value="${tag.id}" id="tag${tag.id}">
-                        
-                        <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="tag${tag.id}">
-                            ${tag.name}
-                        </label>
-                    `).join('');
-                })
-                .catch(err => {
-                    tagsContainerEl.innerHTML = '<span class="text-danger">Error loading tags.</span>';
-                });
-        }
-        async function loadExercises() {
-            debugger;
-
-            // 1. Get all checkboxes with that name
-            const allTags = document.querySelectorAll('input[name="tags_filter"]');
-            const selectedIds = [];
-            for (let i = 0; i < allTags.length; i++) {
-                if (allTags[i].checked) {
-                    selectedIds.push(allTags[i].value);
-                }
-            }
- 
-
-            if(selectedIds.length > 0) {
-                // 3. build string of tags to get  /exercises/tags/1,2,3/
-                const tagString = selectedIds.join(',');                
-                
-                try {
-                    await fetch(`/exercises/tags/${tagString}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if(data.length) {
-                                exercisesContainerEl.innerHTML = data.map(ex => `
-                                    <li class="card mb-2 shadow-sm border-0 p-1" style="cursor: pointer;" 
-                                        onclick='addExercise(${JSON.stringify(ex)})'>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="small">${ex.name}</span>
-                                            <span class="badge bg-primary">+</span>
-                                        </div>
-                                    </li>
-                                `).join('');
-                            }
-                        })
-                } 
-                catch (err) {
-                    exercisesContainerEl.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
-                }
-            }
-            else {
-                exercisesContainerEl.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
-            }
-        }
     </script>
 {% endblock %}
+
+
+
+<!-- ========================= NORMAL AJAX CALLS WITH FETCH, NO HTMX ======================-->
+<!-- 
+<script>
+    async function load_tags() {
+        debugger;
+        fetch('/tags/')
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                tagsContainerEl.innerHTML = data.map(tag => `
+                    <input class="btn-check" type="checkbox" onchange="loadExercises()" 
+                        name="tags_filter" value="${tag.id}" id="tag${tag.id}">
+                    
+                    <label class="btn btn-outline-primary rounded-pill px-3 py-1" for="tag${tag.id}">
+                        ${tag.name}
+                    </label>
+                `).join('');
+            })
+            .catch(err => {
+                tagsContainerEl.innerHTML = '<span class="text-danger">Error loading tags.</span>';
+            });
+    }
+    async function loadExercises() {
+        debugger;
+
+        // 1. Get all checkboxes with that name
+        const allTags = document.querySelectorAll('input[name="tags_filter"]');
+        const selectedIds = [];
+        for (let i = 0; i < allTags.length; i++) {
+            if (allTags[i].checked) {
+                selectedIds.push(allTags[i].value);
+            }
+        }
+
+        if(selectedIds.length > 0) {
+            // 3. build string of tags to get  /exercises/tags/1,2,3/
+            const tagString = selectedIds.join(',');                
+            
+            try {
+                await fetch(`/exercises/tags/${tagString}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.length) {
+                            exercisesContainerEl.innerHTML = data.map(ex => `
+                                <li class="card mb-2 shadow-sm border-0 p-1" style="cursor: pointer;" 
+                                    onclick='addExercise(${JSON.stringify(ex)})'>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small">${ex.name}</span>
+                                        <span class="badge bg-primary">+</span>
+                                    </div>
+                                </li>
+                            `).join('');
+                        }
+                    })
+            } 
+            catch (err) {
+                exercisesContainerEl.innerHTML = '<li class="text-danger small text-center py-3">Error.</li>';
+            }
+        }
+        else {
+            exercisesContainerEl.innerHTML = '<li class="text-muted small text-center py-3">Select tags</li>';
+        }
+    }
+</script> 
+-->
