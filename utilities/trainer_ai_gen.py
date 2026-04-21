@@ -1,4 +1,4 @@
-
+from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
@@ -17,10 +17,19 @@ from .structured_model import WorkoutPlan
 class TrainerGeminiAI:
     # initialize the gemini
     def __init__(self, model_name, api_key):
+
         # should be private to class
-        self._llm = ChatGoogleGenerativeAI(
-            model=model_name,
-            google_api_key=api_key,
+
+        # 1. gemini
+        # self._llm = ChatGoogleGenerativeAI(
+        #     model=model_name,
+        #     google_api_key=api_key,
+        # )
+        # 2. openrouter
+        self._llm = ChatOpenAI(
+            model="nvidia/nemotron-3-super-120b-a12b:free",
+            api_key="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",
+            base_url="https://openrouter.ai/api/v1",
         )
 
 
@@ -94,7 +103,7 @@ class TrainerGeminiAI:
     
     # ===================== actual implementation ========================
     # --- execute promppt (structured output based pydantic model)
-    def ai_workout_structured(self, trainer_id:int, client_id: int):
+    def ai_workout_structured(self, trainer_id:int, client_id: int, exe_count: int):
         prompt = self._get_prompt_template()
         data = self._get_data(trainer_id, client_id)
 
@@ -103,7 +112,7 @@ class TrainerGeminiAI:
         structured_llm = self._llm.with_structured_output(WorkoutPlan, include_raw = True)
         chain = prompt | structured_llm
         response = chain.invoke({
-            'no_of_exercises': 4, 
+            'no_of_exercises': exe_count, 
             'exercise_list': data.get('exercise_list'),
             'client_info': data.get('client_info')
         })
@@ -125,6 +134,7 @@ class TrainerGeminiAI:
 
 
     # --- chatPromptTemplate content for generating exercises based on client info and exercises
+    # - list of tuples
     def _get_prompt_template(self):
         chat_prompt = ChatPromptTemplate.from_messages([
             (

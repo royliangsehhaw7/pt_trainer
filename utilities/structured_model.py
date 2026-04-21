@@ -6,8 +6,8 @@ from typing import List, Optional
 # in order for easy insertion into inline formset rows
 
 class WorkoutExercise(BaseModel):
-    id: int = Field(description="the id of the exercise from the provided data")
-    name: str = Field(descipriont="the name of the exercise")
+    id: int = Field(description="the exact id from the exercises in the provided data")
+    name: str = Field(description="the name of the exercise")
     def_sets: int = Field(description="no of sets to perfrom")
     def_reps: Optional[int] = Field(None, description="reptitions per set")
     def_weight: float = Field(0.0, description="suggested weight in kg")
