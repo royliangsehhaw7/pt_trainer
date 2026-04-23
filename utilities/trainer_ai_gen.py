@@ -16,18 +16,21 @@ from .structured_model import WorkoutPlan
 
 class TrainerGeminiAI:
     # initialize the gemini
-    def __init__(self, model_name, api_key):
+    def __init__(self):
 
         # should be private to class
 
         # 1. gemini
         # self._llm = ChatGoogleGenerativeAI(
-        #     model=model_name,
-        #     google_api_key=api_key,
+        #     model="gemini-2.5-flash-lite",
+        #     google_api_key="AIzaSyBcUPGCeBUa-Bpt_R7YM6dTzDOYVZdy2Tc",
         # )
+        
         # 2. openrouter
+        model="nvidia/nemotron-3-super-120b-a12b:free"
+        # model="google/gemma-4-31b-it:free"        
         self._llm = ChatOpenAI(
-            model="nvidia/nemotron-3-super-120b-a12b:free",
+            model=model,
             api_key="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",
             base_url="https://openrouter.ai/api/v1",
         )
@@ -141,6 +144,9 @@ class TrainerGeminiAI:
                 "system", """
                 You are a personal trainer.
 
+                You will receive a client info
+                - age, height, weight, goals
+
                 You will receive a list of exercises. Each exercise includes:
                 - name, instructions, default sets/reps/weight or duration
                 - tags (representing muscle groups or workout goals, training styles but NOT equipment)
@@ -150,7 +156,7 @@ class TrainerGeminiAI:
                 - Select exactly {no_of_exercises} exercises based on the client goals, age, height, weight
                 - ONLY use exercises from the list
 
-                You may adjust sets, reps, weight, or duration.
+                You may adjust sets, reps, weight, or duration
 
                 Just return the selected exercises data. no other instructions or explanation required.
 

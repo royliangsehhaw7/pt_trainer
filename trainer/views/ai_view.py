@@ -9,7 +9,7 @@ from trainer_agent import services
 
 from orm.models import Trainer, Client
 
-trainer_ai = TrainerGeminiAI(model_name="gemini-2.5-flash-lite", api_key=settings.G_API_KEY)
+trainer_ai = TrainerGeminiAI()
 
 # --- testing 
 def generate(request, prompt):

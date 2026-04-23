@@ -162,6 +162,10 @@
     <div id="empty-form-template" class="d-none">
         <div class="formset-row mb-3 p-2 bg-dark border border-secondary rounded overflow-hidden">
             
+            <div class="d-none">
+                {{ formset.empty_form.DELETE }}
+            </div>
+            
             <div class="mb-2 w-100" style="pointer-events: none;">
                 {{ formset.empty_form.exercise }}
             </div>
@@ -188,7 +192,8 @@
             </div>
 
             <div class="text-end mt-1">
-                <button type="button" class="btn btn-sm text-danger remove-row p-0 border-0" style="font-size: 0.7rem;">
+                <button type="button" class="btn btn-sm text-danger remove-row p-0 border-0" 
+                    onclick="delExercise(this)" style="font-size: 0.7rem;">
                     <i class="bi bi-trash"></i> Remove
                 </button>
             </div>
@@ -236,6 +241,23 @@
                             addExercise(ex)
                         })
                     })
+            }
+        }
+
+
+        function delExercise(btn) {
+            const row = btn.closest('.formset-row');
+            
+            // Find the hidden DELETE checkbox
+            const deleteCheckbox = row.querySelector('input[name$="-DELETE"]');
+            
+            if (deleteCheckbox) {
+                // Mark for Django to ignore
+                deleteCheckbox.checked = true;
+                // Hide from user
+                row.style.display = 'none';
+                // Optional: add a class to identify "dead" rows if needed
+                row.classList.add('marked-for-delete');
             }
         }
     </script>

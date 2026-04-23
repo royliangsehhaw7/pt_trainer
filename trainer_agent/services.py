@@ -35,7 +35,8 @@ class WorkoutGeneratorService:
 
             return {
                 "status": "success",
-                "workout_data": result.get("output"),
+                # "workout_data": result.get("output")
+                "workout_data": result,
                 "logic_events": logic_events
             }
 

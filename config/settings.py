@@ -63,7 +63,10 @@ INSTALLED_APPS = [
 
     'orm',
     'trainer',
-    'backend'
+    'backend',
+
+    'py_agent',
+    'agents'
 ]
 
 MIDDLEWARE = [
