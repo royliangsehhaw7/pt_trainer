@@ -33,7 +33,7 @@ def login_page(request):
         else:
             form.add_error(None, "Please enter both credentials.")
             
-    return render(request, 'registration/login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form, 'layout': 'public'})
 
 def social_login(request):
     user = request.user
@@ -79,4 +79,4 @@ def register_page(request):
     else:
         form = AccountForm()
 
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form, 'layout': 'public'})

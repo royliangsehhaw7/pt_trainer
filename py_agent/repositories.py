@@ -1,47 +1,51 @@
-from typing import List, Dict, Any
+# ============================================================
+# repositories.py  —  Data access layer (pure ORM, no AI logic)
+# Follows Repository Pattern — swap ORM for anything else here
+# ============================================================
+from orm.models import Exercise
+from orm.models import Client, Exercise as ExerciseORM  # your Django models
+
 
 class ClientRepository:
-    def __init__(self, session: Any = None):
-        self.session = session
+    """Thin wrapper over Django ORM. Keeps ORM coupling out of the agent."""
 
-    def get_by_id(self, client_id: int) -> str:
+    def get_client_info(self, client_id: int) -> dict:
         """
-        Fetches age, height, weight, and goals.
-        Returns a string formatted for LLM consumption.
+        Returns a plain dict so the agent tool isn't coupled to Django model
+        instances. LLMs work with serialisable data.
         """
-        # In a real app: self.session.execute("SELECT ... WHERE id = :id", {"id": client_id})
-        # For now, representing the explicit data structure you need:
-        return (
-            "Client Profile: Age 32, Height 180cm, Weight 85kg. "
-            "Goals: Hypertrophy and improved core stability."
-        )
+        client = Client.objects.get(id=client_id)
+        return {
+            "age": client.age,
+            "height_cm": client.height,
+            "weight_kg": client.weight,
+            "goals": client.goals
+        }
+
 
 class ExerciseRepository:
-    def __init__(self, session: Any = None):
-        self.session = session
+    """
+    Fetches exercises scoped to the trainer.
+    If you later add filtering (by tag, equipment), add methods here — 
+    not in the agent tools.
+    """
 
-    def get_by_tags(self, trainer_id: int, tags: str) -> List[Dict[str, Any]]:
-        """
-        Queries exercises associated with a trainer that match specific tags.
-        Avoids 'magic'—uses explicit filtering.
-        """
-        # Logic: 
-        # 1. Split tags string into a list.
-        # 2. Query join table between Exercises and Tags.
-        # 3. Ensure trainer_id isolation for multi-tenancy.
-        
-        return [
-            {
-                "name": "Barbell Squat",
-                "instructions": "Place bar on traps, squat until thighs are parallel.",
-                "default_sets": 3,
-                "default_reps": "8-12",
-                "tags": ["legs", "strength", "compound"]
-            },
-            {
-                "name": "Plank",
-                "instructions": "Hold a pushup position on your elbows.",
-                "default_duration": "60s",
-                "tags": ["core", "stability"]
-            }
-        ]
+    def get_exercises_for_trainer(self, trainer_id: int) -> list[Exercise]:
+        """Fetches the full catalog of exercises for selection."""
+        queryset = Exercise.objects.filter(trainer__id= trainer_id).prefetch_related('tags')
+            
+        ex_list = []
+        for exercise in queryset:
+            # Django requires async iteration for M2M tags
+            tags = [t.name for t in exercise.tags.all()]
+            
+            ex_list.append({
+                'id': exercise.id,
+                'name': exercise.name,
+                'instructions': exercise.instructions,
+                'def_sets': exercise.def_sets,
+                'def_reps': exercise.def_reps,
+                'tags': tags
+            })
+            
+        return ex_list

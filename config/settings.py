@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .info import \
     G_API_KEY, DB_PWD, \
-    S_AUTH_GITHUB_K, S_AUTH_GITHUB_S, S_AUTH_GOOGLE_K, S_AUTH_GOOGLE_K, \
+    S_AUTH_GITHUB_K, S_AUTH_GITHUB_S, S_AUTH_GOOGLE_K, S_AUTH_GOOGLE_S, \
     DB_HOST, DB_NAME, DB_USER, DB_PWD, DB_PORT
 
 
@@ -119,8 +119,7 @@ DATABASES = {
 
 # using path names
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'social_login'         ## this is to facilitate the post social login checking
-                                            ## normal django auth will be redirected from the view
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'index'
 
 # customized User with is_trainer indicator
@@ -142,6 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # =================================== SOCIAL LOGINS =========================================== #
+# https://python-social-auth.readthedocs.io/en/latest/configuration/django.html#
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.github.GithubOAuth2',
@@ -149,20 +149,20 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Google OAuth2
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "123"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "123"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = S_AUTH_GOOGLE_K
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = S_AUTH_GOOGLE_S
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
 # Github OAuth2
-SOCIAL_AUTH_GITHUB_KEY = "123"
-SOCIAL_AUTH_GITHUB_SECRET = "123"
+SOCIAL_AUTH_GITHUB_KEY = S_AUTH_GITHUB_K
+SOCIAL_AUTH_GITHUB_SECRET = S_AUTH_GITHUB_S
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']           # make sureto get email
 
 
-
+SOCIAL_AUTH_REQUESTS_TIMEOUT = 15  # seconds
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 
