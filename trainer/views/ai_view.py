@@ -4,9 +4,6 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from utilities.trainer_ai_gen import TrainerGeminiAI
-from py_agent.service import WorkoutService
-
-from trainer_agent import services
 
 from orm.models import Trainer, Client
 
@@ -32,20 +29,5 @@ def generate_workout_structured(request, client_id, exe_count):
 
     # res is a dict
     res = trainer_ai.ai_workout_structured(trainer.id, client.id, exe_count)
-    return JsonResponse(res, safe=False)
-
-def agent_workout_generate(request, client_id, exe_count):
-    agent = services.WorkoutGeneratorService()
-
-    trainer = get_object_or_404(Trainer, pk = request.user.id)
-    res = agent.execute(trainer.id, client_id, exe_count );
-    return JsonResponse(res, safe=False)
-
-def pyai_workout_generate(request, client_id, exe_count):
-    srv = WorkoutService()
-
-    trainer = get_object_or_404(Trainer, pk = request.user.id)
-    res = srv.generate_workout(trainer.id, client_id, exe_count)
-
     return JsonResponse(res, safe=False)
 

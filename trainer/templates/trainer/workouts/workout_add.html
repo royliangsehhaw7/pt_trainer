@@ -53,22 +53,17 @@
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <div class="text-center col-12">
-                                    <p>Get AI Recommendations</p>
-                                </div>
-                                <div class="d-flex justify-content-between">
                                     <div>
-                                        <div class="row mb-3">
-                                            <div class="form-label" for="{{form.exercise_count.id_for_label}}">{{form.exercise_count.label}}</div>
-                                            {{form.exercise_count}}                                            
-                                        </div>
+                                        <div class="form-label" for="{{form.exercise_count.id_for_label}}">{{form.exercise_count.label}}</div>
+                                        {{form.exercise_count}}                                            
                                     </div>
-
-                                    <button type="button" class="btn btn-outline-primary" id="ai-generate" name="generate" onclick="addAIExercises()">
+                                    <button type="button" class="btn btn-outline-primary text-end" id="ai-generate" name="generate" onclick="addAIExercises()">
                                         Generate
                                     </button>
+                                    <div>
+                                        {{form.ai_feedback}}
+                                    </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -228,19 +223,34 @@
         function delExercise(ex) {
         }    
         async function addAIExercises() {
+            debugger;
             // AI: get selected value of a dropdown from DOM
-            const selectElement = document.querySelector('#id_client');
-            const selectedValue = selectElement.value;
+            const selectClientElement = document.querySelector('#id_client');
+            const selectedClient = parseInt(selectClientElement.value);
 
-            if(selectedValue) {
-                await fetch(`/ai/workout/client/${selectedValue}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        debugger;
-                        data.exercises.forEach(ex => {
-                            addExercise(ex)
-                        })
+            const selectNoElement = document.querySelector('#id_exercise_count');
+            const selectedNo = parseInt(selectNoElement.value);
+
+            if(selectedClient) {
+                await fetch(`/ai/workout/client/${selectedClient}/exercises/${selectedNo}`)
+                    .then(res => {
+                        return res.json()
                     })
+                    .then(data => {
+                        if(data.exercises.length > 0) {
+                            data.exercises.forEach(ex => {
+                                addExercise(ex)
+                            })
+                        }
+                        aiExpElement = document.getElementById('id_ai_feedback');
+                        aiExpElement.innerHTML = data.ai_explanation;
+                    })
+                    .catch(err => {
+                        console.log("Errors:" + err)
+                    })
+            }
+            else {
+                alert('Please select a client')
             }
         }
 

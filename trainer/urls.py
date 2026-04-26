@@ -85,7 +85,4 @@ urlpatterns = [
     path('ai/generate/<str:prompt>', ai_view.generate, name='ai_gen'),
     path('ai/workout/unstructured/', ai_view.generate_workout_unstructured, name='ai_workout_unstructured'),
     path('ai/workout/client/<int:client_id>/exercises/<int:exe_count>', ai_view.generate_workout_structured, name='ai_workout_structured'),
-
-    path('agent/workout/client/<int:client_id>/exercises/<int:exe_count>', ai_view.agent_workout_generate, name='agent_workout'),
-    path('pyagent/workout/client/<int:client_id>/exercises/<int:exe_count>', ai_view.pyai_workout_generate, name='pyai_agent_workout')
 ]

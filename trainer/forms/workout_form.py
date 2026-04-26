@@ -32,7 +32,7 @@ class WorkoutForm(forms.ModelForm):
 
     class Meta:
         model = Workout
-        fields = ['is_completed', 'trainer_review', 'client_remarks', 'client']
+        fields = ['is_completed', 'trainer_review', 'client_remarks', 'client', 'ai_feedback']
         labels = {
             'trainer_review': 'Trainer Review',
             "client_remarks": 'Client Remarks'
@@ -40,6 +40,7 @@ class WorkoutForm(forms.ModelForm):
         widgets = {
             'trainer_review': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'client_remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'ai_feedback': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': True})
         }
 
     def __init__(self, *args, **kwargs):

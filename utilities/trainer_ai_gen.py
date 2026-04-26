@@ -21,19 +21,19 @@ class TrainerGeminiAI:
         # should be private to class
 
         # 1. gemini
-        # self._llm = ChatGoogleGenerativeAI(
-        #     model="gemini-2.5-flash-lite",
-        #     google_api_key="AIzaSyBcUPGCeBUa-Bpt_R7YM6dTzDOYVZdy2Tc",
-        # )
-        
-        # 2. openrouter
-        model="nvidia/nemotron-3-super-120b-a12b:free"
-        # model="google/gemma-4-31b-it:free"        
-        self._llm = ChatOpenAI(
-            model=model,
-            api_key="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",
-            base_url="https://openrouter.ai/api/v1",
+        self._llm = ChatGoogleGenerativeAI(
+            model="gemini-2.5-flash-lite",
+            google_api_key="AIzaSyCzqEQzKJtvRqaUJ4AKdBE5rOeGAH6YCdE",
         )
+        
+        # # 2. openrouter
+        # model="nvidia/nemotron-3-super-120b-a12b:free"
+        # # model="google/gemma-4-31b-it:free"        
+        # self._llm = ChatOpenAI(
+        #     model=model,
+        #     api_key="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",
+        #     base_url="https://openrouter.ai/api/v1",
+        # )
 
 
     # ============================ testing ===============================
@@ -107,22 +107,25 @@ class TrainerGeminiAI:
     # ===================== actual implementation ========================
     # --- execute promppt (structured output based pydantic model)
     def ai_workout_structured(self, trainer_id:int, client_id: int, exe_count: int):
-        prompt = self._get_prompt_template()
-        data = self._get_data(trainer_id, client_id)
+        try:
+            prompt = self._get_prompt_template()
+            data = self._get_data(trainer_id, client_id)
 
-        # --- https://medium.com/@gaurav_hoskote/getting-structured-output-from-llms-using-langchain-bedrock-614efe19a6aa
-        # --- https://reference.langchain.com/python/langchain-google-genai/chat_models/ChatGoogleGenerativeAI/with_structured_outputs
-        structured_llm = self._llm.with_structured_output(WorkoutPlan, include_raw = True)
-        chain = prompt | structured_llm
-        response = chain.invoke({
-            'no_of_exercises': exe_count, 
-            'exercise_list': data.get('exercise_list'),
-            'client_info': data.get('client_info')
-        })
+            # --- https://medium.com/@gaurav_hoskote/getting-structured-output-from-llms-using-langchain-bedrock-614efe19a6aa
+            # --- https://reference.langchain.com/python/langchain-google-genai/chat_models/ChatGoogleGenerativeAI/with_structured_outputs
+            structured_llm = self._llm.with_structured_output(WorkoutPlan, include_raw = True)
+            chain = prompt | structured_llm
+            response = chain.invoke({
+                'no_of_exercises': exe_count, 
+                'exercise_list': data.get('exercise_list'),
+                'client_info': data.get('client_info')
+            })
 
-        # --- process results # additional metadata infiormation
-        workout_data = response.get('parsed')           # using with_structure_output only
-        usage = response.get('raw').usage_metadata      # just curious about this !!!
+            # --- process results # additional metadata infiormation
+            workout_data = response.get('parsed')           # using with_structure_output only
+            usage = response.get('raw').usage_metadata      # just curious about this !!!
+        except Exception as e:
+            raise Exception(f"AI Exception : {str(e)}") from e
 
         # --- for checking
         # return {
