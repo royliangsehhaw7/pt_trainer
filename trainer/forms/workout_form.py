@@ -40,7 +40,7 @@ class WorkoutForm(forms.ModelForm):
         widgets = {
             'trainer_review': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'client_remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'ai_feedback': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': True})
+            'ai_feedback': forms.Textarea(attrs={'class': 'form-control', 'rows': 8, 'readonly': True})
         }
 
     def __init__(self, *args, **kwargs):

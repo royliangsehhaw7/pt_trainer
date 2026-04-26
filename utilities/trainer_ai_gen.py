@@ -14,6 +14,8 @@ from .structured_model import WorkoutPlan
 # --- https://latenode.com/blog/ai-frameworks-technical-infrastructure/langchain-setup-tools-agents-memory/langchain-prompt-templates-complete-guide-with-examples
 # """
 
+from config.info import G_API_KEY
+
 class TrainerGeminiAI:
     # initialize the gemini
     def __init__(self):
@@ -23,7 +25,7 @@ class TrainerGeminiAI:
         # 1. gemini
         self._llm = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash-lite",
-            google_api_key="AIzaSyCzqEQzKJtvRqaUJ4AKdBE5rOeGAH6YCdE",
+            google_api_key=G_API_KEY,
         )
         
         # # 2. openrouter
