@@ -39,6 +39,24 @@ def social_login(request):
     user = request.user
     if user.is_authenticated:
         return redirect('home')
+    
+def register_social_user(backend, user, response, *args, **kwargs):
+    if user:
+        # 1. Ensure they are a trainer
+        if not user.is_trainer:
+            user.is_trainer = True
+            user.save()
+
+        # 2. Add to Group ONLY if they aren't in it yet
+        # This prevents redundant database hits
+        if not user.groups.filter(name='Free').exists():
+            try:
+                free_group = Group.objects.get(name='Free')
+                user.groups.add(free_group)
+            except Group.DoesNotExist:
+                pass 
+
+    return {'user': user}
 
 def register_page(request):
     if request.method == 'POST':
