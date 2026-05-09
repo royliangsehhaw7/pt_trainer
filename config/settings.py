@@ -184,12 +184,14 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.create_user',
     
     # 2. Now associate that user with the social account
-    'social_core.pipeline.social_auth.associate_user',  # This sets the missing social_user var
+    'social_core.pipeline.social_auth.associate_user',  # This is for the social auto to verify agains auth user
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 
     # 3. Finally, run your custom logic
-    'trainer.views.account_view.register_social_user',    
+    'trainer.views.account_view.register_social_user',  # custom function to overide social auto register
+                                                        # auth users table has addition flags to trainer
+                                                        # and also group permission
 )
 
 
